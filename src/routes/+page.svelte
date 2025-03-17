@@ -3,6 +3,8 @@
     import { onMount } from 'svelte';
 
     let arrivalsAndDepartures = $state([]);
+    let StopCode = $state("Loading...");
+    let StopName = $state("Loading...");
 
     // TODO: this was copied and pasted from Wayfinder. Unify them.
     function getArrivalStatus(predictedTime, scheduledTime) {
@@ -25,11 +27,17 @@
         if (browser) {
             const response = await fetch('/api/oba/departures');
             arrivalsAndDepartures = await response.json();
+
+            const stopResponse = await fetch('/api/oba/stop');
+            const stopInfo = await stopResponse.json();
+
+            StopName = stopInfo[0].name;
+            StopCode = stopInfo[0].code;
         }
     });
 </script>
 
-<div class='bg-red-100 h-screen flex flex-col'>
+<div class='bg-red-100 min-h-[90vh] max-h-[100vh] flex flex-col'>
     <div class='flex gap-x-4 mb-4 bg-slate-50 p-2'>
         <h1 class='text-4xl'>Waystation</h1>
         <h2 class='text-2xl flex-1 self-center'>Departures</h2>
@@ -58,4 +66,9 @@
     {:else}
         <p>Loading...</p>
     {/if}
+</div>
+<div class="py-4">
+    <footer class="flex justify-center items-center">
+        <h3 class='text-2xl'>Stop No. {StopCode} - {StopName}</h3>
+    </footer>
 </div>
