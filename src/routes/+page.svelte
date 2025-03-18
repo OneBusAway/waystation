@@ -64,7 +64,7 @@
 	{/if}
 </div>
 <div class="py-4">
-	<footer class="flex items-center justify-center">
+	<footer class="flex items-center justify-end">
 		<h3 class="text-2xl">Stop No. {StopCode} - {StopName}</h3>
 	</footer>
 </div>
