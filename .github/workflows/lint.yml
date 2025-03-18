@@ -7,8 +7,13 @@ on:
 jobs:
   eslint:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
@@ -17,17 +22,17 @@ jobs:
       - name: Fix formatting
         run: npx prettier --write .
       - name: Fix ESLint issues
-        run: npx eslint . --fix
-      - name: Check for remaining issues
-        run: npm run lint
+        run: npx eslint . --fix || true
       - name: Commit fixes if needed
-        if: github.event_name == 'pull_request'
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git status
-          if [[ -n $(git status -s) ]]; then
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          if [[ -n $(git status --porcelain) ]]; then
             git add .
             git commit -m "Fix linting issues"
             git push
+          else
+            echo "No changes to commit"
           fi
+      - name: Check for remaining issues
+        run: npm run lint
