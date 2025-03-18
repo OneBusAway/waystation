@@ -1,0 +1,33 @@
+name: Lint
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      - run: npm ci
+      - name: Fix formatting
+        run: npx prettier --write .
+      - name: Fix ESLint issues
+        run: npx eslint . --fix
+      - name: Check for remaining issues
+        run: npm run lint
+      - name: Commit fixes if needed
+        if: github.event_name == 'pull_request'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git status
+          if [[ -n $(git status -s) ]]; then
+            git add .
+            git commit -m "Fix linting issues"
+            git push
+          fi
