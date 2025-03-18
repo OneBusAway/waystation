@@ -1,6 +1,7 @@
 <script>
 	import { browser } from '$app/environment';
     import { onMount } from 'svelte';
+    import { PUBLIC_OBA_LOGO_URL, PUBLIC_OBA_REGION_NAME} from '$env/static/public'
 
     let arrivalsAndDepartures = $state([]);
     let currentTime = $state(new Date());
@@ -118,24 +119,26 @@
 
 <div class="flex flex-col min-h-screen bg-black text-white">
     <!-- Header -->
-    <div class="flex items-center justify-between p-4 bg-black">
-        <div class="flex items-center">
-            <div class="mr-2 text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 9h18v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"></path>
-                    <path d="M3 9v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9"></path>
-                    <path d="M7 9v7"></path>
-                    <path d="M17 9v7"></path>
-                    <path d="M15 2v7"></path>
-                    <path d="M9 2v7"></path>
-                </svg>
-            </div>
-            <h1 class="text-xl font-bold">METRO</h1>
-            <div class="mx-4 text-3xl font-light">Departures</div>
+    <div class="flex items-center justify-between p-4 bg-black text-white">
+        <!-- Left section with logo and title -->
+        <div class="flex items-center gap-x-4"> 
+            <div class="flex items-center gap-x-2">
+                <a href="/" class="block">
+                    <img src={PUBLIC_OBA_LOGO_URL} alt="OneBusAway" class="h-10">
+                </a>
+                <a href="/" class="block text-xl font-extrabold text-white">
+                    {PUBLIC_OBA_REGION_NAME}
+                </a>
+            </div> 
+            <h2 class="text-2xl self-center">Departures</h2>
         </div>
-        <div class="text-right">
-            <div class="text-sm">{formatDate(currentDate)}</div>
-            <div class="text-3xl font-bold">{formatTime(currentTime)}</div>
+        
+        <!-- Right section with date and time -->
+        <div class="flex items-center gap-x-4">
+            <div class="text-right">
+                <div class="text-sm">{formatDate(currentDate)}</div>
+                <div class="text-3xl font-bold">{formatTime(currentTime)}</div>
+            </div>
         </div>
     </div>
 
