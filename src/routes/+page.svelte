@@ -41,7 +41,7 @@
 
     {#if arrivalsAndDepartures.length > 0}
         <div class='flex flex-col gap-y-2'>
-            {#each arrivalsAndDepartures as dep}
+            {#each arrivalsAndDepartures as dep (dep.id || dep.tripId || `${dep.routeShortName}-${dep.tripHeadsign}-${dep.scheduledDepartureTime}`)}
                 <div class='flex bg-red-100 gap-x-4 px-2'>
                     <div>
                         <h2 class='text-5xl'>{dep.routeShortName}</h2>
