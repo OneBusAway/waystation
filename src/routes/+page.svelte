@@ -1,7 +1,7 @@
 <script>
 	import { browser } from '$app/environment';
-    import { onMount } from 'svelte';
-    import { PUBLIC_OBA_LOGO_URL, PUBLIC_OBA_REGION_NAME} from '$env/static/public'
+	import { onMount } from 'svelte';
+	import { PUBLIC_OBA_LOGO_URL, PUBLIC_OBA_REGION_NAME } from '$env/static/public';
 
     let arrivalsAndDepartures = $state([]);
     let currentTime = $state(new Date());
@@ -192,3 +192,4 @@
         </div>
     </div>
 </div>
+

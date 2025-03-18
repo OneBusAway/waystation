@@ -39,6 +39,13 @@ export default defineConfig({
 					exclude: ['src/**/*.svelte.{test,spec}.{js,ts}']
 				}
 			}
-		]
+		],
+		coverage: {
+			provider: 'v8',
+			reporter: ['html', 'lcov'],
+			reportsDirectory: './coverage',
+			all: true,
+			exclude: ['**/tests', '.svelte-kit', 'build', 'coverage', 'node_modules']
+		}
 	}
 });
