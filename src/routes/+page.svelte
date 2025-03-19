@@ -38,7 +38,6 @@
 		}
 	}
 
-
 	// Check if the departure is coming soon (within minutes) or if it's a scheduled time
 	function isComingSoon(predictedTime, scheduledTime) {
 		const minutes = getArrivalStatus(predictedTime, scheduledTime);
@@ -100,7 +99,7 @@
 </script>
 
 <div class="flex h-screen flex-col">
-	<Navbar currentDate={currentDate} currentTime={currentTime}/>
+	<Navbar {currentDate} {currentTime} />
 
 	<!-- Main content -->
 	<div class="flex-1 bg-gray-200 text-black">
