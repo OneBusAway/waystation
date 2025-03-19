@@ -3,6 +3,7 @@ import { stopIDs } from '$lib/dataStore';
 import { json } from '@sveltejs/kit';
 
 /** @type {import('./$types').RequestHandler} */
+// eslint-disable-next-line no-unused-vars
 export async function GET({ params }) {
 	const stopID = stopIDs()[0];
 	const response = await oba.stop.retrieve(stopID);

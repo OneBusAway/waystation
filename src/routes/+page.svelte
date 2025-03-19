@@ -55,6 +55,7 @@
 	}
 
 	// Fetch stop information using the OneBusAway API
+	// eslint-disable-next-line no-unused-vars
 	async function fetchStopInfo(id) {
 		try {
 			const response = await fetch(`api/oba/stops`);
@@ -74,6 +75,7 @@
 	}
 
 	// Fetch departures for the stop
+	// eslint-disable-next-line no-unused-vars
 	async function fetchDepartures(id = stopCode) {
 		loading = true;
 		try {
@@ -109,7 +111,7 @@
 			</div>
 		{:else if arrivalsAndDepartures.length > 0}
 			<div class="flex flex-col divide-y divide-gray-300">
-				{#each arrivalsAndDepartures as dep}
+				{#each arrivalsAndDepartures as dep, index (index)}
 					<div class="flex items-center gap-x-4 p-4">
 						<div class="rounded-lg bg-gray-800 p-4 text-2xl font-bold text-white">
 							{dep.routeShortName}
