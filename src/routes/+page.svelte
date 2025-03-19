@@ -37,28 +37,25 @@
 	});
 </script>
 
-<div class='bg-red-100 h-screen flex flex-col'>
-    <div class='flex gap-x-4 mb-4 bg-slate-50 p-2'>
-        <div class="flex w-full justify-between gap-4 px-2 py-2 md:w-auto">
-            <div class="flex items-center justify-center gap-x-2">
-                <a href="/" class="block">
-                    <img src={PUBLIC_OBA_LOGO_URL} alt="OneBusAway" class="h-10 rounded-sm">
-                </a>
-                <a href="/" class="block text-xl font-extrabold">
-                    {PUBLIC_OBA_REGION_NAME}
-                </a>
-            </div> 
-        </div>
-        <h2 class='text-2xl flex-1 self-center'>Departures</h2>
-        <div class='self-center'>
-            current time here
-        </div>
-    </div>
-
+<div class="flex h-screen flex-col bg-red-100">
+	<div class="mb-4 flex gap-x-4 bg-slate-50 p-2">
+		<div class="flex w-full justify-between gap-4 px-2 py-2 md:w-auto">
+			<div class="flex items-center justify-center gap-x-2">
+				<a href="/" class="block">
+					<img src={PUBLIC_OBA_LOGO_URL} alt="OneBusAway" class="h-10 rounded-sm" />
+				</a>
+				<a href="/" class="block text-xl font-extrabold">
+					{PUBLIC_OBA_REGION_NAME}
+				</a>
+			</div>
+		</div>
+		<h2 class="flex-1 self-center text-2xl">Departures</h2>
+		<div class="self-center">current time here</div>
+	</div>
 
 	{#if arrivalsAndDepartures.length > 0}
 		<div class="flex flex-col gap-y-2">
-			{#each arrivalsAndDepartures as dep}
+			{#each arrivalsAndDepartures as dep, i (i)}
 				<div class="flex gap-x-4 bg-red-100 px-2">
 					<div>
 						<h2 class="text-5xl">{dep.routeShortName}</h2>
