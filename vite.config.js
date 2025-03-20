@@ -2,9 +2,11 @@ import { paraglide } from '@inlang/paraglide-sveltekit/vite';
 import tailwindcss from '@tailwindcss/vite';
 import { svelteTesting } from '@testing-library/svelte/vite';
 import { sveltekit } from '@sveltejs/kit/vite';
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
+	resolve: process.env.VITEST ? { conditions: ['browser'] } : undefined,
+
 	plugins: [
 		tailwindcss(),
 		sveltekit(),
@@ -39,6 +41,13 @@ export default defineConfig({
 					exclude: ['src/**/*.svelte.{test,spec}.{js,ts}']
 				}
 			}
-		]
+		],
+		coverage: {
+			provider: 'v8',
+			reporter: ['html', 'lcov'],
+			reportsDirectory: './coverage',
+			all: true,
+			exclude: ['**/tests', '.svelte-kit', 'build', 'coverage', 'node_modules']
+		}
 	}
 });

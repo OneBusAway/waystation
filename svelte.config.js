@@ -6,7 +6,10 @@ const config = {
 		runes: true
 	},
 	kit: {
-		adapter: adapter()
+		adapter: adapter(),
+		alias: {
+			$components: './src/components'
+		}
 	}
 };
 

@@ -1,71 +1,108 @@
 <script>
 	import { browser } from '$app/environment';
-    import { onMount } from 'svelte';
-    import { PUBLIC_OBA_LOGO_URL, PUBLIC_OBA_REGION_NAME} from '$env/static/public'
+	import { onMount } from 'svelte';
+	import { PUBLIC_OBA_LOGO_URL, PUBLIC_OBA_REGION_NAME } from '$env/static/public';
 
-    let arrivalsAndDepartures = $state([]);
+	import Header from '$components/navigation/header.svelte';
+	import Footer from '$components/navigation/footer.svelte';
 
-    // TODO: this was copied and pasted from Wayfinder. Unify them.
-    function getArrivalStatus(predictedTime, scheduledTime) {
+	let arrivalsAndDepartures = $state([]);
+	let loading = $state(true);
+
+	// Calculate arrival time in minutes
+	function getArrivalStatus(predictedTime, scheduledTime) {
 		const now = new Date();
 		const predicted = new Date(predictedTime);
 		const scheduled = new Date(scheduledTime);
 
 		const predictedDiff = predicted - now;
 		const scheduledDiff = scheduled - now;
-        
 
-        if (predictedTime == 0) {
-            return Math.abs(Math.floor(scheduledDiff / 60000));
-        } else {
-            return Math.abs(Math.floor(predictedDiff / 60000));
-        }
+		if (predictedTime == 0) {
+			return Math.abs(Math.floor(scheduledDiff / 60000));
+		} else {
+			return Math.abs(Math.floor(predictedDiff / 60000));
+		}
 	}
 
-    onMount(async () => {
-        if (browser) {
-            const response = await fetch('/api/oba/departures');
-            arrivalsAndDepartures = await response.json();
-        }
-    });
+	// Check if the departure is coming soon (within minutes) or if it's a scheduled time
+	function isComingSoon(predictedTime, scheduledTime) {
+		const minutes = getArrivalStatus(predictedTime, scheduledTime);
+		return minutes <= 10; // Show minutes if 10 or fewer minutes away
+	}
+
+	// Format scheduled time
+	function formatScheduledTime(time) {
+		const date = new Date(time);
+		return date.toLocaleTimeString('en-US', {
+			hour: 'numeric',
+			minute: '2-digit',
+			hour12: true
+		});
+	}
+
+	// Fetch departures for the stop
+	async function fetchDepartures() {
+		loading = true;
+		try {
+			const response = await fetch(`/api/oba/departures`);
+			if (!response.ok) throw new Error('Failed to fetch departures');
+			arrivalsAndDepartures = await response.json();
+		} catch (error) {
+			console.error('Error fetching departures:', error);
+			arrivalsAndDepartures = [];
+		} finally {
+			loading = false;
+		}
+	}
+
+	onMount(async () => {
+		if (browser) {
+			await fetchDepartures();
+		}
+	});
 </script>
 
-<div class='bg-red-100 h-screen flex flex-col'>
-    <div class='flex gap-x-4 mb-4 bg-slate-50 p-2'>
-        <div class="flex w-full justify-between gap-4 px-2 py-2 md:w-auto">
-            <div class="flex items-center justify-center gap-x-2">
-                <a href="/" class="block">
-                    <img src={PUBLIC_OBA_LOGO_URL} alt="OneBusAway" class="h-10 rounded-sm">
-                </a>
-                <a href="/" class="block text-xl font-extrabold">
-                    {PUBLIC_OBA_REGION_NAME}
-                </a>
-            </div> 
-        </div>
-        <h2 class='text-2xl flex-1 self-center'>Departures</h2>
-        <div class='self-center'>
-            current time here
-        </div>
-    </div>
+<div class="flex h-screen flex-col">
+	<Header title={PUBLIC_OBA_REGION_NAME} imageUrl={PUBLIC_OBA_LOGO_URL} />
 
+	<!-- Main content -->
+	<div class="flex-1 bg-gray-200 text-black">
+		{#if loading}
+			<div class="flex h-32 items-center justify-center">
+				<p class="text-xl text-gray-600">Loading departures...</p>
+			</div>
+		{:else if arrivalsAndDepartures.length > 0}
+			<div class="flex flex-col divide-y divide-gray-300">
+				{#each arrivalsAndDepartures as dep (dep.tripId)}
+					<div class="flex items-center gap-x-4 p-4">
+						<div class="rounded-lg bg-gray-800 p-4 text-2xl font-bold text-white">
+							{dep.routeShortName}
+						</div>
+						<div class="flex-1 text-xl">
+							{dep.tripHeadsign}
+						</div>
+						<div class="text-right">
+							{#if isComingSoon(dep.predictedDepartureTime, dep.scheduledDepartureTime)}
+								<div class="text-5xl font-bold">
+									{getArrivalStatus(dep.predictedDepartureTime, dep.scheduledDepartureTime)}
+								</div>
+								<div class="text-sm">min</div>
+							{:else}
+								<div class="text-4xl font-bold">
+									{formatScheduledTime(dep.scheduledDepartureTime)}
+								</div>
+							{/if}
+						</div>
+					</div>
+				{/each}
+			</div>
+		{:else}
+			<div class="flex h-32 items-center justify-center">
+				<p class="text-xl text-gray-600">No departures available</p>
+			</div>
+		{/if}
+	</div>
 
-    {#if arrivalsAndDepartures.length > 0}
-        <div class='flex flex-col gap-y-2'>
-            {#each arrivalsAndDepartures as dep}
-                <div class='flex bg-red-100 gap-x-4 px-2'>
-                    <div>
-                        <h2 class='text-5xl'>{dep.routeShortName}</h2>
-                    </div>
-                    <div class='flex-1 text-xl self-center'>
-                        {dep.tripHeadsign}
-                    </div>
-                    <div class='text-2xl self-center'>
-                        {getArrivalStatus(dep.predictedDepartureTime, dep.scheduledDepartureTime)}min
-                    </div>
-                </div>
-            {/each}
-        </div>
-    {:else}
-        <p>Loading...</p>
-    {/if}
+	<Footer />
 </div>
