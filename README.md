@@ -62,7 +62,7 @@ Participating in this codebase means you adhere to the [OBA Code of Conduct](htt
 **We will accept pull requests if:**
 
 - The code has proper tests and all tests pass (or it is a test exposing a failure in existing code).
-- It can be merged without problems (if not, please use: `git rebase master`).
+- It can be merged without problems (if not, please use: `git rebase main`).
 - It doesn't break any existing functionality.
 - It's quality code that conforms to standard style guides and best practices.
 - The description includes a motive for your change and the method you used to achieve it.
