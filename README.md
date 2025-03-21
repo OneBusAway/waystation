@@ -1,9 +1,11 @@
 # Waystation
+
 ![Waystation-Heading](https://github.com/user-attachments/assets/005a2d71-4e9e-4335-91a6-61270b3faeec)
 
 Waystation is the next-generation [Sign Mode](https://developer.onebusaway.org/features/sign-mode) for OneBusAway. It serves as a transit information screen designed to display real-time arrivals and departures for a given transit stop. Built with [SvelteKit](https://kit.svelte.dev/), Waystation provides a modern, standalone web application that empowers transit agencies and businesses to create efficient and visually appealing public transit information systems.
 
 ## Features
+
 - Real-time transit information display.
 - Customizable branding with agency logos and region names.
 - Easy integration with OneBusAway API.
@@ -48,6 +50,7 @@ To get started, set up Waystation for local development:
 Participating in this codebase means you adhere to the [OBA Code of Conduct](https://github.com/OneBusAway/onebusaway/blob/master/CODE_OF_CONDUCT.md).
 
 **Getting Started:**
+
 - Fork the project on GitHub.
 - Create a feature branch.
 - Write tests and code.
@@ -57,6 +60,7 @@ Participating in this codebase means you adhere to the [OBA Code of Conduct](htt
 - Mention related issues in the pull request description or comments.
 
 **We will accept pull requests if:**
+
 - The code has proper tests and all tests pass (or it is a test exposing a failure in existing code).
 - It can be merged without problems (if not, please use: `git rebase master`).
 - It doesn't break any existing functionality.
@@ -71,21 +75,26 @@ Participating in this codebase means you adhere to the [OBA Code of Conduct](htt
 ## Development Tips
 
 Explore the Codebase:
+
 - `/src/` - Core application logic.
 - `/src/components/` - Components and their connections.
 - `/src/lib` - Data fetching and other functionalities.
 
 - Run the test suite to ensure functionality:
+
   ```bash
   npm test
   ```
+
   > Consider creating unit tests for each new feature or component you add.
 
 - Lint and format your code to maintain consistency and code quality:
+
   ```bash
   npm run lint   # Check for linting errors
   npm run format # Format the code
   ```
+
   > Always lint and format your code after making changes.
 
 - Build the project for production to ensure everything works as expected:
