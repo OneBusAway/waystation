@@ -1,9 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
-
-	let stopName = $state('Loading stop information...');
-	let stopCode = $state('');
+	import { stopInfo } from '$lib/store';
 
 	async function fetchStopInfo() {
 		try {
@@ -11,14 +9,13 @@
 			if (!response.ok) throw new Error('Failed to fetch stop information');
 			const data = await response.json();
 			if (data) {
-				stopName = data.name;
-				stopCode = data.code;
+				stopInfo.set({name: data.name, code: data.code});
 				return true;
 			}
 			return false;
 		} catch (error) {
 			console.error('Error fetching stop information:', error);
-			stopName = 'Unknown Stop';
+			stopInfo.set({name: "Unknown Stop", code: ""});
 			return false;
 		}
 	}
@@ -34,9 +31,6 @@
 	<div class="flex items-center justify-between">
 		<div class="flex items-center">
 			<span class="ml-2 text-sm">Waystation by Open Transit Software Foundation</span>
-		</div>
-		<div class="text-sm">
-			Stop No. {stopCode} - {stopName}
 		</div>
 	</div>
 </div>

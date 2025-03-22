@@ -3,6 +3,7 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { PUBLIC_OBA_LOGO_URL, PUBLIC_OBA_REGION_NAME } from '$env/static/public';
 	import { formatTime2 } from '$lib/formatters';
+	import {stopInfo} from "$lib/store";
 
 	import Header from '$components/navigation/header.svelte';
 	import Footer from '$components/navigation/footer.svelte';
@@ -42,7 +43,7 @@
 				minutes: null,
 				displayTime: formatTime2(predictedTime)
 			};
-		} else if (predictedDiff <= 20) {
+		} else if (predictedDiff <= 10) {
 			return {
 				status: 'Arriving',
 				text: 'Arriving in',
@@ -105,6 +106,10 @@
 		currentDate={now}
 		{countdown}
 	/>
+
+	<div class="flex justify-center bg-blue-400 font-bold text-xl py-2 px-2">
+		Stop No. {$stopInfo.code} - {$stopInfo.name}
+	</div>
 
 	<div class="flex-1 bg-gray-200 text-black">
 		{#if loading}
