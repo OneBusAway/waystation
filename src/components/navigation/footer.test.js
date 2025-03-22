@@ -30,5 +30,4 @@ test('renders successfully', async () => {
 	await vi.runAllTimersAsync();
 
 	expect(div.innerHTML).toContain('Waystation by Open Transit Software Foundation');
-	expect(div.innerHTML).toContain('Stop Test Example');
 });

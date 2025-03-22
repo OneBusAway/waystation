@@ -8,6 +8,8 @@
 	import Footer from '$components/navigation/footer.svelte';
 	import Departure from '$components/navigation/departure.svelte';
 
+	let stopName = $state('Loading stop information...');
+	let stopCode = $state('');
 	let arrivalsAndDepartures = $state([]);
 	let loading = $state(true);
 	let currentDateTime = $state(new Date());
@@ -79,10 +81,29 @@
 		setTimeout(updateTime, 1000);
 	}
 
+	async function fetchStopInfo() {
+		try {
+			const response = await fetch(`api/oba/stops`);
+			if (!response.ok) throw new Error('Failed to fetch stop information');
+			const data = await response.json();
+			if (data) {
+				stopName = data.name;
+				stopCode = data.code;
+				return true;
+			}
+			return false;
+		} catch (error) {
+			console.error('Error fetching stop information:', error);
+			stopName = 'Unknown Stop';
+			return false;
+		}
+	}
+
 	onMount(async () => {
 		if (browser) {
 			await fetchDepartures();
 			updateTime();
+			fetchStopInfo();
 
 			// Refresh departures every 30 seconds
 			const interval = setInterval(fetchDepartures, 30000);
@@ -98,6 +119,10 @@
 			<div class="text-xl font-bold">{formatCurrentTime(currentDateTime)}</div>
 		</div>
 	</Header>
+
+	<div class="flex justify-center bg-blue-300 px-2 py-2 text-xl font-bold">
+		Stop No. {stopCode} - {stopName}
+	</div>
 
 	<div class="flex-1 bg-gray-200 text-black">
 		{#if loading}
