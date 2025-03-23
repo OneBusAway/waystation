@@ -4,6 +4,7 @@
 	import Footer from '$components/navigation/footer.svelte';
 	import Countdown from '$components/countdown.svelte';
 	import DepartureList from '$components/departures/list.svelte';
+	import Alerts from '$components/alerts/alerts.svelte';
 	import { onMount } from 'svelte';
 
 	let { data } = $props();
@@ -12,9 +13,11 @@
 	let now = $state(new Date());
 	let countdown = $state(0);
 	let departureList;
+	let alerts;
 
 	async function timerElapsed() {
 		await departureList.fetchDepartures();
+		await alerts.fetchMaintenanceSituations();
 	}
 
 	function tick(counter, date) {
@@ -24,20 +27,30 @@
 
 	onMount(async () => {
 		await departureList.fetchDepartures();
+		await alerts.fetchMaintenanceSituations();
 	});
 </script>
 
 <Countdown refreshInterval={30} {tick} {timerElapsed} />
 
 <div class="flex h-screen flex-col">
-	<Header
-		title={PUBLIC_OBA_REGION_NAME}
-		imageUrl={PUBLIC_OBA_LOGO_URL}
-		currentDate={now}
-		{countdown}
-	/>
+	<div class="flex flex-1 gap-4 overflow-hidden">
+		<div class="flex-1 overflow-y-auto">
+			<Header
+				title={PUBLIC_OBA_REGION_NAME}
+				imageUrl={PUBLIC_OBA_LOGO_URL}
+				currentDate={now}
+				{countdown}
+			/>
+			<DepartureList bind:this={departureList} stopID={data.stopID} />
+		</div>
 
-	<DepartureList bind:this={departureList} stopID={data.stopID} />
+		<div class="w-[1px] bg-gray-300"></div>
 
-	<Footer {stop} />
+		<div class="w-[600px] flex-shrink-0 overflow-y-auto">
+			<Alerts bind:this={alerts} stopID={data.stopID} />
+		</div>
+	</div>
+
+	<Footer {stop} class="shrink-0" />
 </div>
