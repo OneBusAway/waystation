@@ -100,3 +100,16 @@ Explore the Codebase:
   npm run build
   ```
   > Verify that the production build is stable and running correctly with `npm run preview`.
+
+## License
+
+Although this project is made available under the terms of the AGPL 3.0 license, the commits referenced below are licensed under the terms of the Apache 2.0 software license. See [issue #33](https://github.com/OneBusAway/waystation/issues/33) for an explanation of this change.
+
+```
+f96d5e0 2025-03-21 | Update viewport meta tag for large display optimization [tarunsinghofficial]
+358c7bc 2025-03-21 | Make favicon and tab title dynamic using environment variables (#21) [Sundaresan-Karunakaran]
+d67bff4 2025-03-18 | Fixed linting issues in the codebase [Sundaresan-Karunakaran]
+1972333 2025-03-18 | Added coverage in test and ensured both prettier and eslint run in lint [Sundaresan-Karunakaran]
+73d4683 2025-03-18 | Installed and configured vite coverage for running tests [Sundaresan-Karunakaran]
+e699302 2025-03-18 | Copied .github folder and update linting workflow to run both Prettier and ESLint together [Sundaresan-Karunakaran]
+```
