@@ -1,6 +1,6 @@
 <script>
 	import { formatArrivalStatus } from '$lib/formatters';
-	import Departure from '$components/departures/Departure.svelte';
+	import Departure from '$components/departures/departure.svelte';
 
 	let { stopID } = $props();
 
@@ -13,7 +13,10 @@
 			const response = await fetch(`/api/oba/arrivals-and-departures-for-stop/${stopID}`);
 			if (!response.ok) throw new Error('Failed to fetch departures');
 			const responseBody = await response.json();
-			arrivalsAndDepartures = responseBody.data.entry.arrivalsAndDepartures;
+			arrivalsAndDepartures = responseBody.data.entry.arrivalsAndDepartures.map((dep) => {
+				const status = formatArrivalStatus(dep.predictedDepartureTime, dep.scheduledDepartureTime);
+				return { ...dep, status };
+			});
 		} catch (error) {
 			console.error('Error fetching departures:', error);
 			arrivalsAndDepartures = [];
