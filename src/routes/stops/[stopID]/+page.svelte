@@ -5,6 +5,7 @@
 	import Countdown from '$components/countdown.svelte';
 	import DepartureList from '$components/departures/list.svelte';
 	import Alerts from '$components/alerts/alerts.svelte';
+	import { situationsStore, fetchSituations } from '$lib/situations';
 	import { onMount } from 'svelte';
 
 	let { data } = $props();
@@ -13,11 +14,11 @@
 	let now = $state(new Date());
 	let countdown = $state(0);
 	let departureList;
-	let alerts;
+	let hasAlerts = $derived($situationsStore.length > 0);
 
 	async function timerElapsed() {
 		await departureList.fetchDepartures();
-		await alerts.fetchMaintenanceSituations();
+		await fetchSituations(data.stopID);
 	}
 
 	function tick(counter, date) {
@@ -27,7 +28,7 @@
 
 	onMount(async () => {
 		await departureList.fetchDepartures();
-		await alerts.fetchMaintenanceSituations();
+		await fetchSituations(data.stopID);
 	});
 </script>
 
@@ -45,11 +46,13 @@
 			<DepartureList bind:this={departureList} stopID={data.stopID} />
 		</div>
 
-		<div class="w-[1px] bg-gray-300"></div>
+		{#if hasAlerts}
+			<div class="w-[1px] bg-gray-300"></div>
 
-		<div class="w-[600px] flex-shrink-0 overflow-y-auto">
-			<Alerts bind:this={alerts} stopID={data.stopID} />
-		</div>
+			<div class="w-[600px] flex-shrink-0 overflow-y-auto">
+				<Alerts stopID={data.stopID} />
+			</div>
+		{/if}
 	</div>
 
 	<Footer {stop} class="shrink-0" />

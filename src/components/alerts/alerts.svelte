@@ -1,26 +1,16 @@
 <script>
-	const { stopID } = $props();
-	let situations = $state([]);
+	import { situationsStore } from '$lib/situations';
 
-	export async function fetchMaintenanceSituations() {
-		try {
-			const response = await fetch(`/api/oba/arrivals-and-departures-for-stop/${stopID}`);
-			if (!response.ok) throw new Error('Failed to fetch maintenance situations');
-			const responseBody = await response.json();
-			situations = responseBody.data.references?.situations || [];
-		} catch (error) {
-			console.error('Error fetching maintenance situations:', error);
-			situations = [];
-		}
-	}
-
-	const title = $derived(situations.length > 0 ? situations[0].summary?.value || '' : '');
-
-	const description = $derived(situations.length > 0 ? situations[0].description?.value || '' : '');
+	const title = $derived(
+		$situationsStore.length > 0 ? $situationsStore[0].summary?.value || '' : ''
+	);
+	const description = $derived(
+		$situationsStore.length > 0 ? $situationsStore[0].description?.value || '' : ''
+	);
 </script>
 
 <div class="mx-0 my-9 mr-4 p-0">
-	{#if situations.length > 0}
+	{#if $situationsStore.length > 0}
 		<div class="mb-4 flex items-center">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
