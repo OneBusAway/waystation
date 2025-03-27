@@ -1,7 +1,7 @@
 <script>
 	import { formatDate, formatTime } from '$lib/formatters.js';
 
-	let { countdown, currentDate, imageUrl, title } = $props();
+	let { currentDate, imageUrl, title } = $props();
 </script>
 
 <div class="flex gap-x-4 p-2">
@@ -18,6 +18,5 @@
 	<div class="flex-1 text-right">
 		<div class="text-sm">{formatDate(currentDate)}</div>
 		<div class="text-3xl font-bold">{formatTime(currentDate)}</div>
-		<div class="text-sm text-gray-500">Refreshing in {countdown}s</div>
 	</div>
 </div>
