@@ -15,7 +15,8 @@
 			const responseBody = await response.json();
 			arrivalsAndDepartures = responseBody.data.entry.arrivalsAndDepartures.map((dep) => {
 				const status = formatArrivalStatus(dep.predictedDepartureTime, dep.scheduledDepartureTime);
-				return { ...dep, status };
+				const uniqueId = `${dep.tripId ?? '0'}-${dep.stopId ?? '0'}-${Math.floor(Math.random() * 10000)}`;
+				return { ...dep, status, uniqueId };
 			});
 		} catch (error) {
 			console.error('Error fetching departures:', error);
@@ -33,8 +34,8 @@
 		</div>
 	{:else if arrivalsAndDepartures.length > 0}
 		<div class="flex flex-col divide-y divide-gray-300">
-			{#each arrivalsAndDepartures as dep ((dep.predictedDepartureTime, dep.scheduledDepartureTime, dep.vehicleId))}
-				{#if formatArrivalStatus(dep.predictedDepartureTime, dep.scheduledDepartureTime)}
+			{#each arrivalsAndDepartures as dep (dep.uniqueId)}
+				{#if dep.status}
 					<Departure {dep} />
 				{/if}
 			{/each}
