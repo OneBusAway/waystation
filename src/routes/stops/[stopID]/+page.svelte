@@ -1,48 +1,42 @@
 <script>
 	import { PUBLIC_OBA_LOGO_URL, PUBLIC_OBA_REGION_NAME } from '$env/static/public';
+	import Alerts from '$components/alerts/alerts.svelte';
 	import Header from '$components/navigation/header.svelte';
 	import Footer from '$components/navigation/footer.svelte';
-	import Countdown from '$components/countdown.svelte';
 	import DepartureList from '$components/departures/list.svelte';
-	import Alerts from '$components/alerts/alerts.svelte';
+
 	import { situationsStore, fetchSituations } from '$lib/situations';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
+	import { browser } from '$app/environment';
 
 	let { data } = $props();
 	const stop = data.stopData.entry;
 
-	let now = $state(new Date());
-	let countdown = $state(0);
-	let departureList;
+	let interval, departureList;
 	let hasAlerts = $derived($situationsStore.length > 0);
 
-	async function timerElapsed() {
+	async function autoRefresh() {
 		await departureList.fetchDepartures();
 		await fetchSituations(data.stopID);
-	}
-
-	function tick(counter, date) {
-		now = date;
-		countdown = counter;
 	}
 
 	onMount(async () => {
-		await departureList.fetchDepartures();
-		await fetchSituations(data.stopID);
+		await autoRefresh();
+
+		if (browser) {
+			interval = setInterval(autoRefresh, 30000);
+		}
+	});
+
+	onDestroy(() => {
+		clearInterval(interval);
 	});
 </script>
-
-<Countdown refreshInterval={30} {tick} {timerElapsed} />
 
 <div class="flex h-screen flex-col">
 	<div class="flex flex-1 gap-4 overflow-hidden">
 		<div class="flex-1 overflow-y-auto">
-			<Header
-				title={PUBLIC_OBA_REGION_NAME}
-				imageUrl={PUBLIC_OBA_LOGO_URL}
-				currentDate={now}
-				{countdown}
-			/>
+			<Header title={PUBLIC_OBA_REGION_NAME} imageUrl={PUBLIC_OBA_LOGO_URL} />
 			<DepartureList bind:this={departureList} stopID={data.stopID} />
 		</div>
 
