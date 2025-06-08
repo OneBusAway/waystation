@@ -1,5 +1,7 @@
 <script>
 	import { formatArrivalStatus } from '$lib/formatters';
+	import { onMount, onDestroy } from 'svelte';
+	import { browser } from '$app/environment';
 
 	import Alerts from '$components/alerts/alerts.svelte';
 	import Departure from '$components/departures/departure.svelte';
@@ -9,6 +11,10 @@
 	let arrivalsAndDepartures = $state([]);
 	let situations = $state([]);
 	let loading = $state(true);
+
+	let interval;
+
+	const REFRESH_INTERVAL = 30000; // todo: make it a configurable option
 
 	export async function fetchDeparturesAndAlerts() {
 		loading = true;
@@ -29,6 +35,18 @@
 			loading = false;
 		}
 	}
+
+	onMount(async () => {
+		await fetchDeparturesAndAlerts();
+
+		if (browser) {
+			interval = setInterval(fetchDeparturesAndAlerts, REFRESH_INTERVAL);
+		}
+	});
+
+	onDestroy(() => {
+		clearInterval(interval);
+	});
 </script>
 
 <div class="flex flex-1 gap-4 overflow-hidden">
@@ -40,9 +58,7 @@
 		{:else if arrivalsAndDepartures.length > 0}
 			<div class="flex flex-col divide-y divide-gray-300">
 				{#each arrivalsAndDepartures as dep (dep.uniqueId)}
-					{#if dep.status}
-						<Departure {dep} />
-					{/if}
+					<Departure {dep} />
 				{/each}
 			</div>
 		{:else}
@@ -51,6 +67,7 @@
 			</div>
 		{/if}
 	</div>
+
 	{#if situations.length > 0}
 		<div class="w-[1px] bg-gray-300"></div>
 
