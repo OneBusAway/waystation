@@ -1,16 +1,12 @@
 <script>
-	import { situationsStore } from '$lib/situations';
+	let { situations = [] } = $props();
 
-	const title = $derived(
-		$situationsStore.length > 0 ? $situationsStore[0].summary?.value || '' : ''
-	);
-	const description = $derived(
-		$situationsStore.length > 0 ? $situationsStore[0].description?.value || '' : ''
-	);
+	const title = $derived(situations.length > 0 ? situations[0].summary?.value || '' : '');
+	const description = $derived(situations.length > 0 ? situations[0].description?.value || '' : '');
 </script>
 
 <div class="mx-0 my-9 mr-4 p-0">
-	{#if $situationsStore.length > 0}
+	{#if situations.length > 0}
 		<div class="mb-4 flex items-center">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"

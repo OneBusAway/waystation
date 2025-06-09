@@ -1,7 +1,16 @@
 <script>
 	import { formatDate, formatTime } from '$lib/formatters.js';
 
-	let { currentDate, imageUrl, title } = $props();
+	let defaultTitle = 'Transit Board';
+	let defaultIcon = 'https://onebusaway.org/wp-content/uploads/oba_logo-1.png';
+
+	let { imageUrl = defaultIcon, title = defaultTitle } = $props();
+
+	let now = $state(new Date());
+
+	setInterval(() => {
+		now = new Date();
+	}, 1000);
 </script>
 
 <div class="flex gap-x-4 p-2">
@@ -16,7 +25,7 @@
 		</div>
 	</div>
 	<div class="flex-1 text-right">
-		<div class="text-sm">{formatDate(currentDate)}</div>
-		<div class="text-3xl font-bold">{formatTime(currentDate)}</div>
+		<div class="text-sm">{formatDate(now)}</div>
+		<div class="text-3xl font-bold">{formatTime(now)}</div>
 	</div>
 </div>
