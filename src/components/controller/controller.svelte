@@ -58,7 +58,9 @@
 		{:else if arrivalsAndDepartures.length > 0}
 			<div class="flex flex-col divide-y divide-gray-300">
 				{#each arrivalsAndDepartures as dep (dep.uniqueId)}
-					<Departure {dep} />
+					{#if dep.status}
+						<Departure {dep} />
+					{/if}
 				{/each}
 			</div>
 		{:else}
