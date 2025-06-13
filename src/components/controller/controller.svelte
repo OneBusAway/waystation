@@ -1,14 +1,14 @@
 <script>
-	import { formatArrivalStatus } from '$lib/formatters';
+	import { formatArrivalStatus, generateRandomID, sortEarliestDepartures } from '$lib/formatters';
 	import { onMount, onDestroy } from 'svelte';
 	import { browser } from '$app/environment';
 
 	import Alerts from '$components/alerts/alerts.svelte';
 	import Departure from '$components/departures/departure.svelte';
 
-	let { stopID } = $props();
+	let { stopIDs = [] } = $props();
 
-	let arrivalsAndDepartures = $state([]);
+	let allDepartures = $state([]);
 	let situations = $state([]);
 	let loading = $state(true);
 
@@ -16,31 +16,60 @@
 
 	const REFRESH_INTERVAL = 30000; // todo: make it a configurable option
 
-	export async function fetchDeparturesAndAlerts() {
+	function stopRequestDataModel(dep, stopID) {
+		const status = formatArrivalStatus(dep.predictedDepartureTime, dep.scheduledDepartureTime);
+		const id = generateRandomID(dep.tripId, dep.stopId);
+
+		return {
+			...dep,
+			stopID,
+			status,
+			uniqueId: id
+		};
+	}
+
+	async function obaAPI(stopID) {
+		const response = await fetch(`/api/oba/arrivals-and-departures-for-stop/${stopID}`);
+		if (!response) throw new Error(`Fetch Error: Failed to fetch stop ${stopID}`);
+		const json = await response.json();
+
+		return {
+			stopID,
+			departures: json.data.entry.arrivalsAndDepartures,
+			situations: json.data.entry.references?.situations || []
+		};
+	}
+
+	export async function fetchStops() {
 		loading = true;
 		try {
-			const response = await fetch(`/api/oba/arrivals-and-departures-for-stop/${stopID}`);
-			if (!response.ok) throw new Error('Failed to fetch departures');
-			const responseBody = await response.json();
-			arrivalsAndDepartures = responseBody.data.entry.arrivalsAndDepartures.map((dep) => {
-				const status = formatArrivalStatus(dep.predictedDepartureTime, dep.scheduledDepartureTime);
-				const uniqueId = `${dep.tripId ?? '0'}-${dep.stopId ?? '0'}-${Math.floor(Math.random() * 10000)}`;
-				return { ...dep, status, uniqueId };
+			const response = await Promise.all(stopIDs.map(async (id) => obaAPI(id)));
+
+			allDepartures = response.flatMap((eachResponse) => {
+				const stopID = eachResponse.stopID;
+				const departures = eachResponse.departures;
+
+				return departures.map((dep) => {
+					return stopRequestDataModel(dep, stopID);
+				});
 			});
-			situations = responseBody.data.references?.situations || [];
+
+			situations = response.flatMap((eachSituation) => eachSituation.situations);
+
+			allDepartures = sortEarliestDepartures(allDepartures);
 		} catch (error) {
-			console.error('Error fetching departures:', error);
-			arrivalsAndDepartures = [];
+			console.error('Error fetching stops:', error);
+			allDepartures = [];
 		} finally {
 			loading = false;
 		}
 	}
 
 	onMount(async () => {
-		await fetchDeparturesAndAlerts();
+		await fetchStops();
 
 		if (browser) {
-			interval = setInterval(fetchDeparturesAndAlerts, REFRESH_INTERVAL);
+			interval = setInterval(fetchStops, REFRESH_INTERVAL);
 		}
 	});
 
@@ -55,9 +84,9 @@
 			<div class="flex h-32 items-center justify-center">
 				<p class="text-xl text-gray-600">Loading departures...</p>
 			</div>
-		{:else if arrivalsAndDepartures.length > 0}
+		{:else if allDepartures.length > 0}
 			<div class="flex flex-col divide-y divide-gray-300">
-				{#each arrivalsAndDepartures as dep (dep.uniqueId)}
+				{#each allDepartures as dep (dep.uniqueId)}
 					{#if dep.status}
 						<Departure {dep} />
 					{/if}

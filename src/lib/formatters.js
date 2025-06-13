@@ -124,3 +124,39 @@ export function formatCurrentTime(date) {
 		hour12: true
 	});
 }
+
+/**
+ * Generate a unique ID string based on trip and stop IDs.
+ * Used to uniquely identify departure blocks.
+ *
+ * @param {string} tripID - The trip ID
+ * @param {string} stopID - The stop ID
+ * @returns {string} - A unique ID in the format "tripID-stopID-randomNumber"
+ */
+export function generateRandomID(tripID, stopID) {
+	return `${tripID ?? '0'}-${stopID ?? '0'}-${Math.floor(Math.random() * 10000)}`;
+}
+
+/**
+ * Sort a list of departures by their earliest available departure time.
+ * Filters out departures with invalid or missing times.
+ *
+ * @param {Array} departures - Array of departure objects with predicted or scheduled times
+ * @returns {Array} - Sorted array of valid departures in chronological order
+ */
+export function sortEarliestDepartures(departures) {
+	const validDepartures = departures.filter((dep) => {
+		const time = dep.predictedDepartureTime ?? dep.scheduledDepartureTime;
+
+		return time && time > 0;
+	});
+
+	const sortedDepartures = validDepartures.sort((x, y) => {
+		const timeX = x.predictedDepartureTime ?? x.scheduledDepartureTime;
+		const timeY = y.predictedDepartureTime ?? y.scheduledDepartureTime;
+
+		return timeX - timeY;
+	});
+
+	return sortedDepartures;
+}
