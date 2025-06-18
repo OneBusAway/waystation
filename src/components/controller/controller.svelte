@@ -15,6 +15,7 @@
 	let interval;
 
 	const REFRESH_INTERVAL = 30000; // todo: make it a configurable option
+	const MAX_DEPARTURES = 5;
 
 	function stopRequestDataModel(dep, stopID, stopName) {
 		const status = formatArrivalStatus(dep.predictedDepartureTime, dep.scheduledDepartureTime);
@@ -61,7 +62,9 @@
 
 			situations = response.flatMap((eachSituation) => eachSituation.situations);
 
+			allDepartures = allDepartures.filter((dep) => dep.status !== null);
 			allDepartures = sortEarliestDepartures(allDepartures);
+			allDepartures = allDepartures.slice(0, MAX_DEPARTURES);
 		} catch (error) {
 			console.error('Error fetching stops:', error);
 			allDepartures = [];
