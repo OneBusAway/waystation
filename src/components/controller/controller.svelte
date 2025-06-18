@@ -36,7 +36,7 @@
 		return {
 			stopID,
 			departures: json.data.entry.arrivalsAndDepartures,
-			situations: json.data.entry.references?.situations || []
+			situations: json.data.references?.situations || []
 		};
 	}
 
