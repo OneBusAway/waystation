@@ -1,5 +1,7 @@
 <script>
 	import { formatArrivalStatus, formatRouteStatus } from '$lib/formatters';
+	import { ArrowDownRight, ArrowUpLeft } from '@lucide/svelte';
+
 	const { dep } = $props();
 
 	const status = formatArrivalStatus(dep.predictedDepartureTime, dep.scheduledDepartureTime);
@@ -11,26 +13,16 @@
 		{dep.routeShortName}
 	</div>
 
-	<div class="flex-1 text-xl">
-		{dep.tripHeadsign}
+	<div class="flex flex-1 items-center gap-2 text-xl">
+		<span>{dep.tripHeadsign}</span>
+		<div class="h-5 w-5 text-green-500">•</div>
+		<span class="font-semibold">{dep.stopName}</span>
 	</div>
 
 	<div class="flex items-center">
 		{#if status.status === 'Departing'}
 			<div class="mr-3 flex items-center">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					class="mr-2 h-6 w-6 {status.color}"
-					viewBox="0 0 20 20"
-					fill="currentColor"
-					transform="rotate(135)"
-				>
-					<path
-						fill-rule="evenodd"
-						d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z"
-						clip-rule="evenodd"
-					/>
-				</svg>
+				<ArrowUpLeft class={status.color} strokeWidth={2.3} size={28} />
 				<span class="text-xl font-bold {status.color}">{status.text}</span>
 			</div>
 			<div class="mx-3 h-9 border-l-3 border-gray-400"></div>
@@ -41,19 +33,7 @@
 			<div class="mx-3 h-9 border-l-3 border-gray-400"></div>
 
 			<div class="mr-3 flex items-center">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					class="mr-2 h-6 w-6 {status.color}"
-					viewBox="0 0 20 20"
-					fill="currentColor"
-					transform="rotate(315)"
-				>
-					<path
-						fill-rule="evenodd"
-						d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z"
-						clip-rule="evenodd"
-					/>
-				</svg>
+				<ArrowDownRight class="mr-2 {status.color}" strokeWidth={2.3} size={28} />
 				<span class="text-lg {status.color}">{status.text}</span>
 				<span class="mx-2 text-4xl font-bold {status.color}">{status.minutes}</span>
 				<span class="text-lg {status.color}">min</span>
