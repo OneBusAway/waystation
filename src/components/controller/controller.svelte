@@ -16,7 +16,7 @@
 
 	const REFRESH_INTERVAL = 30000; // todo: make it a configurable option
 
-	function stopRequestDataModel(dep, stopID) {
+	function stopRequestDataModel(dep, stopID, stopName) {
 		const status = formatArrivalStatus(dep.predictedDepartureTime, dep.scheduledDepartureTime);
 		const id = generateRandomID(dep.tripId, dep.stopId);
 
@@ -24,6 +24,7 @@
 			...dep,
 			stopID,
 			status,
+			stopName,
 			uniqueId: id
 		};
 	}
@@ -35,6 +36,9 @@
 
 		return {
 			stopID,
+			stopName:
+				Object.values(json.data.references.stops).find((targetStop) => targetStop.id === stopID)
+					?.name ?? stopID,
 			departures: json.data.entry.arrivalsAndDepartures,
 			situations: json.data.references?.situations || []
 		};
@@ -47,10 +51,11 @@
 
 			allDepartures = response.flatMap((eachResponse) => {
 				const stopID = eachResponse.stopID;
+				const stopName = eachResponse.stopName;
 				const departures = eachResponse.departures;
 
 				return departures.map((dep) => {
-					return stopRequestDataModel(dep, stopID);
+					return stopRequestDataModel(dep, stopID, stopName);
 				});
 			});
 

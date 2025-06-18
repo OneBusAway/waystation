@@ -13,8 +13,10 @@
 		{dep.routeShortName}
 	</div>
 
-	<div class="flex-1 text-xl">
-		{dep.tripHeadsign}
+	<div class="flex flex-1 items-center gap-2 text-xl">
+		<span>{dep.tripHeadsign}</span>
+		<div class="h-5 w-5 text-green-500">•</div>
+		<span class="font-semibold">{dep.stopName}</span>
 	</div>
 
 	<div class="flex items-center">
