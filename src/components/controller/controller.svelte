@@ -15,7 +15,7 @@
 	let interval;
 
 	const REFRESH_INTERVAL = 30000; // todo: make it a configurable option
-	const MAX_DEPARTURES = 5;
+	const MAX_DEPARTURES = 99;
 
 	function stopRequestDataModel(dep, stopID, stopName) {
 		const status = formatArrivalStatus(dep.predictedDepartureTime, dep.scheduledDepartureTime);
@@ -39,7 +39,7 @@
 			stopID,
 			stopName:
 				Object.values(json.data.references.stops).find((targetStop) => targetStop.id === stopID)
-					?.name ?? stopID,
+					?.name ?? `Stop #` + stopID.split('_')[1],
 			departures: json.data.entry.arrivalsAndDepartures,
 			situations: json.data.references?.situations || []
 		};
@@ -77,6 +77,7 @@
 		await fetchStops();
 
 		if (browser) {
+			clearInterval(interval);
 			interval = setInterval(fetchStops, REFRESH_INTERVAL);
 		}
 	});
@@ -107,7 +108,7 @@
 		{/if}
 	</div>
 
-	{#if situations.length > 0}
+	{#if situations.length > 0 && situations[0].summary?.value}
 		<div class="w-[1px] bg-gray-300"></div>
 
 		<div class="w-[600px] flex-shrink-0 overflow-y-auto">
