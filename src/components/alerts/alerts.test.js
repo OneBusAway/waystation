@@ -15,31 +15,36 @@ describe('Alerts component', () => {
 				situations: [
 					{
 						summary: { value: 'Test Alert Title' },
-						description: { value: 'Test Alert Description' }
+						description: { value: 'Test Alert Description' },
+						activeWindows: [
+							{
+								from: 1718948400000,
+								to: 1718952000000
+							}
+						],
+						reason: 'UNKNOWN_CAUSE',
+						severity: 'UNKNOWN_SEVERITY'
 					}
 				]
 			}
 		});
 
-		expect(container.textContent).toContain('SCHEDULEDMAINTENANCE');
 		expect(container.textContent).toContain('Test Alert Title');
 		expect(container.textContent).toContain('Test Alert Description');
-		expect(container.innerHTML).toContain('bg-gradient-to-r');
+		expect(container.textContent).toContain('Unknown');
 	});
 
-	test('renders with empty strings when summary or/and description are missing', () => {
+	test('does not render when title is missing, even if a description exists', () => {
 		const { container } = render(Alerts, {
-			props: { situations: [{}] }
+			props: {
+				situations: [
+					{
+						description: { value: 'Description only' }
+					}
+				]
+			}
 		});
 
-		const heading = container.querySelector('h2');
-		expect(heading).toBeTruthy();
-		expect(heading.textContent.replace(/\s/g, '')).toBe('SCHEDULEDMAINTENANCE');
-
-		const titleDiv = container.querySelector('.mb-3.text-2xl.font-extrabold.text-white');
-		const descDiv = container.querySelector('.text-lg.font-normal.text-white');
-
-		expect(titleDiv?.textContent.trim()).toBe('');
-		expect(descDiv?.textContent.trim()).toBe('');
+		expect(container.innerHTML).toBe('<!---->');
 	});
 });
