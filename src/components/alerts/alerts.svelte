@@ -54,7 +54,7 @@
 
 			{#if description.length <= 1100}
 				<div
-					class="corner mt-5 rounded-[10px] bg-[rgba(0,39,59,0.05)] px-4 py-1.5 text-lg font-bold font-normal"
+					class="corner mt-5 rounded-[10px] bg-[rgba(0,39,59,0.05)] px-4 py-1.5 text-xl font-bold font-normal"
 				>
 					{description}
 				</div>
