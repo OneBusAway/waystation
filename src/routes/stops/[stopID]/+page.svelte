@@ -7,16 +7,16 @@
 
 	let { data } = $props();
 
-	const stop = data.stopData.entry;
+	const stops = data.dataBlocks.map((eachBlock) => eachBlock.entry);
 </script>
 
 <div class="flex h-screen flex-col">
 	<Header title={PUBLIC_OBA_REGION_NAME} imageUrl={PUBLIC_OBA_LOGO_URL} />
 	<div class="flex flex-1 gap-4 overflow-hidden">
 		<div class="flex-1 overflow-y-auto">
-			<Controller stopID={data.stopID} />
+			<Controller stopIDs={data.stopIDs} />
 		</div>
 	</div>
 
-	<Footer {stop} class="shrink-0" />
+	<Footer {stops} class="shrink-0" />
 </div>

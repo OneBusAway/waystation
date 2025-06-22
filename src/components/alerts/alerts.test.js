@@ -27,19 +27,11 @@ describe('Alerts component', () => {
 		expect(container.innerHTML).toContain('bg-gradient-to-r');
 	});
 
-	test('renders with empty strings when summary or/and description are missing', () => {
+	test('does not render when title is missing, even if a description exists', () => {
 		const { container } = render(Alerts, {
 			props: { situations: [{}] }
 		});
 
-		const heading = container.querySelector('h2');
-		expect(heading).toBeTruthy();
-		expect(heading.textContent.replace(/\s/g, '')).toBe('SCHEDULEDMAINTENANCE');
-
-		const titleDiv = container.querySelector('.mb-3.text-2xl.font-extrabold.text-white');
-		const descDiv = container.querySelector('.text-lg.font-normal.text-white');
-
-		expect(titleDiv?.textContent.trim()).toBe('');
-		expect(descDiv?.textContent.trim()).toBe('');
+		expect(container.innerHTML).toBe('<!---->');
 	});
 });
