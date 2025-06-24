@@ -72,17 +72,17 @@ export function formatRouteStatus(predictedTime, scheduledTime) {
 	if (diff < -1) {
 		return {
 			status: 'EARLY',
-			color: 'bg-green-500'
+			color: 'green'
 		};
 	} else if (diff > 1) {
 		return {
 			status: 'LATE',
-			color: 'bg-red-500'
+			color: 'red'
 		};
 	} else {
 		return {
 			status: 'ON TIME',
-			color: 'bg-blue-500'
+			color: 'blue'
 		};
 	}
 }
