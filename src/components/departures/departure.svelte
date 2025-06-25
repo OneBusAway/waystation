@@ -73,7 +73,7 @@
 					{routeStatus.status}
 				</div>
 			{/if}
-			<div class="whitespace-nowrap flex items-center gap-1.5">
+			<div class="flex items-center gap-1.5 whitespace-nowrap">
 				<ArrowDownRight class={colorClass} strokeWidth={2.3} size={28} />
 				<span class="text-lg whitespace-nowrap">{status.text}</span>
 				<span class={`text-${routeStatus.color}-500 text-3xl font-bold`}>{status.minutes}</span>
