@@ -15,22 +15,35 @@ export function formatTime(date) {
 export function formatArrivalStatus(predictedTime, scheduledTime) {
 	const now = new Date();
 	const predicted = new Date(predictedTime);
+	const scheduled = new Date(scheduledTime);
 
 	const predictedDiff = Math.floor((predicted - now) / 60000);
+	const scheduledDiff = Math.floor((scheduled - now) / 60000);
 
 	if (predictedTime === 0) {
-		return {
-			status: 'Scheduled',
-			text: '',
-			color: 'text-gray-500',
-			minutes: null,
-			displayTime: formatTime2(scheduledTime)
-		};
+		// No predicted time, use scheduled time
+		if (scheduledDiff <= 10) {
+			return {
+				status: 'Arriving',
+				text: 'Arriving in',
+				color: 'text-blue-500',
+				minutes: scheduledDiff,
+				displayTime: formatTime2(scheduledTime)
+			};
+		} else {
+			return {
+				status: 'Scheduled',
+				text: '',
+				color: 'text-gray-500',
+				minutes: null,
+				displayTime: formatTime2(scheduledTime)
+			};
+		}
 	} else if (predictedDiff < -2) {
 		// If the bus left more than 2 minutes ago, it's already gone
 		return null;
 	} else if (predictedDiff <= 0) {
-		// If it's within 2 minutes of departure, show "Departing now" with time
+		// If it's within 2 minutes of departure, show "Departing now"
 		return {
 			status: 'Departing',
 			text: 'Departing now',
@@ -38,7 +51,8 @@ export function formatArrivalStatus(predictedTime, scheduledTime) {
 			minutes: null,
 			displayTime: formatTime2(predictedTime)
 		};
-	} else if (predictedDiff <= 20) {
+	} else if (predictedDiff <= 10) {
+		// Within 10 minutes
 		return {
 			status: 'Arriving',
 			text: 'Arriving in',
@@ -47,42 +61,44 @@ export function formatArrivalStatus(predictedTime, scheduledTime) {
 			displayTime: formatTime2(predictedTime)
 		};
 	} else {
+		// More than 10 minutes away -> show time only
 		return {
 			status: 'Scheduled',
 			text: '',
 			color: 'text-gray-500',
 			minutes: null,
-			displayTime: formatTime2(scheduledTime)
+			displayTime: formatTime2(predictedTime)
 		};
 	}
 }
 
-// Check if the vehicle is departing late or on time
+// Is the vehicle is early or late?
 export function formatRouteStatus(predictedTime, scheduledTime) {
 	if (typeof predictedTime === 'undefined' || predictedTime === null || predictedTime === 0) {
 		return {
-			status: 'UNKNOWN',
-			color: 'text-gray-500'
+			status: null,
+			color: 'gray'
 		};
 	}
+
 	const predicted = new Date(predictedTime);
 	const scheduled = new Date(scheduledTime);
 	const diff = Math.floor((predicted - scheduled) / 60000);
 
 	if (diff < -1) {
 		return {
-			status: 'EARLY',
+			status: `${Math.abs(diff)} min early`,
 			color: 'green'
 		};
 	} else if (diff > 1) {
 		return {
-			status: 'LATE',
+			status: `${diff} min late`,
 			color: 'red'
 		};
 	} else {
 		return {
-			status: 'ON TIME',
-			color: 'blue'
+			status: null,
+			color: 'gray'
 		};
 	}
 }
