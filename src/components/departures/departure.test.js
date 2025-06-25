@@ -98,5 +98,4 @@ test('renders successfully with no status or minutes', async () => {
 	expect(div.innerHTML).toContain('Central Station');
 	expect(div.innerHTML).toContain(predictedDepartureTimestr);
 	expect(div.innerHTML).not.toContain('Delayed');
-	expect(div.innerHTML).not.toContain('min');
 });

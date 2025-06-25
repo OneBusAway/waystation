@@ -87,14 +87,14 @@
 	});
 </script>
 
-<div class="flex flex-1 gap-4 overflow-hidden">
-	<div class="flex flex-1 flex-col overflow-y-auto bg-gray-200 text-black">
+<div class="flex flex-1 overflow-hidden">
+	<div class="flex flex-1 flex-col overflow-y-auto text-[#003956]">
 		{#if loading}
 			<div class="flex h-32 items-center justify-center">
 				<p class="text-xl text-gray-600">Loading departures...</p>
 			</div>
 		{:else if allDepartures.length > 0}
-			<div class="flex flex-col divide-y divide-gray-300">
+			<div class="flex flex-col">
 				{#each allDepartures as dep (dep.uniqueId)}
 					{#if dep.status}
 						<Departure {dep} />
@@ -108,10 +108,8 @@
 		{/if}
 	</div>
 
-	{#if situations.length > 0 && situations[0].summary?.value}
-		<div class="w-[1px] bg-gray-300"></div>
-
-		<div class="w-[600px] flex-shrink-0 overflow-y-auto">
+	{#if situations.length > 0 && situations[0].summary?.value && allDepartures.length > 0}
+		<div class="flex-shrink-0 basis-[35%] overflow-y-auto">
 			<Alerts {situations} />
 		</div>
 	{/if}
