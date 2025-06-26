@@ -12,7 +12,6 @@
 	const activeWindow = situation.activeWindows?.[0] ?? {};
 
 	const title = $derived(situation.summary?.value ?? '');
-	const description = $derived(situation.description?.value ?? '');
 
 	const dateStart = formatTimestamp(activeWindow.from ?? '');
 	const dateEnd = formatTimestamp(activeWindow.to ?? '');
@@ -49,14 +48,6 @@
 						><span class="text-[#FF5E51]">{dateStart}</span> ➔
 						<span class="text-[#FF5E51]">{dateEnd}</span></span
 					>
-				</div>
-			{/if}
-
-			{#if description.length <= 1100}
-				<div
-					class="corner mt-5 rounded-[10px] bg-[rgba(0,39,59,0.05)] px-4 py-1.5 text-xl font-bold font-normal"
-				>
-					{description}
 				</div>
 			{/if}
 		</div>

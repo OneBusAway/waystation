@@ -15,7 +15,7 @@ describe('Alerts component', () => {
 				situations: [
 					{
 						summary: { value: 'Test Alert Title' },
-						description: { value: 'Test Alert Description' },
+						// description: { value: 'Test Alert Description' },
 						activeWindows: [
 							{
 								from: 1718948400000,
@@ -30,7 +30,7 @@ describe('Alerts component', () => {
 		});
 
 		expect(container.textContent).toContain('Test Alert Title');
-		expect(container.textContent).toContain('Test Alert Description');
+		// expect(container.textContent).toContain('Test Alert Description');
 		expect(container.textContent).toContain('Unknown');
 	});
 

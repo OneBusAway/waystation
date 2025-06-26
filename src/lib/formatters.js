@@ -51,7 +51,7 @@ export function formatArrivalStatus(predictedTime, scheduledTime) {
 			minutes: null,
 			displayTime: formatTime2(predictedTime)
 		};
-	} else if (predictedDiff <= 10) {
+	} else if (predictedDiff < 10) {
 		// Within 10 minutes
 		return {
 			status: 'Arriving',
@@ -88,12 +88,12 @@ export function formatRouteStatus(predictedTime, scheduledTime) {
 	if (diff < -1) {
 		return {
 			status: `${Math.abs(diff)} min early`,
-			color: 'green'
+			color: 'red'
 		};
 	} else if (diff > 1) {
 		return {
 			status: `${diff} min late`,
-			color: 'red'
+			color: 'blue'
 		};
 	} else {
 		return {
