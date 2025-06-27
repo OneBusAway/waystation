@@ -51,7 +51,7 @@ export function formatArrivalStatus(predictedTime, scheduledTime) {
 			minutes: null,
 			displayTime: formatTime2(predictedTime)
 		};
-	} else if (predictedDiff <= 10) {
+	} else if (predictedDiff < 10) {
 		// Within 10 minutes
 		return {
 			status: 'Arriving',
@@ -88,12 +88,12 @@ export function formatRouteStatus(predictedTime, scheduledTime) {
 	if (diff < -1) {
 		return {
 			status: `${Math.abs(diff)} min early`,
-			color: 'green'
+			color: 'red'
 		};
 	} else if (diff > 1) {
 		return {
 			status: `${diff} min late`,
-			color: 'red'
+			color: 'blue'
 		};
 	} else {
 		return {
@@ -203,24 +203,4 @@ export function validateTimestamp(str) {
 	const parsedDate = new Date(str);
 
 	return !isNaN(parsedDate.getTime()) && typeof str === 'string' && str.trim().length > 0;
-}
-
-/**
- * Converts a raw reason type (i.e. "UNKNOWN_CAUSE") into a user-friendly label.
- *
- * @param {string} reason - The reason type from the data (i.e. "UNKNOWN_CAUSE")
- * @returns {string} - User-friendly labelled reason.
- */
-export function formatReasonType(reason) {
-	return reason === 'UNKNOWN_CAUSE' ? 'Unknown' : 'Undecided';
-}
-
-/**
- * Converts a severity type into a user-friendly label.
- *
- * @param {string} severity - The severity type from the data (i.e. "noImpact")
- * @returns {string} - User-friendly labelled severity.
- */
-export function formatSeverityType(severity) {
-	return severity === 'noImpact' ? 'Normal' : 'Undecided';
 }
