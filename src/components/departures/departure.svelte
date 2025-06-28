@@ -61,36 +61,37 @@
 		</span>
 	</div>
 
-	<div class="ml-3 flex items-center gap-1">
+	<div class="ml-3 flex items-end gap-1">
 		{#if status.status === 'Departing'}
 			<div class="flex items-center">
 				<ArrowUpLeft strokeWidth={2.3} size={42} />
-				<span class="ml-3 text-4xl font-bold whitespace-nowrap">{status.text}</span>
-			</div>
-		{:else if status.minutes !== null}
-			<div class="flex items-center gap-3 font-semibold whitespace-nowrap">
-				<ArrowDownRight class={colorClass} strokeWidth={2.3} size={42} />
-				<span class="text-4xl whitespace-nowrap">{status.text}</span>
-				<span class={`${COLOR_CLASSES[routeStatus.color]} text-5xl font-bold`}
-					>{status.minutes}</span
-				>
-				<span class="text-4xl">min</span>
-			</div>
-		{/if}
-
-		{#if status.status === 'Arriving' && (routeStatus.status || status.status === 'Scheduled')}
-			<ChevronRight size={36} class="text-gray-400" />
-		{/if}
-
-		<div class="flex flex-col items-end">
-			{#if status.status === 'Scheduled'}
-				<span class="text-6xl font-bold whitespace-nowrap">{status.displayTime}</span>
-			{/if}
-			{#if routeStatus.status && status.status !== 'Departing'}
-				<span class={`${COLOR_CLASSES[routeStatus.color]} text-3xl font-bold`}>
-					{routeStatus.status}
+				<span class="ml-3 text-4xl font-bold whitespace-nowrap">
+					{status.text}
 				</span>
-			{/if}
-		</div>
+			</div>
+		{:else}
+			<div class="flex flex-col items-end">
+				{#if status.status === 'Scheduled'}
+					<span class="text-6xl font-bold whitespace-nowrap">
+						{status.displayTime}
+					</span>
+				{:else if status.minutes !== null}
+					<div class="flex items-center gap-3 font-semibold whitespace-nowrap">
+						<ArrowDownRight class={colorClass} strokeWidth={2.3} size={42} />
+						<span class="text-4xl whitespace-nowrap">{status.text}</span>
+						<span class={`${COLOR_CLASSES[routeStatus.color]} text-5xl font-bold`}>
+							{status.minutes}
+						</span>
+						<span class="text-4xl">min</span>
+					</div>
+				{/if}
+
+				{#if routeStatus.status}
+					<span class={`${COLOR_CLASSES[routeStatus.color]} text-3xl font-bold`}>
+						{routeStatus.status}
+					</span>
+				{/if}
+			</div>
+		{/if}
 	</div>
 </div>
