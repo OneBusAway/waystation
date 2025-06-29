@@ -2,11 +2,11 @@
  * Format time for display
  * @param {Date} date
  */
-export function formatTime(date) {
+export function formatDateTime(date) {
 	return date.toLocaleTimeString('en-US', {
 		hour: 'numeric',
 		minute: '2-digit',
-		second: '2-digit', // Add this line to show seconds
+		second: '2-digit',
 		hour12: true
 	});
 }
@@ -14,62 +14,129 @@ export function formatTime(date) {
 // Get status for arrival or departure
 export function formatArrivalStatus(predictedTime, scheduledTime) {
 	const now = new Date();
+
 	const predicted = new Date(predictedTime);
 	const scheduled = new Date(scheduledTime);
 
 	const predictedDiff = Math.floor((predicted - now) / 60000);
 	const scheduledDiff = Math.floor((scheduled - now) / 60000);
 
+	// No predicted time, use scheduled time
 	if (predictedTime === 0) {
-		// No predicted time, use scheduled time
-		if (scheduledDiff <= 10) {
+		if (scheduledDiff < 10) {
 			return {
 				status: 'Arriving',
-				text: 'Arriving in',
-				color: 'text-blue-500',
-				minutes: scheduledDiff,
-				displayTime: formatTime2(scheduledTime)
+				eta: scheduledDiff,
+				scheduledTime: formatTime(scheduledTime)
 			};
 		} else {
 			return {
 				status: 'Scheduled',
-				text: '',
-				color: 'text-gray-500',
-				minutes: null,
-				displayTime: formatTime2(scheduledTime)
+				eta: null,
+				scheduledTime: formatTime(scheduledTime)
 			};
 		}
-	} else if (predictedDiff < -2) {
-		// If the bus left more than 2 minutes ago, it's already gone
+	}
+
+	// Bus left more than 2 minutes ago
+	if (predictedDiff < -2) {
 		return null;
-	} else if (predictedDiff <= 0) {
-		// If it's within 2 minutes of departure, show "Departing now"
+	}
+
+	if (predictedDiff <= 0) {
+		// Within 2 minutes
 		return {
 			status: 'Departing',
-			text: 'Departing now',
-			color: 'text-red-500',
-			minutes: null,
-			displayTime: formatTime2(predictedTime)
+			eta: null,
+			scheduledTime: formatTime(predictedTime)
 		};
 	} else if (predictedDiff < 10) {
 		// Within 10 minutes
 		return {
 			status: 'Arriving',
-			text: 'Arriving in',
-			color: 'text-blue-500',
-			minutes: predictedDiff,
-			displayTime: formatTime2(predictedTime)
+			eta: predictedDiff,
+			scheduledTime: formatTime(predictedTime)
 		};
 	} else {
-		// More than 10 minutes away -> show time only
+		// More than 10 minutes away
 		return {
 			status: 'Scheduled',
-			text: '',
-			color: 'text-gray-500',
-			minutes: null,
-			displayTime: formatTime2(predictedTime)
+			eta: null,
+			scheduledTime: formatTime(predictedTime)
 		};
 	}
+}
+
+export function formatBorderColor(defaultStatus, routeStatus) {
+	if (defaultStatus === 'Departing') {
+		return {
+			borderColor: 'border-[#8D8D8D]'
+		};
+	}
+
+	if (routeStatus === 'early') {
+		return {
+			borderColor: 'border-[#EB3223]'
+		};
+	}
+
+	if (routeStatus === 'late') {
+		return {
+			borderColor: 'border-[#0087E8]'
+		};
+	}
+
+	return {
+		borderColor: 'border-[#00273B66]'
+	};
+}
+
+export function formatShadowColor(defaultStatus, routeStatus) {
+	if (defaultStatus === 'Departing') {
+		return {
+			shadowColor: 'rgba(0,0,0,0.08)'
+		};
+	}
+
+	if (routeStatus === 'early') {
+		return {
+			shadowColor: 'rgba(235,50,35,0.03)'
+		};
+	}
+
+	if (routeStatus === 'late') {
+		return {
+			shadowColor: 'rgba(0,149,255,0.07)'
+		};
+	}
+
+	return {
+		shadowColor: 'rgba(0,0,0,0.08)'
+	};
+}
+
+export function formatTextColor(defaultStatus, routeStatus) {
+	if (defaultStatus === 'Departing') {
+		return {
+			textColor: ''
+		};
+	}
+
+	if (routeStatus === 'early') {
+		return {
+			textColor: 'text-[#EB3223]'
+		};
+	}
+
+	if (routeStatus === 'late') {
+		return {
+			textColor: 'text-[#0087E8]'
+		};
+	}
+
+	return {
+		textColor: 'text-[#8D8D8D]'
+	};
 }
 
 // Is the vehicle is early or late?
@@ -77,37 +144,40 @@ export function formatRouteStatus(predictedTime, scheduledTime) {
 	if (typeof predictedTime === 'undefined' || predictedTime === null || predictedTime === 0) {
 		return {
 			status: null,
-			color: 'gray'
+			tag: ''
 		};
 	}
 
 	const predicted = new Date(predictedTime);
 	const scheduled = new Date(scheduledTime);
+
 	const diff = Math.floor((predicted - scheduled) / 60000);
 
 	if (diff < -1) {
 		return {
-			status: `${Math.abs(diff)} min early`,
-			color: 'red'
-		};
-	} else if (diff > 1) {
-		return {
-			status: `${diff} min late`,
-			color: 'blue'
-		};
-	} else {
-		return {
-			status: null,
-			color: 'gray'
+			status: 'early',
+			tag: `${Math.abs(diff)} min early`
 		};
 	}
+
+	if (diff > 1) {
+		return {
+			status: 'late',
+			tag: `${diff} min late`
+		};
+	}
+
+	return {
+		status: 'on-time',
+		tag: null
+	};
 }
 
 /**
  * Format time for display
  * @param {Date} time
  */
-export function formatTime2(time) {
+export function formatTime(time) {
 	const date = new Date(time);
 	return date.toLocaleTimeString('en-US', {
 		hour: 'numeric',

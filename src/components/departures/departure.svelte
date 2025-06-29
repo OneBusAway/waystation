@@ -1,49 +1,29 @@
 <script>
-	import { formatArrivalStatus, formatRouteStatus } from '$lib/formatters';
+	import {
+		formatArrivalStatus,
+		formatRouteStatus,
+		formatBorderColor,
+		formatShadowColor,
+		formatTextColor
+	} from '$lib/formatters';
 	import { ArrowDownRight, ArrowUpLeft, ChevronRight } from '@lucide/svelte';
 
 	const { dep } = $props();
 
-	const status = formatArrivalStatus(dep.predictedDepartureTime, dep.scheduledDepartureTime);
+	const depStatus = formatArrivalStatus(dep.predictedDepartureTime, dep.scheduledDepartureTime);
 	const routeStatus = formatRouteStatus(dep.predictedDepartureTime, dep.scheduledDepartureTime);
 
-	const COLOR_CLASSES = {
-		green: 'text-green-500',
-		red: 'text-red-500',
-		blue: 'text-[#0087E8]',
-		gray: 'text-[#8D8D8D]'
+	const departure = {
+		...depStatus,
+		...formatBorderColor(depStatus.status, routeStatus.status),
+		...formatShadowColor(depStatus.status, routeStatus.status),
+		...formatTextColor(depStatus.status, routeStatus.status)
 	};
-
-	const BORDER_COLORS = {
-		green: 'border-[#00BD2F]',
-		red: 'border-[#EB3223]',
-		blue: 'border-[#0087E8]',
-		default: 'border-[#00273B66]'
-	};
-
-	const SHADOW_COLORS = {
-		green: 'rgba(0,189,47,0.1)',
-		red: 'rgba(235,50,35,0.03)',
-		blue: 'rgba(0,149,255,0.07)',
-		default: 'rgba(0,0,0,0.08)'
-	};
-
-	const colorClass = COLOR_CLASSES[routeStatus.color] ?? COLOR_CLASSES.gray;
-
-	const isDeparting = status.status === 'Departing';
-
-	const borderColor = isDeparting
-		? BORDER_COLORS.default
-		: (BORDER_COLORS[routeStatus.color] ?? BORDER_COLORS.default);
-
-	const shadowColor = isDeparting
-		? SHADOW_COLORS.default
-		: (SHADOW_COLORS[routeStatus.color] ?? SHADOW_COLORS.default);
 </script>
 
 <div
-	class={`m-4 flex items-center rounded-[32px] border-r-7 border-l-7 ${borderColor} bg-[rgba(255,255,255,0.85)] p-5`}
-	style={`box-shadow: 0 0 10px 10px ${shadowColor}`}
+	class={`flex items-center rounded-[32px] border-r-7 border-l-7 ${departure.borderColor} m-4 bg-[rgba(255,255,255,0.85)] p-5`}
+	style={`box-shadow: 0 0 10px 10px ${departure.shadowColor}`}
 >
 	<div
 		class="mr-5 flex min-w-42 items-center justify-center rounded-[20px] bg-[#00273B] px-7 py-6 text-4xl font-black whitespace-nowrap text-white"
@@ -62,33 +42,31 @@
 	</div>
 
 	<div class="ml-3 flex items-end gap-1">
-		{#if status.status === 'Departing'}
+		{#if departure.status === 'Departing'}
 			<div class="flex items-center">
 				<ArrowUpLeft strokeWidth={2.3} size={42} />
-				<span class="ml-3 text-4xl font-bold whitespace-nowrap">
-					{status.text}
-				</span>
+				<span class="ml-3 text-4xl font-bold whitespace-nowrap"> Departing now </span>
 			</div>
 		{:else}
 			<div class="flex flex-col items-end">
-				{#if status.status === 'Scheduled'}
+				{#if departure.status === 'Scheduled'}
 					<span class="text-6xl font-bold whitespace-nowrap">
-						{status.displayTime}
+						{departure.scheduledTime}
 					</span>
-				{:else if status.minutes !== null}
+				{:else if departure.status === 'Arriving'}
 					<div class="flex items-center gap-3 font-semibold whitespace-nowrap">
-						<ArrowDownRight class={colorClass} strokeWidth={2.3} size={42} />
-						<span class="text-4xl whitespace-nowrap">{status.text}</span>
-						<span class={`${COLOR_CLASSES[routeStatus.color]} text-5xl font-bold`}>
-							{status.minutes}
+						<ArrowDownRight class={departure.textColor} strokeWidth={2.3} size={42} />
+						<span class="text-4xl whitespace-nowrap">Arriving in</span>
+						<span class={`${departure.textColor} text-5xl font-bold`}>
+							{departure.eta}
 						</span>
 						<span class="text-4xl">min</span>
 					</div>
 				{/if}
 
-				{#if routeStatus.status}
-					<span class={`${COLOR_CLASSES[routeStatus.color]} text-3xl font-bold`}>
-						{routeStatus.status}
+				{#if routeStatus.tag}
+					<span class={`${departure.textColor} text-3xl font-bold`}>
+						{routeStatus.tag}
 					</span>
 				{/if}
 			</div>
