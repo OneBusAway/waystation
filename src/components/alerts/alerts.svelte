@@ -15,7 +15,7 @@
 {#if title}
 	<div class="m-5">
 		<div
-			class="text-brand-darkerblue corner rounded-[24px] bg-white px-5.5 py-8 font-bold"
+			class="text-brand-darkerblue rounded-[24px] bg-white px-5.5 py-8 font-bold"
 			style="box-shadow: 0 0 20px 1px rgba(0,0,0,0.15);"
 		>
 			<div class="text-brand-red flex items-center justify-center text-4xl font-bold">

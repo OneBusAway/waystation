@@ -1,5 +1,5 @@
 <script>
-	import { formatDate, formatTime } from '$lib/formatters.js';
+	import { formatDate, formatDateTime } from '$lib/formatters.js';
 
 	let defaultTitle = 'Transit Board';
 	let defaultIcon = 'https://onebusaway.org/wp-content/uploads/oba_logo-1.png';
@@ -26,6 +26,6 @@
 	</div>
 	<div class="flex-1 text-right">
 		<div class="text-sm">{formatDate(now)}</div>
-		<div class="text-3xl font-bold">{formatTime(now)}</div>
+		<div class="text-3xl font-bold">{formatDateTime(now)}</div>
 	</div>
 </div>

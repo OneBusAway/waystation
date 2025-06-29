@@ -3,7 +3,7 @@
 @plugin '@tailwindcss/typography';
 
 body {
-	@apply relative m-0 bg-gray-500;
+	@apply relative m-0 min-h-screen bg-gray-500;
 }
 
 body::before {

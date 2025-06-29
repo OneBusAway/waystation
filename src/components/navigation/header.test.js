@@ -6,7 +6,7 @@ import Header from './header.svelte';
 
 vi.mock('$lib/formatters.js', () => ({
 	formatDate: () => 'Mocked Date',
-	formatTime: () => 'Mocked Time'
+	formatDateTime: () => 'Mocked Time'
 }));
 
 test('renders successfully', () => {
