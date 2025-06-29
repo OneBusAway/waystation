@@ -70,48 +70,48 @@ export function formatArrivalStatus(predictedTime, scheduledTime) {
 export function formatBorderColor(defaultStatus, routeStatus) {
 	if (defaultStatus === 'Departing') {
 		return {
-			borderColor: 'border-[#8D8D8D]'
+			borderColor: 'border-brand-gray'
 		};
 	}
 
 	if (routeStatus === 'early') {
 		return {
-			borderColor: 'border-[#EB3223]'
+			borderColor: 'border-brand-red'
 		};
 	}
 
 	if (routeStatus === 'late') {
 		return {
-			borderColor: 'border-[#0087E8]'
+			borderColor: 'border-brand-blue'
 		};
 	}
 
 	return {
-		borderColor: 'border-[#00273B66]'
+		borderColor: 'border-brand-lightgray'
 	};
 }
 
 export function formatShadowColor(defaultStatus, routeStatus) {
 	if (defaultStatus === 'Departing') {
 		return {
-			shadowColor: 'rgba(0,0,0,0.08)'
+			shadowColor: 'var(--shadow-gray)'
 		};
 	}
 
 	if (routeStatus === 'early') {
 		return {
-			shadowColor: 'rgba(235,50,35,0.03)'
+			shadowColor: 'var(--shadow-red)'
 		};
 	}
 
 	if (routeStatus === 'late') {
 		return {
-			shadowColor: 'rgba(0,149,255,0.07)'
+			shadowColor: 'var(--shadow-blue)'
 		};
 	}
 
 	return {
-		shadowColor: 'rgba(0,0,0,0.08)'
+		shadowColor: 'var(--shadow-gray)'
 	};
 }
 
@@ -124,18 +124,18 @@ export function formatTextColor(defaultStatus, routeStatus) {
 
 	if (routeStatus === 'early') {
 		return {
-			textColor: 'text-[#EB3223]'
+			textColor: 'text-brand-red'
 		};
 	}
 
 	if (routeStatus === 'late') {
 		return {
-			textColor: 'text-[#0087E8]'
+			textColor: 'text-brand-blue'
 		};
 	}
 
 	return {
-		textColor: 'text-[#8D8D8D]'
+		textColor: 'text-brand-gray'
 	};
 }
 

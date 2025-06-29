@@ -88,7 +88,7 @@
 </script>
 
 <div class="flex flex-1 overflow-hidden">
-	<div class="flex flex-1 flex-col overflow-y-auto text-[#004B71]">
+	<div class="text-brand-darkblue flex flex-1 flex-col overflow-y-auto">
 		{#if loading}
 			<div class="flex h-32 items-center justify-center">
 				<p class="text-xl">Loading departures...</p>

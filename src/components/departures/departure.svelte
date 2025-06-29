@@ -22,11 +22,11 @@
 </script>
 
 <div
-	class={`flex items-center rounded-[32px] border-r-7 border-l-7 ${departure.borderColor} m-4 bg-[rgba(255,255,255,0.85)] p-5`}
-	style={`box-shadow: 0 0 10px 10px ${departure.shadowColor}`}
+	class={`flex items-center rounded-[32px] border-x-7 ${departure.borderColor} m-4 bg-white/75 p-5`}
+	style={`box-shadow: ${departure.shadowColor}`}
 >
 	<div
-		class="mr-5 flex min-w-42 items-center justify-center rounded-[20px] bg-[#00273B] px-7 py-6 text-4xl font-black whitespace-nowrap text-white"
+		class="bg-brand-darkerblue mr-5 flex min-w-42 items-center justify-center rounded-[20px] px-7 py-6 text-4xl font-black whitespace-nowrap text-white"
 	>
 		{dep.routeShortName}
 	</div>
