@@ -1,15 +1,15 @@
 <script>
-	import { formatTimestamp, validateTimestamp } from '$lib/formatters';
+	import { formatTimestamp } from '$lib/formatters';
 
 	let { situations = [] } = $props();
 
-	const situation = situations[0] ?? {};
-	const activeWindow = situation.activeWindows?.[0] ?? {};
+	const situation = situations[0];
+	const summary = situation?.summary;
+	const activeWindow = situation?.activeWindows?.[0];
 
-	const title = $derived(situation.summary?.value ?? '');
-
-	const dateStart = formatTimestamp(activeWindow.from ?? '');
-	const dateEnd = formatTimestamp(activeWindow.to ?? '');
+	const title = summary?.value?.trim() ?? '';
+	const dateStart = formatTimestamp(activeWindow?.from);
+	const dateEnd = formatTimestamp(activeWindow?.to);
 </script>
 
 {#if title}
@@ -26,15 +26,25 @@
 				{title}
 			</div>
 
-			{#if validateTimestamp(dateStart) && validateTimestamp(dateEnd)}
-				<div class="flex items-center justify-center text-3xl">
-					<span class="whitespace-nowrap">
-						<span class="text-oba-green">{dateStart}</span>
-						➔
-						<span class="text-oba-green">{dateEnd}</span>
-					</span>
-				</div>
-			{/if}
+			<div class="text-brand-darkblue flex flex-row justify-center gap-x-5 text-center text-4xl">
+				{#if dateStart !== 'Invalid Date'}
+					<div class="flex flex-col items-center">
+						Starting
+						<span class="text-oba-green font-extrabold">{dateStart}</span>
+					</div>
+				{/if}
+
+				{#if dateStart !== 'Invalid Date' && dateEnd !== 'Invalid Date'}
+					<div class="flex items-center">➔</div>
+				{/if}
+
+				{#if dateEnd !== 'Invalid Date'}
+					<div class="flex flex-col items-center">
+						Ending
+						<span class="text-oba-green font-extrabold">{dateEnd}</span>
+					</div>
+				{/if}
+			</div>
 		</div>
 	</div>
 {/if}
