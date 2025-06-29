@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { formatTime, formatTime2, formatDate, formatCurrentTime } from '$lib/formatters';
+import { formatDateTime, formatTime, formatDate, formatCurrentTime } from '$lib/formatters';
 
 describe('Formatter Utilities', () => {
 	beforeEach(() => {
@@ -10,48 +10,48 @@ describe('Formatter Utilities', () => {
 		vi.restoreAllMocks();
 	});
 
-	describe('formatTime', () => {
+	describe('formatDateTime', () => {
 		it('formats time with hours, minutes, and seconds', () => {
 			const date = new Date(2023, 0, 1, 13, 45, 30);
-			const formattedTime = formatTime(date);
+			const formattedTime = formatDateTime(date);
 			expect(formattedTime).toBe('1:45:30 PM');
 		});
 
 		it('handles midnight (12 AM) correctly', () => {
 			const date = new Date(2023, 0, 1, 0, 5, 15);
-			const formattedTime = formatTime(date);
+			const formattedTime = formatDateTime(date);
 			expect(formattedTime).toBe('12:05:15 AM');
 		});
 
 		it('handles noon (12 PM) correctly', () => {
 			const date = new Date(2023, 0, 1, 12, 0, 0);
-			const formattedTime = formatTime(date);
+			const formattedTime = formatDateTime(date);
 			expect(formattedTime).toBe('12:00:00 PM');
 		});
 	});
 
-	describe('formatTime2', () => {
+	describe('formatTime', () => {
 		it('formats time with hours and minutes only (no seconds)', () => {
 			const date = new Date(2023, 0, 1, 13, 45, 30);
-			const formattedTime = formatTime2(date);
+			const formattedTime = formatTime(date);
 			expect(formattedTime).toBe('1:45 PM');
 		});
 
 		it('handles midnight (12 AM) correctly', () => {
 			const date = new Date(2023, 0, 1, 0, 5, 15);
-			const formattedTime = formatTime2(date);
+			const formattedTime = formatTime(date);
 			expect(formattedTime).toBe('12:05 AM');
 		});
 
 		it('handles noon (12 PM) correctly', () => {
 			const date = new Date(2023, 0, 1, 12, 0, 0);
-			const formattedTime = formatTime2(date);
+			const formattedTime = formatTime(date);
 			expect(formattedTime).toBe('12:00 PM');
 		});
 
 		it('accepts string date input', () => {
 			const dateStr = '2023-01-01T13:45:30';
-			const formattedTime = formatTime2(dateStr);
+			const formattedTime = formatTime(dateStr);
 			expect(formattedTime).toBe('1:45 PM');
 		});
 	});
@@ -99,10 +99,10 @@ describe('Formatter Utilities', () => {
 			const timeStringSpy = vi.spyOn(Date.prototype, 'toLocaleTimeString');
 			const dateStringSpy = vi.spyOn(Date.prototype, 'toLocaleDateString');
 
-			formatTime(date);
+			formatDateTime(date);
 			expect(timeStringSpy).toHaveBeenCalledWith('en-US', expect.anything());
 
-			formatTime2(date);
+			formatTime(date);
 			expect(timeStringSpy).toHaveBeenCalledWith('en-US', expect.anything());
 
 			formatDate(date);

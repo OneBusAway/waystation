@@ -88,10 +88,10 @@
 </script>
 
 <div class="flex flex-1 overflow-hidden">
-	<div class="flex flex-1 flex-col overflow-y-auto text-[#004B71]">
+	<div class="text-brand-darkblue flex flex-1 flex-col overflow-y-auto">
 		{#if loading}
 			<div class="flex h-32 items-center justify-center">
-				<p class="text-xl text-gray-600">Loading departures...</p>
+				<p class="text-xl">Loading departures...</p>
 			</div>
 		{:else if allDepartures.length > 0}
 			<div class="flex flex-col">
@@ -103,7 +103,7 @@
 			</div>
 		{:else}
 			<div class="flex h-32 items-center justify-center">
-				<p class="text-xl text-gray-600">No departures available</p>
+				<p class="text-xl">No departures available</p>
 			</div>
 		{/if}
 	</div>

@@ -2,112 +2,220 @@
  * Format time for display
  * @param {Date} date
  */
-export function formatTime(date) {
+export function formatDateTime(date) {
 	return date.toLocaleTimeString('en-US', {
 		hour: 'numeric',
 		minute: '2-digit',
-		second: '2-digit', // Add this line to show seconds
+		second: '2-digit',
 		hour12: true
 	});
 }
 
-// Get status for arrival or departure
+/**
+ * Determines real-time arrival/departure status and timing
+ *
+ * @param {number} predictedTime - Predicted arrival timestamp (0 if unavailable)
+ * @param {number} scheduledTime - Scheduled arrival timestamp
+ *
+ * @returns {Object|null} Returns {status, eta, scheduledTime} or null if departed
+ */
 export function formatArrivalStatus(predictedTime, scheduledTime) {
 	const now = new Date();
+
 	const predicted = new Date(predictedTime);
 	const scheduled = new Date(scheduledTime);
 
 	const predictedDiff = Math.floor((predicted - now) / 60000);
 	const scheduledDiff = Math.floor((scheduled - now) / 60000);
 
+	// No predicted time, use scheduled time
 	if (predictedTime === 0) {
-		// No predicted time, use scheduled time
-		if (scheduledDiff <= 10) {
+		if (scheduledDiff < 10) {
 			return {
 				status: 'Arriving',
-				text: 'Arriving in',
-				color: 'text-blue-500',
-				minutes: scheduledDiff,
-				displayTime: formatTime2(scheduledTime)
+				eta: scheduledDiff,
+				scheduledTime: formatTime(scheduledTime)
 			};
 		} else {
 			return {
 				status: 'Scheduled',
-				text: '',
-				color: 'text-gray-500',
-				minutes: null,
-				displayTime: formatTime2(scheduledTime)
+				eta: null,
+				scheduledTime: formatTime(scheduledTime)
 			};
 		}
-	} else if (predictedDiff < -2) {
-		// If the bus left more than 2 minutes ago, it's already gone
+	}
+
+	// Bus left more than 2 minutes ago
+	if (predictedDiff < -2) {
 		return null;
-	} else if (predictedDiff <= 0) {
-		// If it's within 2 minutes of departure, show "Departing now"
+	}
+
+	if (predictedDiff <= 0) {
+		// Within 2 minutes
 		return {
 			status: 'Departing',
-			text: 'Departing now',
-			color: 'text-red-500',
-			minutes: null,
-			displayTime: formatTime2(predictedTime)
+			eta: null,
+			scheduledTime: formatTime(predictedTime)
 		};
 	} else if (predictedDiff < 10) {
 		// Within 10 minutes
 		return {
 			status: 'Arriving',
-			text: 'Arriving in',
-			color: 'text-blue-500',
-			minutes: predictedDiff,
-			displayTime: formatTime2(predictedTime)
+			eta: predictedDiff,
+			scheduledTime: formatTime(predictedTime)
 		};
 	} else {
-		// More than 10 minutes away -> show time only
+		// More than 10 minutes away
 		return {
 			status: 'Scheduled',
-			text: '',
-			color: 'text-gray-500',
-			minutes: null,
-			displayTime: formatTime2(predictedTime)
+			eta: null,
+			scheduledTime: formatTime(predictedTime)
 		};
 	}
 }
 
-// Is the vehicle is early or late?
+/**
+ * Calculate early/late status compared to schedule
+ *
+ * @param {number} predictedTime - Predicted timestamp
+ * @param {number} scheduledTime - Scheduled timestamp
+ *
+ * @returns {Object} {status: string|null, tag: string|null}
+ */
 export function formatRouteStatus(predictedTime, scheduledTime) {
 	if (typeof predictedTime === 'undefined' || predictedTime === null || predictedTime === 0) {
 		return {
 			status: null,
-			color: 'gray'
+			tag: ''
 		};
 	}
 
 	const predicted = new Date(predictedTime);
 	const scheduled = new Date(scheduledTime);
+
 	const diff = Math.floor((predicted - scheduled) / 60000);
 
 	if (diff < -1) {
 		return {
-			status: `${Math.abs(diff)} min early`,
-			color: 'red'
-		};
-	} else if (diff > 1) {
-		return {
-			status: `${diff} min late`,
-			color: 'blue'
-		};
-	} else {
-		return {
-			status: null,
-			color: 'gray'
+			status: 'early',
+			tag: `${Math.abs(diff)} min early`
 		};
 	}
+
+	if (diff > 1) {
+		return {
+			status: 'late',
+			tag: `${diff} min late`
+		};
+	}
+
+	return {
+		status: 'on-time',
+		tag: null
+	};
+}
+
+/**
+ * Get border color class based on status
+ *
+ * @param {string} defaultStatus - Arrival status
+ * @param {string} routeStatus - Early/late status
+ *
+ * @returns {Object} {borderColor: string}
+ */
+export function formatBorderColor(defaultStatus, routeStatus) {
+	if (defaultStatus === 'Departing') {
+		return {
+			borderColor: 'border-brand-gray'
+		};
+	}
+
+	if (routeStatus === 'early') {
+		return {
+			borderColor: 'border-brand-red'
+		};
+	}
+
+	if (routeStatus === 'late') {
+		return {
+			borderColor: 'border-brand-blue'
+		};
+	}
+
+	return {
+		borderColor: 'border-brand-lightgray'
+	};
+}
+
+/**
+ * Get shadow color variable based on status
+ *
+ * @param {string} defaultStatus - Arrival status
+ * @param {string} routeStatus - Early/late status
+ *
+ * @returns {Object} {shadowColor: string}
+ */
+export function formatShadowColor(defaultStatus, routeStatus) {
+	if (defaultStatus === 'Departing') {
+		return {
+			shadowColor: 'var(--shadow-gray)'
+		};
+	}
+
+	if (routeStatus === 'early') {
+		return {
+			shadowColor: 'var(--shadow-red)'
+		};
+	}
+
+	if (routeStatus === 'late') {
+		return {
+			shadowColor: 'var(--shadow-blue)'
+		};
+	}
+
+	return {
+		shadowColor: 'var(--shadow-gray)'
+	};
+}
+
+/**
+ * Get text color class based on status
+ *
+ * @param {string} defaultStatus - Arrival status
+ * @param {string} routeStatus - Early/late status
+ *
+ * @returns {Object} {textColor: string}
+ */
+export function formatTextColor(defaultStatus, routeStatus) {
+	if (defaultStatus === 'Departing') {
+		return {
+			textColor: ''
+		};
+	}
+
+	if (routeStatus === 'early') {
+		return {
+			textColor: 'text-brand-red'
+		};
+	}
+
+	if (routeStatus === 'late') {
+		return {
+			textColor: 'text-brand-blue'
+		};
+	}
+
+	return {
+		textColor: 'text-brand-gray'
+	};
 }
 
 /**
  * Format time for display
  * @param {Date} time
  */
-export function formatTime2(time) {
+export function formatTime(time) {
 	const date = new Date(time);
 	return date.toLocaleTimeString('en-US', {
 		hour: 'numeric',
