@@ -11,7 +11,14 @@ export function formatDateTime(date) {
 	});
 }
 
-// Get status for arrival or departure
+/**
+ * Determines real-time arrival/departure status and timing
+ *
+ * @param {number} predictedTime - Predicted arrival timestamp (0 if unavailable)
+ * @param {number} scheduledTime - Scheduled arrival timestamp
+ *
+ * @returns {Object|null} Returns {status, eta, scheduledTime} or null if departed
+ */
 export function formatArrivalStatus(predictedTime, scheduledTime) {
 	const now = new Date();
 
@@ -67,79 +74,14 @@ export function formatArrivalStatus(predictedTime, scheduledTime) {
 	}
 }
 
-export function formatBorderColor(defaultStatus, routeStatus) {
-	if (defaultStatus === 'Departing') {
-		return {
-			borderColor: 'border-brand-gray'
-		};
-	}
-
-	if (routeStatus === 'early') {
-		return {
-			borderColor: 'border-brand-red'
-		};
-	}
-
-	if (routeStatus === 'late') {
-		return {
-			borderColor: 'border-brand-blue'
-		};
-	}
-
-	return {
-		borderColor: 'border-brand-lightgray'
-	};
-}
-
-export function formatShadowColor(defaultStatus, routeStatus) {
-	if (defaultStatus === 'Departing') {
-		return {
-			shadowColor: 'var(--shadow-gray)'
-		};
-	}
-
-	if (routeStatus === 'early') {
-		return {
-			shadowColor: 'var(--shadow-red)'
-		};
-	}
-
-	if (routeStatus === 'late') {
-		return {
-			shadowColor: 'var(--shadow-blue)'
-		};
-	}
-
-	return {
-		shadowColor: 'var(--shadow-gray)'
-	};
-}
-
-export function formatTextColor(defaultStatus, routeStatus) {
-	if (defaultStatus === 'Departing') {
-		return {
-			textColor: ''
-		};
-	}
-
-	if (routeStatus === 'early') {
-		return {
-			textColor: 'text-brand-red'
-		};
-	}
-
-	if (routeStatus === 'late') {
-		return {
-			textColor: 'text-brand-blue'
-		};
-	}
-
-	return {
-		textColor: 'text-brand-gray'
-	};
-}
-
-// Is the vehicle is early or late?
+/**
+ * Calculate early/late status compared to schedule
+ *
+ * @param {number} predictedTime - Predicted timestamp
+ * @param {number} scheduledTime - Scheduled timestamp
+ *
+ * @returns {Object} {status: string|null, tag: string|null}
+ */
 export function formatRouteStatus(predictedTime, scheduledTime) {
 	if (typeof predictedTime === 'undefined' || predictedTime === null || predictedTime === 0) {
 		return {
@@ -170,6 +112,102 @@ export function formatRouteStatus(predictedTime, scheduledTime) {
 	return {
 		status: 'on-time',
 		tag: null
+	};
+}
+
+/**
+ * Get border color class based on status
+ *
+ * @param {string} defaultStatus - Arrival status
+ * @param {string} routeStatus - Early/late status
+ *
+ * @returns {Object} {borderColor: string}
+ */
+export function formatBorderColor(defaultStatus, routeStatus) {
+	if (defaultStatus === 'Departing') {
+		return {
+			borderColor: 'border-brand-gray'
+		};
+	}
+
+	if (routeStatus === 'early') {
+		return {
+			borderColor: 'border-brand-red'
+		};
+	}
+
+	if (routeStatus === 'late') {
+		return {
+			borderColor: 'border-brand-blue'
+		};
+	}
+
+	return {
+		borderColor: 'border-brand-lightgray'
+	};
+}
+
+/**
+ * Get shadow color variable based on status
+ *
+ * @param {string} defaultStatus - Arrival status
+ * @param {string} routeStatus - Early/late status
+ *
+ * @returns {Object} {shadowColor: string}
+ */
+export function formatShadowColor(defaultStatus, routeStatus) {
+	if (defaultStatus === 'Departing') {
+		return {
+			shadowColor: 'var(--shadow-gray)'
+		};
+	}
+
+	if (routeStatus === 'early') {
+		return {
+			shadowColor: 'var(--shadow-red)'
+		};
+	}
+
+	if (routeStatus === 'late') {
+		return {
+			shadowColor: 'var(--shadow-blue)'
+		};
+	}
+
+	return {
+		shadowColor: 'var(--shadow-gray)'
+	};
+}
+
+/**
+ * Get text color class based on status
+ *
+ * @param {string} defaultStatus - Arrival status
+ * @param {string} routeStatus - Early/late status
+ *
+ * @returns {Object} {textColor: string}
+ */
+export function formatTextColor(defaultStatus, routeStatus) {
+	if (defaultStatus === 'Departing') {
+		return {
+			textColor: ''
+		};
+	}
+
+	if (routeStatus === 'early') {
+		return {
+			textColor: 'text-brand-red'
+		};
+	}
+
+	if (routeStatus === 'late') {
+		return {
+			textColor: 'text-brand-blue'
+		};
+	}
+
+	return {
+		textColor: 'text-brand-gray'
 	};
 }
 
