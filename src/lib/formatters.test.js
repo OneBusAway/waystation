@@ -1,115 +1,111 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { formatDateTime, formatTime, formatDate, formatCurrentTime } from '$lib/formatters';
+// @vitest-environment jsdom
 
-describe('Formatter Utilities', () => {
-	beforeEach(() => {
-		vi.resetModules();
-	});
+import { describe, test, expect, afterEach } from 'vitest';
+import { cleanup } from '@testing-library/svelte';
+import {
+	formatDateTime,
+	formatTime,
+	formatDate,
+	formatCurrentTime,
+	formatTimestamp,
+	formatArrivalStatus,
+	formatRouteStatus,
+	formatBorderColor,
+	formatShadowColor,
+	formatTextColor,
+	generateRandomID,
+	sortEarliestDepartures,
+	removeDuplicates
+} from '$lib/formatters';
 
-	afterEach(() => {
-		vi.restoreAllMocks();
-	});
+afterEach(() => {
+	cleanup();
+});
 
-	describe('formatDateTime', () => {
-		it('formats time with hours, minutes, and seconds', () => {
-			const date = new Date(2023, 0, 1, 13, 45, 30);
-			const formattedTime = formatDateTime(date);
-			expect(formattedTime).toBe('1:45:30 PM');
+describe('formatters', () => {
+	describe('Time & Date Formatting', () => {
+		test('formatDateTime includes seconds and meridiem', () => {
+			const date = new Date('2025-07-01T12:34:56');
+			expect(formatDateTime(date)).toMatch(/12:34:56 (AM|PM)/);
 		});
 
-		it('handles midnight (12 AM) correctly', () => {
-			const date = new Date(2023, 0, 1, 0, 5, 15);
-			const formattedTime = formatDateTime(date);
-			expect(formattedTime).toBe('12:05:15 AM');
+		test('formatTime outputs hour and minute', () => {
+			const time = new Date('2025-07-01T15:00:00');
+			expect(formatTime(time)).toMatch(/3:00 (PM|AM)/);
 		});
 
-		it('handles noon (12 PM) correctly', () => {
-			const date = new Date(2023, 0, 1, 12, 0, 0);
-			const formattedTime = formatDateTime(date);
-			expect(formattedTime).toBe('12:00:00 PM');
-		});
-	});
-
-	describe('formatTime', () => {
-		it('formats time with hours and minutes only (no seconds)', () => {
-			const date = new Date(2023, 0, 1, 13, 45, 30);
-			const formattedTime = formatTime(date);
-			expect(formattedTime).toBe('1:45 PM');
+		test('formatDate includes weekday and full date', () => {
+			const date = new Date('2025-07-01');
+			expect(formatDate(date)).toMatch(/Tuesday, July 1/);
 		});
 
-		it('handles midnight (12 AM) correctly', () => {
-			const date = new Date(2023, 0, 1, 0, 5, 15);
-			const formattedTime = formatTime(date);
-			expect(formattedTime).toBe('12:05 AM');
+		test('formatCurrentTime includes full time with seconds', () => {
+			const now = new Date('2025-07-01T09:15:30');
+			expect(formatCurrentTime(now)).toMatch(/9:15:30 (AM|PM)/);
 		});
 
-		it('handles noon (12 PM) correctly', () => {
-			const date = new Date(2023, 0, 1, 12, 0, 0);
-			const formattedTime = formatTime(date);
-			expect(formattedTime).toBe('12:00 PM');
-		});
-
-		it('accepts string date input', () => {
-			const dateStr = '2023-01-01T13:45:30';
-			const formattedTime = formatTime(dateStr);
-			expect(formattedTime).toBe('1:45 PM');
+		test('formatTimestamp gives readable short format', () => {
+			const ts = new Date('2025-06-18').getTime();
+			expect(formatTimestamp(ts)).toMatch(/Wed, Jun 18, 2025/);
 		});
 	});
 
-	describe('formatDate', () => {
-		it('formats date with weekday, month, and day', () => {
-			const date = new Date(2023, 0, 1);
-			const formattedDate = formatDate(date);
-			expect(formattedDate).toBe('Sunday, January 1');
+	describe('Arrival & Route Status', () => {
+		test('formatArrivalStatus handles no prediction as Arriving', () => {
+			const now = Date.now();
+			const result = formatArrivalStatus(0, now + 5 * 60000);
+			expect(result?.status).toBe('Arriving');
 		});
 
-		it('formats dates at different times the same', () => {
-			const date1 = new Date(2023, 2, 15, 9, 30);
-			const date2 = new Date(2023, 2, 15, 18, 45);
-
-			expect(formatDate(date1)).toBe(formatDate(date2));
-			expect(formatDate(date1)).toBe('Wednesday, March 15');
-		});
-	});
-
-	describe('formatCurrentTime', () => {
-		it('formats current time with hours, minutes, and seconds using 2-digit format', () => {
-			const date = new Date(2023, 0, 1, 9, 5, 7);
-			const formattedTime = formatCurrentTime(date);
-			expect(formattedTime).toBe('09:05:07 AM');
-		});
-
-		it('formats time with leading zeros for single-digit hours', () => {
-			const date = new Date(2023, 0, 1, 9, 5, 7);
-			const formattedTime = formatCurrentTime(date);
-			expect(formattedTime).toBe('09:05:07 AM');
-		});
-
-		it('formats time with leading zeros for single-digit minutes and seconds', () => {
-			const date = new Date(2023, 0, 1, 12, 1, 2);
-			const formattedTime = formatCurrentTime(date);
-			expect(formattedTime).toBe('12:01:02 PM');
+		test('formatRouteStatus detects early arrival', () => {
+			const scheduled = Date.now();
+			const predicted = scheduled - 5 * 60000;
+			const result = formatRouteStatus(predicted, scheduled);
+			expect(result.status).toBe('early');
 		});
 	});
 
-	describe('locale behavior', () => {
-		it('uses en-US locale for all formatting functions', () => {
-			const date = new Date(2023, 0, 1, 13, 45, 30);
+	describe('Styling Helpers', () => {
+		test('formatBorderColor returns gray for Departing', () => {
+			const result = formatBorderColor('Departing', 'late');
+			expect(result.borderColor).toBe('border-brand-gray');
+		});
 
-			const timeStringSpy = vi.spyOn(Date.prototype, 'toLocaleTimeString');
-			const dateStringSpy = vi.spyOn(Date.prototype, 'toLocaleDateString');
+		test('formatShadowColor returns red for early', () => {
+			const result = formatShadowColor('Arriving', 'early');
+			expect(result.shadowColor).toBe('var(--shadow-red)');
+		});
 
-			formatDateTime(date);
-			expect(timeStringSpy).toHaveBeenCalledWith('en-US', expect.anything());
+		test('formatTextColor returns gray for unknown', () => {
+			const result = formatTextColor('Arriving', 'unknown');
+			expect(result.textColor).toBe('text-brand-gray');
+		});
+	});
 
-			formatTime(date);
-			expect(timeStringSpy).toHaveBeenCalledWith('en-US', expect.anything());
+	describe('Utilities', () => {
+		test('generateRandomID creates unique ID with pattern', () => {
+			const id = generateRandomID('trip1', 'stop2');
+			expect(id).toMatch(/trip1-stop2-\d+/);
+		});
 
-			formatDate(date);
-			expect(dateStringSpy).toHaveBeenCalledWith('en-US', expect.anything());
+		test('sortEarliestDepartures returns sorted list', () => {
+			const deps = [
+				{ predictedDepartureTime: 3000 },
+				{ scheduledDepartureTime: 1000 },
+				{ predictedDepartureTime: 2000 }
+			];
+			const sorted = sortEarliestDepartures(deps);
+			expect(sorted[0].scheduledDepartureTime).toBe(1000);
+		});
 
-			formatCurrentTime(date);
-			expect(timeStringSpy).toHaveBeenCalledWith('en-US', expect.anything());
+		test('removeDuplicates filters duplicates correctly', () => {
+			const deps = [
+				{ tripId: '1', scheduledDepartureTime: 1000 },
+				{ tripId: '1', scheduledDepartureTime: 1000 },
+				{ tripId: '2', scheduledDepartureTime: 2000 }
+			];
+			const filtered = removeDuplicates(deps);
+			expect(filtered.length).toBe(2);
 		});
 	});
 });

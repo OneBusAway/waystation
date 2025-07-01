@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+
 import { render, cleanup } from '@testing-library/svelte';
 import { expect, test, describe, afterEach } from 'vitest';
 import Alerts from './alerts.svelte';

@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
-import { render } from '@testing-library/svelte';
-import { expect, test, vi } from 'vitest';
+import { render, cleanup } from '@testing-library/svelte';
+import { afterEach, describe, expect, test, vi } from 'vitest';
 import Header from './header.svelte';
 
 vi.mock('$lib/formatters.js', () => ({
@@ -9,15 +9,36 @@ vi.mock('$lib/formatters.js', () => ({
 	formatDateTime: () => 'Mocked Time'
 }));
 
-test('renders successfully', () => {
-	const div = document.createElement('div');
-	render(Header, {
-		props: {
-			title: 'Hello Test World',
-			imageUrl: 'https://example.com/image.jpg'
-		},
-		target: div
+afterEach(() => {
+	cleanup();
+});
+
+describe('Header', () => {
+	test('renders custom title and image', () => {
+		const { getByText, getByAltText } = render(Header, {
+			props: {
+				title: 'Hello Test World',
+				imageUrl: 'https://example.com/image.jpg'
+			}
+		});
+
+		expect(getByText('Hello Test World')).toBeTruthy();
+		expect(getByAltText('Homepage').getAttribute('src')).toBe('https://example.com/image.jpg');
 	});
 
-	expect(div.innerHTML).toContain('Hello Test World');
+	test('falls back to default title and image if not provided', () => {
+		const { getByText, getByAltText } = render(Header);
+
+		expect(getByText('Transit Board')).toBeTruthy();
+		expect(getByAltText('Homepage').getAttribute('src')).toBe(
+			'https://onebusaway.org/wp-content/uploads/oba_logo-1.png'
+		);
+	});
+
+	test('displays mocked date and time correctly', () => {
+		const { getByText } = render(Header);
+
+		expect(getByText('Mocked Date')).toBeTruthy();
+		expect(getByText('Mocked Time')).toBeTruthy();
+	});
 });
