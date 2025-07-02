@@ -1,14 +1,19 @@
 // @vitest-environment jsdom
 
 import { cleanup, render, waitFor } from '@testing-library/svelte';
-import { test, expect, vi, afterEach } from 'vitest';
+import { test, expect, vi, afterEach, beforeEach } from 'vitest';
 import Controller from './controller.svelte';
 
-test('renders a departure after fetching', async () => {
-	afterEach(() => {
-		cleanup();
-	});
+beforeEach(() => {
+	vi.restoreAllMocks();
+});
 
+afterEach(() => {
+	cleanup();
+	vi.restoreAllMocks();
+});
+
+test('renders a departure after fetching', async () => {
 	vi.stubGlobal(
 		'fetch',
 		vi.fn(() =>

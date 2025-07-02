@@ -11,10 +11,6 @@ export function formatDateTime(date) {
 	});
 }
 
-function isValidTimestamp(timestamp) {
-	return typeof timestamp === 'number' && timestamp > 0;
-}
-
 /**
  * Determines real-time arrival/departure status and timing
  *
@@ -24,8 +20,6 @@ function isValidTimestamp(timestamp) {
  * @returns {Object|null} Returns {status, eta, scheduledTime} or null if departed
  */
 export function formatArrivalStatus(predictedTime, scheduledTime) {
-	if (!isValidTimestamp(scheduledTime)) return null;
-
 	const now = new Date();
 
 	const predicted = new Date(predictedTime);

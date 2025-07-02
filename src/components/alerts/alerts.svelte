@@ -7,7 +7,7 @@
 	const summary = situation?.summary;
 	const activeWindow = situation?.activeWindows?.[0];
 
-	const title = summary?.value?.trim() ?? '';
+	const title = summary?.value?.trim?.() ?? '';
 	const dateStart = formatTimestamp(activeWindow?.from);
 	const dateEnd = formatTimestamp(activeWindow?.to);
 </script>
