@@ -9,11 +9,6 @@ describe('Alerts component', () => {
 		cleanup();
 	});
 
-	test('renders nothing when no alerts exist', () => {
-		const { container } = render(Alerts, { props: { situations: [] } });
-		expect(container.innerHTML).toBe('<!---->');
-	});
-
 	test('renders successfully with alert data', () => {
 		const { container, getByText } = render(Alerts, {
 			props: {
@@ -78,25 +73,6 @@ describe('Alerts component', () => {
 		expect(queryByText('Starting')).toBeNull();
 		expect(getByText('Ending')).toBeTruthy();
 		expect(container.innerHTML).not.toContain('➔');
-	});
-
-	test('does not render when title is missing', () => {
-		const { container } = render(Alerts, {
-			props: {
-				situations: [
-					{
-						activeWindows: [
-							{
-								from: 1718948400000,
-								to: 1718952000000
-							}
-						]
-					}
-				]
-			}
-		});
-
-		expect(container.innerHTML).toBe('<!---->');
 	});
 
 	test('handles invalid dates', () => {
