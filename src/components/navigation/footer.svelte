@@ -8,7 +8,7 @@
 		<div class="flex items-center">
 			<span class="ml-2 text-sm">{t.footer_watermark()}</span>
 		</div>
-		<div class="right-alignment text-right text-sm">
+		<div class="right-alignment text-sm">
 			{#each stops as stop, i (stop.code)}
 				{t.footer_stopNumber({ stopCode: stop.code, stopName: stop.name })}
 				{#if i < stops.length - 1}
