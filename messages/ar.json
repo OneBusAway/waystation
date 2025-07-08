@@ -1,0 +1,15 @@
+{
+	"root_id": "ID",
+	"root_name": "Name",
+	"agencies": "هيئات النقل",
+	"alerts_disclaimer": "تنبيه!",
+	"alerts_starting": "يبدأ",
+	"alerts_ending": "ينتهي",
+	"departure_statusMinute": "دقائق",
+	"departure_statusArriving": "يصل في",
+	"departure_statusDeparting": "يغادر الآن",
+	"departure_statusEarly": "{num} دقائق مبكرًا",
+	"departure_statusLate": "{num} دقائق متأخرًا",
+	"footer_stopNumber": "المحطة رقم {stopCode} - {stopName}",
+	"footer_watermark": "Waystation by Open Transit Software Foundation"
+}

@@ -5,11 +5,15 @@
 		removeDuplicates,
 		sortEarliestDepartures
 	} from '$lib/formatters';
-	import { onMount, onDestroy } from 'svelte';
+
 	import { browser } from '$app/environment';
+	import { onMount, onDestroy } from 'svelte';
+	import { setLanguageTag } from '$lib/paraglide/runtime.js';
 
 	import Alerts from '$components/alerts/alerts.svelte';
 	import Departure from '$components/departures/departure.svelte';
+
+	setLanguageTag('ar');
 
 	let { stopIDs = [] } = $props();
 

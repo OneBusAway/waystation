@@ -26,3 +26,8 @@ body::before {
 	--shadow-gray: 0 0 10px 10px rgba(0, 0, 0, 0.08);
 	--color-oba-green: oklch(0.632 0.1728 138.8);
 }
+
+.right-alignment {
+	direction: rtl;
+	@apply isolate text-right;
+}

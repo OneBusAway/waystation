@@ -1,3 +1,6 @@
+import * as t from '$lib/paraglide/messages.js';
+import { languageTag } from './paraglide/runtime';
+
 /**
  * Format time for display
  * @param {Date} date
@@ -74,6 +77,8 @@ export function formatArrivalStatus(predictedTime, scheduledTime) {
 	}
 }
 
+export function formatTranslation() {}
+
 /**
  * Calculate early/late status compared to schedule
  *
@@ -98,14 +103,14 @@ export function formatRouteStatus(predictedTime, scheduledTime) {
 	if (diff < -1) {
 		return {
 			status: 'early',
-			tag: `${Math.abs(diff)} min early`
+			tag: `${t.departure_statusEarly({ num: Math.abs(diff) })}`
 		};
 	}
 
 	if (diff > 1) {
 		return {
 			status: 'late',
-			tag: `${diff} min late`
+			tag: `${t.departure_statusLate({ num: Math.abs(diff) })}`
 		};
 	}
 
@@ -229,7 +234,7 @@ export function formatTime(time) {
  * @param {Date} date
  */
 export function formatDate(date) {
-	return date.toLocaleDateString('en-US', {
+	return date.toLocaleDateString(`${languageTag()}`, {
 		weekday: 'long',
 		month: 'long',
 		day: 'numeric'
@@ -292,7 +297,7 @@ export function sortEarliestDepartures(departures) {
  * @returns {string} - A formatted date string like "Mon, Jul 21, 2025"
  */
 export function formatTimestamp(timestamp) {
-	return new Date(timestamp).toLocaleString('en-US', {
+	return new Date(timestamp).toLocaleString(`${languageTag()}`, {
 		weekday: 'short',
 		year: 'numeric',
 		month: 'short',
@@ -315,4 +320,20 @@ export function removeDuplicates(departures) {
 		seen.add(key);
 		return true;
 	});
+}
+
+/**
+ *  Translates text to another language.
+ *  Uses MyMemory API - falls back to original text if translation fails.
+ *
+ *  @param {string} text - Text to translate
+ *  @param {string} [targetLang=en"] - Language code like 'es', 'ar'
+ *  @returns {Promise<string>} Translated text or original if error
+ */
+export async function translateText(text, targetLang = 'en') {
+	const response = await fetch(
+		`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${targetLang}`
+	);
+	const data = await response.json();
+	return data.responseData.translatedText || text;
 }
