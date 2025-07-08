@@ -1,5 +1,10 @@
 <script>
-	import { formatArrivalStatus, generateRandomID, sortEarliestDepartures } from '$lib/formatters';
+	import {
+		formatArrivalStatus,
+		generateRandomID,
+		removeDuplicates,
+		sortEarliestDepartures
+	} from '$lib/formatters';
 	import { onMount, onDestroy } from 'svelte';
 	import { browser } from '$app/environment';
 
@@ -35,6 +40,14 @@
 		if (!response) throw new Error(`Fetch Error: Failed to fetch stop ${stopID}`);
 		const json = await response.json();
 
+		if (
+			!json?.data?.references?.stops ||
+			!json?.data?.entry?.arrivalsAndDepartures ||
+			!json?.data?.references?.situations
+		) {
+			throw new Error(`Malformed API response for stop ${stopID}`);
+		}
+
 		return {
 			stopID,
 			stopName:
@@ -63,6 +76,7 @@
 			situations = response.flatMap((eachSituation) => eachSituation.situations);
 
 			allDepartures = allDepartures.filter((dep) => dep.status !== null);
+			allDepartures = removeDuplicates(allDepartures);
 			allDepartures = sortEarliestDepartures(allDepartures);
 			allDepartures = allDepartures.slice(0, MAX_DEPARTURES);
 		} catch (error) {
