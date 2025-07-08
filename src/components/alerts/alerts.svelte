@@ -1,5 +1,5 @@
 <script>
-	import { translateText, formatTimestamp } from '$lib/formatters';
+	import { translate, formatTimestamp } from '$lib/formatters';
 	import { languageTag } from '$lib/paraglide/runtime.js';
 	import * as t from '$lib/paraglide/messages.js';
 
@@ -10,7 +10,7 @@
 
 	$effect(() => {
 		if (languageTag() !== 'en') {
-			translateText(title, languageTag()).then((result) => {
+			translate(title, languageTag()).then((result) => {
 				translatedTitle = result;
 			});
 		}

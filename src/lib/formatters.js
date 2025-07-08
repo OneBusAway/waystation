@@ -323,17 +323,29 @@ export function removeDuplicates(departures) {
 }
 
 /**
- *  Translates text to another language.
- *  Uses MyMemory API - falls back to original text if translation fails.
+ * Translates a given text into the specified target language by proxying
+ * through Google’s unofficial translate endpoint.
  *
- *  @param {string} text - Text to translate
- *  @param {string} [targetLang=en"] - Language code like 'es', 'ar'
- *  @returns {Promise<string>} Translated text or original if error
+ * @param {string} text        - The text to translate.
+ * @param {string} targetLang  - The BCP-47 language code to translate into (e.g. 'es', 'ar', 'fr').
+ * @returns {Promise<string>}  - A promise that resolves to the translated string.
+ * @throws {Error}             - If the fetch request fails or returns a non-OK status.
  */
-export async function translateText(text, targetLang = 'en') {
-	const response = await fetch(
-		`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${targetLang}`
-	);
-	const data = await response.json();
-	return data.responseData.translatedText || text;
+export async function translate(text, targetLang) {
+	const params = new URLSearchParams({
+		client: 'gtx',
+		sl: 'auto',
+		tl: targetLang,
+		dt: 't',
+		q: text
+	});
+
+	const res = await fetch(`https://translate.googleapis.com/translate_a/single?${params}`);
+
+	if (!res.ok) {
+		throw new Error('Google-translate proxy failed');
+	}
+
+	const body = await res.json();
+	return body[0].map((chunk) => chunk[0]).join('');
 }
