@@ -13,7 +13,7 @@
 	import Alerts from '$components/alerts/alerts.svelte';
 	import Departure from '$components/departures/departure.svelte';
 
-	setLanguageTag('es');
+	setLanguageTag('fr');
 
 	let { stopIDs = [] } = $props();
 
