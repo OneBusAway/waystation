@@ -1,6 +1,6 @@
 <script>
 	let { stops } = $props();
-	import * as t from '$lib/paraglide/messages';
+	import * as t from '$lib/paraglide/messages.js';
 </script>
 
 <div class="bg-gray-300 p-3 text-black">

@@ -9,7 +9,7 @@
 	import { browser } from '$app/environment';
 	import { onMount, onDestroy } from 'svelte';
 
-	import * as t from '$lib/paraglide/messages';
+	import * as t from '$lib/paraglide/messages.js';
 	import Alerts from '$components/alerts/alerts.svelte';
 	import Departure from '$components/departures/departure.svelte';
 

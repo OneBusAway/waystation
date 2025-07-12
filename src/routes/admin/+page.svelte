@@ -32,7 +32,7 @@
 					<label for="es">Spanish (es)</label>
 					<br />
 					<input type="radio" id="de" name="language" bind:group={selector} value="de" />
-					<label for="es">German (de)</label>
+					<label for="de">German (de)</label>
 				</form>
 			</div>
 			<div class="flex justify-end text-xl text-black">

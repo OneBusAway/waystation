@@ -77,8 +77,6 @@ export function formatArrivalStatus(predictedTime, scheduledTime) {
 	}
 }
 
-export function formatTranslation() {}
-
 /**
  * Calculate early/late status compared to schedule
  *
