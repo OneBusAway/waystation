@@ -1,11 +1,12 @@
 {
-	"$schema": "https://inlang.com/schema/inlang-message-format",
 	"root_id": "ID",
 	"root_name": "Nombre",
 	"agencies": "Agencias",
 	"alerts_disclaimer": "¡Se requiere su atención!",
 	"alerts_starting": "Comienza",
 	"alerts_ending": "Termina",
+	"controller_loading": "Cargando salidas...",
+	"controller_unavailable": "No hay salidas disponibles",
 	"departure_statusMinute": "min",
 	"departure_statusArriving": "Llegando en",
 	"departure_statusDeparting": "Saliendo ahora",

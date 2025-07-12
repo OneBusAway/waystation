@@ -1,4 +1,17 @@
 {
-	"$schema": "https://inlang.com/schema/inlang-message-format",
-	"example_message": "Guten Tag {username}"
+	"root_id": "ID",
+	"root_name": "Name",
+	"agencies": "Verkehrsbetriebe",
+	"alerts_disclaimer": "Achtung erforderlich!",
+	"alerts_starting": "Beginnt",
+	"alerts_ending": "Endet",
+	"controller_loading": "Abfahrten werden geladen...",
+	"controller_unavailable": "Keine Abfahrten verfügbar",
+	"departure_statusMinute": "min",
+	"departure_statusArriving": "Ankunft in",
+	"departure_statusDeparting": "Fährt jetzt ab",
+	"departure_statusEarly": "{num} min zu früh",
+	"departure_statusLate": "{num} min zu spät",
+	"footer_stopNumber": "Haltestelle Nr. {stopCode} - {stopName}",
+	"footer_watermark": "Waystation von Open Transit Software Foundation"
 }

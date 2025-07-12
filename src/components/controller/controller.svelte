@@ -9,6 +9,7 @@
 	import { browser } from '$app/environment';
 	import { onMount, onDestroy } from 'svelte';
 
+	import * as t from '$lib/paraglide/messages';
 	import Alerts from '$components/alerts/alerts.svelte';
 	import Departure from '$components/departures/departure.svelte';
 
@@ -106,7 +107,7 @@
 	<div class="text-brand-darkblue flex flex-1 flex-col overflow-y-auto">
 		{#if loading}
 			<div class="flex h-32 items-center justify-center">
-				<p class="text-xl">Loading departures...</p>
+				<p class="text-xl">{t.controller_loading()}</p>
 			</div>
 		{:else if allDepartures.length > 0}
 			<div class="flex flex-col">
@@ -118,7 +119,7 @@
 			</div>
 		{:else}
 			<div class="flex h-32 items-center justify-center">
-				<p class="text-xl">No departures available</p>
+				<p class="text-xl">{t.controller_unavailable()}</p>
 			</div>
 		{/if}
 	</div>

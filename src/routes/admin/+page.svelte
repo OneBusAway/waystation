@@ -30,6 +30,9 @@
 					<br />
 					<input type="radio" id="es" name="language" bind:group={selector} value="es" />
 					<label for="es">Spanish (es)</label>
+					<br />
+					<input type="radio" id="de" name="language" bind:group={selector} value="de" />
+					<label for="es">German (de)</label>
 				</form>
 			</div>
 			<div class="flex justify-end text-xl text-black">
