@@ -1,6 +1,6 @@
 <script>
 	import { translate, formatTimestamp } from '$lib/formatters';
-	import { languageTag } from '$lib/paraglide/runtime.js';
+	import { getLocale } from '$lib/paraglide/runtime.js';
 	import * as t from '$lib/paraglide/messages.js';
 
 	let { situations = [] } = $props();
@@ -9,8 +9,8 @@
 	let translatedTitle = $state(title);
 
 	$effect(() => {
-		if (languageTag() !== 'en') {
-			translate(title, languageTag()).then((result) => {
+		if (getLocale() !== 'en') {
+			translate(title, getLocale()).then((result) => {
 				translatedTitle = result;
 			});
 		}
@@ -20,7 +20,7 @@
 	const dateStart = formatTimestamp(activeWindow?.from);
 	const dateEnd = formatTimestamp(activeWindow?.to);
 
-	const alignment = languageTag() !== 'ar' ? `` : `right-alignment leading-12`;
+	const alignment = getLocale() !== 'ar' ? `` : `right-alignment leading-12`;
 </script>
 
 <div class="m-5">

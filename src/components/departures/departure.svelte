@@ -8,14 +8,14 @@
 	} from '$lib/formatters';
 
 	import { ArrowDownRight, ArrowUpLeft, ChevronRight } from '@lucide/svelte';
-	import { languageTag } from '$lib/paraglide/runtime.js';
+	import { getLocale } from '$lib/paraglide/runtime.js';
 	import * as t from '$lib/paraglide/messages.js';
 
 	const { dep } = $props();
 
 	const depStatus = formatArrivalStatus(dep.predictedDepartureTime, dep.scheduledDepartureTime);
 	const routeStatus = formatRouteStatus(dep.predictedDepartureTime, dep.scheduledDepartureTime);
-	const alignment = languageTag() !== 'ar' ? `` : `right-alignment`;
+	const alignment = getLocale() !== 'ar' ? `` : `right-alignment`;
 
 	const departure = {
 		...depStatus,
@@ -61,7 +61,7 @@
 					</span>
 				{:else if departure.status === 'Arriving'}
 					<div class="flex items-center gap-3 font-semibold whitespace-nowrap">
-						{#if languageTag() !== 'ar'}
+						{#if getLocale() !== 'ar'}
 							<ArrowDownRight class={departure.textColor} strokeWidth={2.3} size={42} />
 							<span class="text-4xl whitespace-nowrap">{t.departure_statusArriving()}</span>
 							<span class={`${departure.textColor} text-5xl font-bold`}>

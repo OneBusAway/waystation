@@ -1,13 +1,13 @@
 <script>
 	import { PUBLIC_OBA_LOGO_URL, PUBLIC_OBA_REGION_NAME } from '$env/static/public';
-	import { setLanguageTag } from '$lib/paraglide/runtime';
+	import { setLocale } from '$lib/paraglide/runtime';
 
 	import Header from '$components/navigation/header.svelte';
 
 	let selector = $state('en');
 
 	function saveChanges() {
-		setLanguageTag(selector);
+		setLocale(selector);
 	}
 </script>
 

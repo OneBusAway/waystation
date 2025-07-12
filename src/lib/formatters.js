@@ -1,5 +1,5 @@
 import * as t from '$lib/paraglide/messages.js';
-import { languageTag } from './paraglide/runtime';
+import { getLocale } from './paraglide/runtime';
 
 /**
  * Format time for display
@@ -234,7 +234,7 @@ export function formatTime(time) {
  * @param {Date} date
  */
 export function formatDate(date) {
-	return date.toLocaleDateString(`${languageTag()}`, {
+	return date.toLocaleDateString(`${getLocale()}`, {
 		weekday: 'long',
 		month: 'long',
 		day: 'numeric'
@@ -297,7 +297,7 @@ export function sortEarliestDepartures(departures) {
  * @returns {string} - A formatted date string like "Mon, Jul 21, 2025"
  */
 export function formatTimestamp(timestamp) {
-	return new Date(timestamp).toLocaleString(`${languageTag()}`, {
+	return new Date(timestamp).toLocaleString(`${getLocale()}`, {
 		weekday: 'short',
 		year: 'numeric',
 		month: 'short',
