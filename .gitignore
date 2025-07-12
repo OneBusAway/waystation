@@ -27,3 +27,6 @@ src/lib/paraglide
 
 # Testing
 coverage
+
+# Workspace
+.vscode/extensions.json

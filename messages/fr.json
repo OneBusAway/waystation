@@ -1,0 +1,17 @@
+{
+	"root_id": "ID",
+	"root_name": "Nom",
+	"agencies": "Agences",
+	"alerts_disclaimer": "Votre attention est requise !",
+	"alerts_starting": "Début",
+	"alerts_ending": "Fin",
+	"controller_loading": "Chargement des départs...",
+	"controller_unavailable": "Aucun départ disponible",
+	"departure_statusMinute": "min",
+	"departure_statusArriving": "Arrivée dans",
+	"departure_statusDeparting": "Départ maintenant",
+	"departure_statusEarly": "{num} min en avance",
+	"departure_statusLate": "{num} min en retard",
+	"footer_stopNumber": "Arrêt No. {stopCode} - {stopName}",
+	"footer_watermark": "Waystation par Open Transit Software Foundation"
+}
