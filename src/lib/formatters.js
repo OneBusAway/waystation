@@ -1,3 +1,6 @@
+import * as t from '$lib/paraglide/messages.js';
+import { getLocale } from './paraglide/runtime';
+
 /**
  * Format time for display
  * @param {Date} date
@@ -98,14 +101,14 @@ export function formatRouteStatus(predictedTime, scheduledTime) {
 	if (diff < -1) {
 		return {
 			status: 'early',
-			tag: `${Math.abs(diff)} min early`
+			tag: `${t.departure_statusEarly({ num: Math.abs(diff) })}`
 		};
 	}
 
 	if (diff > 1) {
 		return {
 			status: 'late',
-			tag: `${diff} min late`
+			tag: `${t.departure_statusLate({ num: Math.abs(diff) })}`
 		};
 	}
 
@@ -229,7 +232,7 @@ export function formatTime(time) {
  * @param {Date} date
  */
 export function formatDate(date) {
-	return date.toLocaleDateString('en-US', {
+	return date.toLocaleDateString(`${getLocale()}`, {
 		weekday: 'long',
 		month: 'long',
 		day: 'numeric'
@@ -292,7 +295,7 @@ export function sortEarliestDepartures(departures) {
  * @returns {string} - A formatted date string like "Mon, Jul 21, 2025"
  */
 export function formatTimestamp(timestamp) {
-	return new Date(timestamp).toLocaleString('en-US', {
+	return new Date(timestamp).toLocaleString(`${getLocale()}`, {
 		weekday: 'short',
 		year: 'numeric',
 		month: 'short',
@@ -315,4 +318,32 @@ export function removeDuplicates(departures) {
 		seen.add(key);
 		return true;
 	});
+}
+
+/**
+ * Translates a given text into the specified target language by proxying
+ * through Google’s unofficial translate endpoint.
+ *
+ * @param {string} text        - The text to translate.
+ * @param {string} targetLang  - The BCP-47 language code to translate into (e.g. 'es', 'ar', 'fr').
+ * @returns {Promise<string>}  - A promise that resolves to the translated string.
+ * @throws {Error}             - If the fetch request fails or returns a non-OK status.
+ */
+export async function translate(text, targetLang) {
+	const params = new URLSearchParams({
+		client: 'gtx',
+		sl: 'auto',
+		tl: targetLang,
+		dt: 't',
+		q: text
+	});
+
+	const res = await fetch(`https://translate.googleapis.com/translate_a/single?${params}`);
+
+	if (!res.ok) {
+		throw new Error('Google-translate proxy failed');
+	}
+
+	const body = await res.json();
+	return body[0].map((chunk) => chunk[0]).join('');
 }

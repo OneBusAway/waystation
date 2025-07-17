@@ -1,8 +1,10 @@
-import { paraglide } from '@inlang/paraglide-sveltekit/vite';
-import tailwindcss from '@tailwindcss/vite';
-import { svelteTesting } from '@testing-library/svelte/vite';
 import { sveltekit } from '@sveltejs/kit/vite';
-import { defineConfig } from 'vitest/config';
+import { svelteTesting } from '@testing-library/svelte/vite';
+import { defineConfig } from 'vite';
+
+import { paraglideVitePlugin } from '@inlang/paraglide-js';
+
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
 	resolve: process.env.VITEST ? { conditions: ['browser'] } : undefined,
@@ -10,7 +12,7 @@ export default defineConfig({
 	plugins: [
 		tailwindcss(),
 		sveltekit(),
-		paraglide({
+		paraglideVitePlugin({
 			project: './project.inlang',
 			outdir: './src/lib/paraglide'
 		})

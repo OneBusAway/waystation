@@ -6,7 +6,10 @@
 		formatShadowColor,
 		formatTextColor
 	} from '$lib/formatters';
+
 	import { ArrowDownRight, ArrowUpLeft, ChevronRight } from '@lucide/svelte';
+	import { getLocale } from '$lib/paraglide/runtime.js';
+	import * as t from '$lib/paraglide/messages.js';
 
 	const { dep } = $props();
 
@@ -45,7 +48,9 @@
 		{#if departure.status === 'Departing'}
 			<div class="flex items-center">
 				<ArrowUpLeft strokeWidth={2.3} size={42} />
-				<span class="ml-3 text-4xl font-bold whitespace-nowrap">Departing now</span>
+				<span class="ml-3 text-4xl font-bold whitespace-nowrap"
+					>{t.departure_statusDeparting()}</span
+				>
 			</div>
 		{:else}
 			<div class="flex flex-col items-end">
@@ -55,17 +60,26 @@
 					</span>
 				{:else if departure.status === 'Arriving'}
 					<div class="flex items-center gap-3 font-semibold whitespace-nowrap">
-						<ArrowDownRight class={departure.textColor} strokeWidth={2.3} size={42} />
-						<span class="text-4xl whitespace-nowrap">Arriving in</span>
-						<span class={`${departure.textColor} text-5xl font-bold`}>
-							{departure.eta}
-						</span>
-						<span class="text-4xl">min</span>
+						{#if getLocale() !== 'ar'}
+							<ArrowDownRight class={departure.textColor} strokeWidth={2.3} size={42} />
+							<span class="text-4xl whitespace-nowrap">{t.departure_statusArriving()}</span>
+							<span class={`${departure.textColor} text-5xl font-bold`}>
+								{departure.eta}
+							</span>
+							<span class="text-4xl">{t.departure_statusMinute()}</span>
+						{:else}
+							<ArrowDownRight class={departure.textColor} strokeWidth={2.3} size={42} />
+							<span class="text-4xl">{t.departure_statusMinute()}</span>
+							<span class={`${departure.textColor} text-5xl font-bold`}>
+								{departure.eta}
+							</span>
+							<span class="text-4xl whitespace-nowrap">{t.departure_statusArriving()}</span>
+						{/if}
 					</div>
 				{/if}
 
 				{#if routeStatus.tag}
-					<span class={`${departure.textColor} text-3xl font-bold`}>
+					<span dir="auto" class={`${departure.textColor} text-3xl font-bold`}>
 						{routeStatus.tag}
 					</span>
 				{/if}
