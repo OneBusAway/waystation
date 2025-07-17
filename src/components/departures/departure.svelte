@@ -15,7 +15,6 @@
 
 	const depStatus = formatArrivalStatus(dep.predictedDepartureTime, dep.scheduledDepartureTime);
 	const routeStatus = formatRouteStatus(dep.predictedDepartureTime, dep.scheduledDepartureTime);
-	const alignment = getLocale() !== 'ar' ? `` : `right-alignment`;
 
 	const departure = {
 		...depStatus,
@@ -80,7 +79,7 @@
 				{/if}
 
 				{#if routeStatus.tag}
-					<span class={`${departure.textColor} text-3xl font-bold ${alignment}`}>
+					<span dir="auto" class={`${departure.textColor} text-3xl font-bold`}>
 						{routeStatus.tag}
 					</span>
 				{/if}

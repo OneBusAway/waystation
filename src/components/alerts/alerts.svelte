@@ -19,20 +19,19 @@
 	const activeWindow = situations[0]?.activeWindows?.[0];
 	const dateStart = formatTimestamp(activeWindow?.from);
 	const dateEnd = formatTimestamp(activeWindow?.to);
-
-	const alignment = getLocale() !== 'ar' ? `` : `right-alignment leading-12`;
 </script>
 
 <div class="m-5">
 	<div
 		class="text-brand-darkerblue rounded-[24px] bg-white px-5.5 py-8 font-bold"
 		style="box-shadow: 0 0 20px 1px rgba(0,0,0,0.15);"
+		dir="auto"
 	>
-		<div class={`text-brand-red flex items-center justify-center text-4xl font-bold  ${alignment}`}>
+		<div class="text-brand-red flex items-center justify-center text-4xl font-bold">
 			{t.alerts_disclaimer()}
 		</div>
 
-		<div class={`my-6 text-4xl font-bold ${alignment}`}>
+		<div class="my-6 text-4xl leading-12 font-bold">
 			{translatedTitle || title}
 		</div>
 
