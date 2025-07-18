@@ -4,7 +4,7 @@ import { render, cleanup } from '@testing-library/svelte';
 import { expect, test, describe, afterEach } from 'vitest';
 import Alerts from './alerts.svelte';
 
-describe('Alerts component', () => {
+describe('Alerts component sidebar mode', () => {
 	afterEach(() => {
 		cleanup();
 	});
@@ -22,7 +22,8 @@ describe('Alerts component', () => {
 							}
 						]
 					}
-				]
+				],
+				displayMode: true
 			}
 		});
 
@@ -45,7 +46,8 @@ describe('Alerts component', () => {
 							}
 						]
 					}
-				]
+				],
+				displayMode: true
 			}
 		});
 
@@ -66,7 +68,8 @@ describe('Alerts component', () => {
 							}
 						]
 					}
-				]
+				],
+				displayMode: true
 			}
 		});
 
@@ -88,7 +91,8 @@ describe('Alerts component', () => {
 							}
 						]
 					}
-				]
+				],
+				displayMode: true
 			}
 		});
 

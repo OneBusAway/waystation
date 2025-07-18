@@ -48,7 +48,7 @@
 		{#if departure.status === 'Departing'}
 			<div class="flex items-center">
 				<ArrowUpLeft strokeWidth={2.3} size={42} />
-				<span class="ml-3 text-4xl font-bold whitespace-nowrap"
+				<span class="ml-3 text-5xl font-bold whitespace-nowrap"
 					>{t.departure_statusDeparting()}</span
 				>
 			</div>
