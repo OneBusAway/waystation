@@ -111,8 +111,8 @@
 <div class="flex flex-1 overflow-hidden">
 	<div class="text-brand-darkblue flex flex-1 flex-col overflow-y-auto">
 		{#if loading}
-			<div class="flex h-32 items-center justify-center">
-				<p class="text-xl">{t.controller_loading()}</p>
+			<div class="flex h-[6.667vw] items-center justify-center">
+				<p class="text-[1.542vw]">{t.controller_loading()}</p>
 			</div>
 		{:else if allDepartures.length > 0}
 			<div class="flex flex-col">
@@ -123,8 +123,8 @@
 				{/each}
 			</div>
 		{:else}
-			<div class="flex h-32 items-center justify-center">
-				<p class="text-xl">{t.controller_unavailable()}</p>
+			<div class="flex h-[6.667vw] items-center justify-center">
+				<p class="text-[1.542vw]">{t.controller_unavailable()}</p>
 			</div>
 		{/if}
 	</div>

@@ -24,19 +24,19 @@
 	});
 </script>
 
-<div class="flex gap-x-4 p-2">
-	<div class="flex w-full justify-between gap-4 px-2 py-2 md:w-auto">
-		<div class="flex items-center justify-center gap-x-2">
+<div class="flex justify-between gap-x-[0.833vw] p-[0.416vw] whitespace-nowrap">
+	<div class="flex w-full justify-between gap-[0.833vw] px-[0.416vw] py-[0.416vw]">
+		<div class="flex items-center justify-center gap-x-[0.416vw]">
 			<a href="/" class="block">
-				<img src={imageUrl} alt="Homepage" class="h-10 rounded-sm" />
+				<img src={imageUrl} alt="Homepage" class="h-[1.875vw] rounded-[0.329vw]" />
 			</a>
-			<a href="/" class="block text-xl font-extrabold">
+			<a href="/" class="block text-[1.04vw] leading-none font-extrabold">
 				{title}
 			</a>
 		</div>
 	</div>
-	<div class="flex-1 text-right">
-		<div class="text-2xl">{formatDate(now)}</div>
-		<div class="text-4xl font-bold">{formatDateTime(now)}</div>
+	<div class="flex flex-col gap-y-[0.416vw] text-right leading-none">
+		<div class="text-[1.25vw]">{formatDate(now)}</div>
+		<div class="text-[1.875vw] font-bold">{formatDateTime(now)}</div>
 	</div>
 </div>
