@@ -40,22 +40,29 @@
 		<div
 			class="text-brand-darkblue flex flex-row justify-center gap-x-[1.302vw] text-center text-[1.875vw]"
 		>
-			{#if dateStart !== 'Invalid Date'}
+			{#if dateStart === dateEnd && dateStart !== 'Invalid Date'}
 				<div class="flex flex-col items-center gap-y-[0.625vw]">
-					{t.alerts_starting()}
+					{t.alerts_on()}
 					<span class="text-oba-green font-extrabold">{dateStart}</span>
 				</div>
-			{/if}
+			{:else}
+				{#if dateStart !== 'Invalid Date'}
+					<div class="flex flex-col items-center gap-y-[0.625vw]">
+						{t.alerts_starting()}
+						<span class="text-oba-green font-extrabold">{dateStart}</span>
+					</div>
+				{/if}
 
-			{#if dateStart !== 'Invalid Date' && dateEnd !== 'Invalid Date'}
-				<div class="flex items-center">➔</div>
-			{/if}
+				{#if dateStart !== 'Invalid Date' && dateEnd !== 'Invalid Date'}
+					<div class="flex items-center">➔</div>
+				{/if}
 
-			{#if dateEnd !== 'Invalid Date'}
-				<div class="flex flex-col items-center gap-y-[0.625vw]">
-					{t.alerts_ending()}
-					<span class="text-oba-green font-extrabold">{dateEnd}</span>
-				</div>
+				{#if dateEnd !== 'Invalid Date'}
+					<div class="flex flex-col items-center gap-y-[0.625vw]">
+						{t.alerts_ending()}
+						<span class="text-oba-green font-extrabold">{dateEnd}</span>
+					</div>
+				{/if}
 			{/if}
 		</div>
 	</div>
@@ -76,18 +83,25 @@
 		<div
 			class="text-brand-darkblue flex max-w-[30vw] min-w-0 gap-x-[1.042vw] text-center text-[1.875vw]"
 		>
-			{#if dateStart !== 'Invalid Date'}
+			{#if dateStart === dateEnd && dateStart !== 'Invalid Date'}
 				<div class="flex flex-col items-center gap-y-[0.208vw]">
-					{t.alerts_starting()}
+					{t.alerts_on()}
 					<span class="text-oba-green font-extrabold">{dateStart}</span>
 				</div>
-			{/if}
+			{:else}
+				{#if dateStart !== 'Invalid Date'}
+					<div class="flex flex-col items-center gap-y-[0.208vw]">
+						{t.alerts_starting()}
+						<span class="text-oba-green font-extrabold">{dateStart}</span>
+					</div>
+				{/if}
 
-			{#if dateEnd !== 'Invalid Date'}
-				<div class="flex flex-col items-center gap-y-[0.208vw]">
-					{t.alerts_ending()}
-					<span class="text-oba-green font-extrabold">{dateEnd}</span>
-				</div>
+				{#if dateEnd !== 'Invalid Date'}
+					<div class="flex flex-col items-center gap-y-[0.208vw]">
+						{t.alerts_ending()}
+						<span class="text-oba-green font-extrabold">{dateEnd}</span>
+					</div>
+				{/if}
 			{/if}
 		</div>
 	</div>

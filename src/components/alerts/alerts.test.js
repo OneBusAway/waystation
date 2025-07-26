@@ -3,14 +3,15 @@
 import { render, cleanup } from '@testing-library/svelte';
 import { expect, test, describe, afterEach } from 'vitest';
 import Alerts from './alerts.svelte';
+import * as t from '$lib/paraglide/messages.js';
 
-describe('Alerts component sidebar mode', () => {
+describe('Alerts component in displayMode (sidebar mode)', () => {
 	afterEach(() => {
 		cleanup();
 	});
 
-	test('renders successfully with alert data', () => {
-		const { container, getByText } = render(Alerts, {
+	test('renders alert with equal valid start and end dates', () => {
+		const { getByText, queryByText, container } = render(Alerts, {
 			props: {
 				situations: [
 					{
@@ -18,7 +19,7 @@ describe('Alerts component sidebar mode', () => {
 						activeWindows: [
 							{
 								from: 1718948400000,
-								to: 1718952000000
+								to: 1718948400000
 							}
 						]
 					}
@@ -27,14 +28,15 @@ describe('Alerts component sidebar mode', () => {
 			}
 		});
 
-		expect(getByText('Your attention required!')).toBeTruthy();
+		expect(getByText(t.alerts_disclaimer())).toBeTruthy();
 		expect(getByText('Test Alert Title')).toBeTruthy();
-		expect(getByText('Starting')).toBeTruthy();
-		expect(getByText('Ending')).toBeTruthy();
-		expect(container.textContent).toContain('➔');
+		expect(getByText(t.alerts_on())).toBeTruthy();
+		expect(container.innerHTML).not.toContain('➔');
+		expect(queryByText(t.alerts_starting())).toBeNull();
+		expect(queryByText(t.alerts_ending())).toBeNull();
 	});
 
-	test('renders with only start date', () => {
+	test('renders alert with only start date', () => {
 		const { getByText, queryByText, container } = render(Alerts, {
 			props: {
 				situations: [
@@ -51,12 +53,12 @@ describe('Alerts component sidebar mode', () => {
 			}
 		});
 
-		expect(getByText('Starting')).toBeTruthy();
-		expect(queryByText('Ending')).toBeNull();
+		expect(getByText(t.alerts_starting())).toBeTruthy();
+		expect(queryByText(t.alerts_ending())).toBeNull();
 		expect(container.innerHTML).not.toContain('➔');
 	});
 
-	test('renders with only end date', () => {
+	test('renders alert with only end date', () => {
 		const { getByText, queryByText, container } = render(Alerts, {
 			props: {
 				situations: [
@@ -73,12 +75,35 @@ describe('Alerts component sidebar mode', () => {
 			}
 		});
 
-		expect(queryByText('Starting')).toBeNull();
-		expect(getByText('Ending')).toBeTruthy();
+		expect(queryByText(t.alerts_starting())).toBeNull();
+		expect(getByText(t.alerts_ending())).toBeTruthy();
 		expect(container.innerHTML).not.toContain('➔');
 	});
 
-	test('handles invalid dates', () => {
+	test('renders alert with both valid but different dates', () => {
+		const { getByText, container } = render(Alerts, {
+			props: {
+				situations: [
+					{
+						summary: { value: 'Test Alert Title' },
+						activeWindows: [
+							{
+								from: 1718948400000,
+								to: 1318952000000
+							}
+						]
+					}
+				],
+				displayMode: true
+			}
+		});
+
+		expect(getByText(t.alerts_starting())).toBeTruthy();
+		expect(getByText(t.alerts_ending())).toBeTruthy();
+		expect(container.textContent).toContain('➔');
+	});
+
+	test('does not render any date-related text for invalid timestamps', () => {
 		const { queryByText, container } = render(Alerts, {
 			props: {
 				situations: [
@@ -96,8 +121,9 @@ describe('Alerts component sidebar mode', () => {
 			}
 		});
 
-		expect(queryByText('Starting')).toBeNull();
-		expect(queryByText('Ending')).toBeNull();
+		expect(queryByText(t.alerts_on())).toBeNull();
+		expect(queryByText(t.alerts_starting())).toBeNull();
+		expect(queryByText(t.alerts_ending())).toBeNull();
 		expect(container.innerHTML).not.toContain('➔');
 	});
 });
