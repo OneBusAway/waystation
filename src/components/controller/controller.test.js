@@ -46,6 +46,11 @@ test('renders a departure after fetching', async () => {
 		)
 	);
 
+	document.getElementById = vi.fn().mockImplementation((id) => {
+		if (id === 'footer') return { offsetHeight: 50 };
+		return null;
+	});
+
 	const { getByText } = render(Controller, { props: { stopIDs: ['agency_123'] } });
 
 	await waitFor(() => {

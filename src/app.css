@@ -21,8 +21,8 @@ body::before {
 	--color-brand-lightgray: oklch(0.2583 0.0561 236.7 / 40%);
 	--color-brand-red: oklch(0.6117 0.2216 29.64);
 	--color-brand-blue: oklch(0.6145 0.174877 250.2013);
-	--shadow-red: 0 0 10px 10px rgba(235, 50, 35, 0.03);
-	--shadow-blue: 0 0 10px 10px rgba(0, 149, 255, 0.07);
-	--shadow-gray: 0 0 10px 10px rgba(0, 0, 0, 0.08);
-	--color-oba-green: oklch(0.632 0.1728 138.8);
+	--shadow-red: 0 0 0.52vw 0.52vw rgba(235, 50, 35, 0.03);
+	--shadow-blue: 0 0 0.52vw 0.52vw rgba(0, 149, 255, 0.07);
+	--shadow-gray: 0 0 0.52vw 0.52vw rgba(0, 0, 0, 0.08);
+	--color-oba-green: oklch(0.692 0.1728 138.8);
 }

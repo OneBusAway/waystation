@@ -18,5 +18,7 @@
 		</div>
 	</div>
 
-	<Footer {stops} class="shrink-0" />
+	<div id="footer">
+		<Footer {stops} class="shrink-0" />
+	</div>
 </div>
