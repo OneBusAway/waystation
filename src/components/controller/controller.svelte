@@ -22,10 +22,10 @@
 	let situations = $state([]);
 	let loading = $state(true);
 
-	let interval;
-
-	const REFRESH_INTERVAL = 30000; // todo: make it a configurable option
-	const MAX_DEPARTURES = 99;
+	let interval,
+		config,
+		REFRESH_INTERVAL = 30_000,
+		MAX_DEPARTURES = 99;
 
 	function stopRequestDataModel(dep, stopID, stopName) {
 		const status = formatArrivalStatus(dep.predictedDepartureTime, dep.scheduledDepartureTime);
@@ -93,6 +93,12 @@
 	}
 
 	onMount(async () => {
+		const res = await fetch('/api/config');
+		config = await res.json();
+
+		REFRESH_INTERVAL = config.refreshInterval * 1000 || 30_000;
+		MAX_DEPARTURES = config.maxDepartures || 99;
+
 		await fetchStops();
 
 		if (browser) {
