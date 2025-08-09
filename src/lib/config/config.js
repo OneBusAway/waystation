@@ -3,6 +3,12 @@ import fs from 'fs';
 const PATH = 'src/lib/config/settings.json';
 
 export function getConfig() {
+	if (!fs.existsSync(PATH)) {
+		return {
+			maxDepartures: 4,
+			updateInterval: 30
+		};
+	}
 	const fileData = fs.readFileSync(PATH, 'utf-8');
 	return JSON.parse(fileData);
 }
