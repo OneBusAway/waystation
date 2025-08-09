@@ -15,6 +15,9 @@
 
 	let { stopIDs = [] } = $props();
 
+	let footerHeight = $state(0);
+	let sideDisplay = $state(false);
+
 	let allDepartures = $state([]);
 	let situations = $state([]);
 	let loading = $state(true);
@@ -94,7 +97,10 @@
 
 		if (browser) {
 			clearInterval(interval);
+			sideDisplay = window.innerWidth > 1680;
 			interval = setInterval(fetchStops, REFRESH_INTERVAL);
+			const footer = document.getElementById('footer');
+			if (footer) footerHeight = footer.offsetHeight;
 		}
 	});
 
@@ -106,8 +112,8 @@
 <div class="flex flex-1 overflow-hidden">
 	<div class="text-brand-darkblue flex flex-1 flex-col overflow-y-auto">
 		{#if loading}
-			<div class="flex h-32 items-center justify-center">
-				<p class="text-xl">{t.controller_loading()}</p>
+			<div class="flex h-[6.667vw] items-center justify-center">
+				<p class="text-[1.542vw]">{t.controller_loading()}</p>
 			</div>
 		{:else if allDepartures.length > 0}
 			<div class="flex flex-col">
@@ -118,15 +124,21 @@
 				{/each}
 			</div>
 		{:else}
-			<div class="flex h-32 items-center justify-center">
-				<p class="text-xl">{t.controller_unavailable()}</p>
+			<div class="flex h-[6.667vw] items-center justify-center">
+				<p class="text-[1.542vw]">{t.controller_unavailable()}</p>
 			</div>
 		{/if}
 	</div>
 
 	{#if situations.length > 0 && situations[0].summary?.value && allDepartures.length > 0}
-		<div class="flex-shrink-0 basis-[35%] overflow-y-auto">
-			<Alerts {situations} />
-		</div>
+		{#if sideDisplay}
+			<div class="flex-shrink-0 basis-[35%] overflow-y-auto">
+				<Alerts {situations} displayMode={sideDisplay} />
+			</div>
+		{:else}
+			<div class="fixed" style={`bottom: ${footerHeight}px`}>
+				<Alerts {situations} displayMode={sideDisplay} />
+			</div>
+		{/if}
 	{/if}
 </div>
