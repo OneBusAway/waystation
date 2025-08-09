@@ -105,7 +105,8 @@
 			clearInterval(interval);
 			sideDisplay = window.innerWidth > 1680;
 			interval = setInterval(fetchStops, REFRESH_INTERVAL);
-			footerHeight = document.getElementById('footer').offsetHeight;
+			const footer = document.getElementById('footer');
+			if (footer) footerHeight = footer.offsetHeight;
 		}
 	});
 
