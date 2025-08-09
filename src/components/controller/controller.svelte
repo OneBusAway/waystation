@@ -96,7 +96,7 @@
 		const res = await fetch('/api/config');
 		config = await res.json();
 
-		REFRESH_INTERVAL = config.refreshInterval * 1000 || 30_000;
+		REFRESH_INTERVAL = config.updateInterval * 1000 || 30_000;
 		MAX_DEPARTURES = config.maxDepartures || 99;
 
 		await fetchStops();

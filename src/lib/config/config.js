@@ -11,3 +11,5 @@ export function saveConfig(file) {
 	const writeData = JSON.stringify(file, null, 2);
 	fs.writeFileSync(PATH, writeData);
 }
+
+export const startTime = Date.now();

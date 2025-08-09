@@ -1,16 +1,20 @@
 <script>
 	import { PUBLIC_OBA_LOGO_URL, PUBLIC_OBA_REGION_NAME } from '$env/static/public';
 	import { onMount } from 'svelte';
+	import { formatSeconds } from '$lib/formatters';
 	import { setLocale } from '$lib/paraglide/runtime';
 	import { Power, Plus, Minus } from '@lucide/svelte';
 
 	import Header from '$components/navigation/header.svelte';
 
+	let { data } = $props();
+
 	let localConfig = $state({
-		maxDepartures: 3,
+		maxDepartures: 4,
 		updateInterval: 30
 	});
 
+	let runningTime = $state(0);
 	let selector = $state('en');
 	let fallback = 'https://onebusaway.org/wp-content/uploads/oba_logo-1.png';
 
@@ -46,10 +50,18 @@
 		}
 	}
 
+	const upTime = () => {
+		runningTime = Math.floor((Date.now() - data.startTime) / 1000);
+		runningTime = formatSeconds(runningTime);
+	};
+
 	onMount(async () => {
 		const req = await fetch('/api/config');
 		let config = await req.json();
 		if (config) localConfig = config;
+
+		upTime();
+		setInterval(upTime, 1000);
 	});
 </script>
 
@@ -62,10 +74,10 @@
 				Admin Dashboard
 			</span>
 			<span
-				class="hitespace-nowrap text-oba-green flex items-center gap-x-2 rounded-2xl bg-gray-100 p-3 text-xl"
+				class="text-oba-green flex items-center gap-x-2 rounded-2xl bg-gray-100 p-3 text-xl whitespace-nowrap"
 			>
 				<Power size={22} strokeWidth={3.5} />
-				1 Day, 2 Hours, 30 minutes
+				{runningTime}
 			</span>
 		</div>
 		<div class="flex w-[65vw] flex-row gap-3 rounded-3xl bg-white p-5 text-xl">

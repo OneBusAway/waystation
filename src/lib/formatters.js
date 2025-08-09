@@ -1,5 +1,17 @@
 import * as t from '$lib/paraglide/messages.js';
 import { getLocale } from './paraglide/runtime';
+import { Duration } from 'luxon';
+
+/**
+ * Format seconds into a human-readable time
+ * @param {number} seconds
+ * @returns {string}
+ */
+export function formatSeconds(seconds) {
+	return Duration.fromObject({ seconds })
+		.shiftTo('months', 'days', 'hours', 'minutes', 'seconds')
+		.toHuman({ listStyle: 'long', unitDisplay: 'long' });
+}
 
 /**
  * Format time for display
