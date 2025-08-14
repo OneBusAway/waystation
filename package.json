@@ -45,6 +45,7 @@
 	"dependencies": {
 		"@inlang/paraglide-js": "^2.2.0",
 		"@lucide/svelte": "^0.515.0",
+		"luxon": "^3.7.1",
 		"onebusaway-sdk": "^1.7.3"
 	}
 }

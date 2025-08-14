@@ -54,7 +54,11 @@
 				{/if}
 
 				{#if dateStart !== 'Invalid Date' && dateEnd !== 'Invalid Date'}
-					<div class="flex items-center">➔</div>
+					<div
+						class={`flex items-center ${getLocale() === 'ar' ? '[transform:rotate(180deg)]' : ' '}`}
+					>
+						➔
+					</div>
 				{/if}
 
 				{#if dateEnd !== 'Invalid Date'}
