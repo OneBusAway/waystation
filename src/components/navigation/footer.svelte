@@ -1,6 +1,18 @@
 <script>
-	let { stops } = $props();
+	import { onMount } from 'svelte';
 	import * as t from '$lib/paraglide/messages.js';
+
+	let { stopIDs = [] } = $props();
+
+	let stops = $state([]);
+
+	async function stopNames() {
+		const response = await fetch(`/api/oba/name-and-code-for-stop/${stopIDs.join('+')}`);
+		const dataBlocks = await response.json();
+		stops = dataBlocks;
+	}
+
+	onMount(stopNames);
 </script>
 
 <div class="flex items-center justify-between bg-gray-300 p-[0.625vw] text-black">
