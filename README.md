@@ -45,30 +45,7 @@ To get started, set up Waystation for local development:
 
 ## Contribution
 
-Participating in this codebase means you adhere to the [OBA Code of Conduct](https://github.com/OneBusAway/onebusaway/blob/master/CODE_OF_CONDUCT.md).
-
-**Getting Started:**
-
-- Fork the project on GitHub.
-- Create a feature branch.
-- Write tests and code.
-- If you have multiple commits, squash them into one commit. See [this article](http://eli.thegreenplace.net/2014/02/19/squashing-github-pull-requests-into-a-single-commit) and [this Git documentation](http://git-scm.com/book/en/Git-Tools-Rewriting-History#Squashing-Commits) for instructions.
-- Push the commit to your fork.
-- Submit a pull request with a motive for your change and the method you used to achieve it.
-- Mention related issues in the pull request description or comments.
-
-**We will accept pull requests if:**
-
-- The code has proper tests and all tests pass (or it is a test exposing a failure in existing code).
-- It can be merged without problems (if not, please use: `git rebase main`).
-- It doesn't break any existing functionality.
-- It's quality code that conforms to standard style guides and best practices.
-- The description includes a motive for your change and the method you used to achieve it.
-- It is not a catch-all pull request but rather fixes a specific issue or implements a specific feature.
-- It keeps the OneBusAway codebase clean and well-structured.
-- We think other users will benefit from the same functionality.
-- If it makes changes to the UI, the pull request should include screenshots.
-- It is a single commit (please use `git rebase -i` to squash commits).
+Please read our [Contributing Guide](https://github.com/OneBusAway/waystation/blob/main/docs/contribution.md) for details on how to get started.
 
 ## Development Tips
 
