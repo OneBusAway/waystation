@@ -1,4 +1,4 @@
 {
-	"maxDepartures": 4,
-	"updateInterval": 30
+  "maxDepartures": 4,
+  "updateInterval": 30
 }
