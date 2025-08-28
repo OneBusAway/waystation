@@ -52,4 +52,4 @@ npm test
 
 ## Support
 
-* For further help & guidance, check our [Support](SUPPORT.md) framework!
+* For further help & guidance, check our [Support](../SUPPORT.md) framework!

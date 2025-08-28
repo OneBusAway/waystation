@@ -27,4 +27,4 @@ Each page assembles UI components and manages navigation across the Waystation b
 
 Server-side endpoints that expose data as JSON for the client. These act as a wrapper around upstream services to provide a consistent API.
 
-- #### [API Reference](api-routes.md)
+- #### [API Reference](api-reference.md)
