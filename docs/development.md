@@ -49,3 +49,7 @@ npm test
 * [OBA Documentation](https://developer.onebusaway.org/) — general API reference.
 * [Routing Guide](routing.md) — Waystation architecture overview.
 * [API Reference](api-reference.md) — list of internal API endpoints.
+
+## Support
+
+* For further help & guidance, check our [Support](SUPPORT.md) framework!
