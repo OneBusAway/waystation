@@ -2,7 +2,8 @@
 
 This document defines the internal API endpoints of the Waystation app. These endpoints supply data to UI components, persist configuration, and ensure resilience through cached responses when upstream fetches fail.
 
-> **Note:** These endpoints are server-side only. They should not be exposed publicly without proper security measures.
+> [!NOTE]
+> These endpoints are server-side only. They should not be exposed publicly without proper security measures.
 
 ## `/api/config`
 

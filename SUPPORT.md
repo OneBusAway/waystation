@@ -15,7 +15,8 @@ You are welcome to join our community for help and support. Before posting a que
 * Explain the steps you have already taken to resolve it.
 * Share any relevant logs, code snippets, or error messages.
 
-> **Note:** You don’t need to spend a long time troubleshooting, but you should demonstrate that you have made some effort on your own. This helps maintainers and community members understand the problem more quickly and provide better assistance.
+> [!NOTE]  
+> You don’t need to spend a long time troubleshooting, but you should demonstrate that you have made some effort on your own. This helps maintainers and community members understand the problem more quickly and provide better assistance.
 
 ### Reach Out to the Community
 

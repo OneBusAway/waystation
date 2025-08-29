@@ -31,7 +31,8 @@ PUBLIC_OBA_SERVER_URL="https://api.pugetsound.onebusaway.org/"
 PRIVATE_OBA_API_KEY="test"
 ```
 
-> **Note:** OBA API usage may be rate-limited. Contact the project admins via [Slack](https://opentransitsoftwarefoundation.org/join-our-slack/) if you encounter issues.
+> [!TIP]  
+> OBA API usage may be rate-limited. Contact the project admins via [Slack](https://opentransitsoftwarefoundation.org/join-our-slack/) if you encounter issues.
 
 ### 4. Testing
 
