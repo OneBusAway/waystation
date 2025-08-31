@@ -1,102 +1,30 @@
-# Waystation
+<img width="600" height="175" alt="WS-Header" src="https://github.com/user-attachments/assets/7cf4bc76-9db5-4f2e-af43-ce4ccd4efc36" />
 
-![Waystation-Heading](https://github.com/user-attachments/assets/005a2d71-4e9e-4335-91a6-61270b3faeec)
+[![License](https://img.shields.io/github/license/OneBusAway/waystation)](https://github.com/OneBusAway/waystation/blob/main/LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/OneBusAway/waystation/blob/main/CONTRIBUTING.md)
+[![Coverage Status](https://coveralls.io/repos/github/OneBusAway/waystation/badge.svg?branch=main)](https://coveralls.io/github/OneBusAway/waystation?branch=main)
+[![SvelteKit](https://img.shields.io/badge/SvelteKit-FF3E00?logo=svelte&logoColor=white)](https://svelte.dev/)
 
-Waystation is the next-generation [Sign Mode](https://developer.onebusaway.org/features/sign-mode) for OneBusAway. It serves as a transit information screen designed to display real-time arrivals and departures for a given transit stop. Built with [SvelteKit](https://kit.svelte.dev/), Waystation provides a modern, standalone web application that empowers transit agencies and businesses to create efficient and visually appealing public transit information systems.
+Waystation is a transit information display that provides reliable, real-time arrival and departure times at bus stops, train stations, and transit hubs. It also delivers service alerts and supports multiple languages, ensuring accurate information is accessible to a wide range of riders.
 
-## Features
+For agencies, Waystation is the next-generation *Sign Mode* for the [OneBusAway project](https://github.com/OneBusAway/onebusaway/wiki)—a ready-to-deploy application designed for continuous, long-term operation. It is developed with the needs of transit agencies in mind, providing a dependable and low-maintenance system for delivering real-time rider information.
 
-- Real-time transit information display.
-- Customizable branding with agency logos and region names.
-- Easy integration with OneBusAway API.
-- Modern, responsive design built with SvelteKit.
+For developers, Waystation is designed to be straightforward to install, configure, and extend. It is implemented with [SvelteKit](https://svelte.dev/), internationalized with [inlang Paraglide](https://inlang.com/m/gerre34r/library-inlang-paraglideJs), and relies on [OneBusAway APIs](https://github.com/OneBusAway/js-sdk) as its primary data source.
 
-## `.env` File Keys
+<img width="1000" height="450" alt="WaystationInActionBanner" src="https://github.com/user-attachments/assets/e9ca4196-7ecd-48d3-a848-69bc9ede9adc" />
 
-- `PUBLIC_OBA_LOGO_URL` string: (required) The URL of your transit agency's logo.
-- `PUBLIC_OBA_REGION_NAME` string: (required) displayed in the header.
-- `PUBLIC_OBA_SERVER_URL` string: (required) Your OBA API server's URL.
-- `PRIVATE_OBA_API_KEY` string: (required) Your OneBusAway REST API server key.
+# Development
 
-## Development
+See [Developer Guide](docs/development.md) and [Documentation](docs/routing.md) for setup and technical details.
 
-To get started, set up Waystation for local development:
+# Contributions
 
-1. **Install Dependencies and Set Up Environment Variables** - Ensure you have [Node.js](https://nodejs.org/) (v16 or higher) and [npm](https://www.npmjs.com/) installed. Then, install the project dependencies and set up your environment variables:
+We welcome contributions! Please review our [Contributor Guide](CONTRIBUTING.md) before opening a pull request.
 
-   ```bash
-   npm install          # Install project dependencies
-   cp .env.example .env # Copy the example environment file to .env
-   ```
+# Support
 
-   > Edit the `.env` file to match your OneBusAway API credentials and other required settings. By default, this should work:
+For help and troubleshooting, see our [Support Guide](SUPPORT.md).
 
-   ```env
-   PUBLIC_OBA_LOGO_URL="https://onebusaway.org/wp-content/uploads/oba_logo-1.png"
-   PUBLIC_OBA_REGION_NAME="Sound Transit"
-   PUBLIC_OBA_SERVER_URL="https://api.pugetsound.onebusaway.org/"
-   PRIVATE_OBA_API_KEY="test"
-   ```
+# License
 
-2. **Run the Development Server** - Launch Waystation locally:
-   ```bash
-   npm run dev
-   ```
-
-## Contribution
-
-Participating in this codebase means you adhere to the [OBA Code of Conduct](https://github.com/OneBusAway/onebusaway/blob/master/CODE_OF_CONDUCT.md).
-
-**Getting Started:**
-
-- Fork the project on GitHub.
-- Create a feature branch.
-- Write tests and code.
-- If you have multiple commits, squash them into one commit. See [this article](http://eli.thegreenplace.net/2014/02/19/squashing-github-pull-requests-into-a-single-commit) and [this Git documentation](http://git-scm.com/book/en/Git-Tools-Rewriting-History#Squashing-Commits) for instructions.
-- Push the commit to your fork.
-- Submit a pull request with a motive for your change and the method you used to achieve it.
-- Mention related issues in the pull request description or comments.
-
-**We will accept pull requests if:**
-
-- The code has proper tests and all tests pass (or it is a test exposing a failure in existing code).
-- It can be merged without problems (if not, please use: `git rebase main`).
-- It doesn't break any existing functionality.
-- It's quality code that conforms to standard style guides and best practices.
-- The description includes a motive for your change and the method you used to achieve it.
-- It is not a catch-all pull request but rather fixes a specific issue or implements a specific feature.
-- It keeps the OneBusAway codebase clean and well-structured.
-- We think other users will benefit from the same functionality.
-- If it makes changes to the UI, the pull request should include screenshots.
-- It is a single commit (please use `git rebase -i` to squash commits).
-
-## Development Tips
-
-Explore the Codebase:
-
-- `/src/` - Core application logic.
-- `/src/components/` - Components and their connections.
-- `/src/lib` - Data fetching and other functionalities.
-
-- Run the test suite to ensure functionality:
-
-  ```bash
-  npm test
-  ```
-
-  > Consider creating unit tests for each new feature or component you add.
-
-- Lint and format your code to maintain consistency and code quality:
-
-  ```bash
-  npm run lint   # Check for linting errors
-  npm run format # Format the code
-  ```
-
-  > Always lint and format your code after making changes.
-
-- Build the project for production to ensure everything works as expected:
-  ```bash
-  npm run build
-  ```
-  > Verify that the production build is stable and running correctly with `npm run preview`.
+Waystation is [AGPL-3.0](https://github.com/OneBusAway/waystation/blob/main/LICENSE) licensed.
