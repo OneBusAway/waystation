@@ -5,7 +5,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/OneBusAway/waystation/badge.svg?branch=main)](https://coveralls.io/github/OneBusAway/waystation?branch=main)
 [![SvelteKit](https://img.shields.io/badge/SvelteKit-FF3E00?logo=svelte&logoColor=white)](https://svelte.dev/)
 
-Waystation is a transit information display that provides reliable, real-time arrival and departure times at bus stops, train stations, and transit hubs.
+Waystation is a transit information display that provides reliable, real-time arrival and departure times at bus stops, train stations, and transit hubs. It also delivers service alerts and supports multiple languages, ensuring accurate information is accessible to a wide range of riders.
 
 For agencies, Waystation is the next-generation *Sign Mode* for the [OneBusAway project](https://github.com/OneBusAway/onebusaway/wiki)—a ready-to-deploy application designed for continuous, long-term operation. It is developed with the needs of transit agencies in mind, providing a dependable and low-maintenance system for delivering real-time rider information.
 
