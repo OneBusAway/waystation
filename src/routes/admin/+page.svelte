@@ -83,7 +83,7 @@
 		<div class="flex w-full max-w-7xl flex-col gap-3 rounded-3xl bg-white p-5 text-xl md:flex-row">
 			<div class="flex w-full flex-col gap-y-3 rounded-xl border-4 border-gray-300 p-3">
 				Display Language
-				<select bind:value={selector}>
+				<select bind:value={selector} class="hover:cursor-pointer">
 					<option value="en">English</option>
 					<option value="ar">Arabic</option>
 					<option value="es">Spanish</option>
@@ -95,13 +95,13 @@
 				Departures Display Limit
 				<span class="flex items-center gap-x-3 text-2xl font-bold whitespace-nowrap">
 					<Minus
-						class="rounded-md bg-gray-200"
+						class="rounded-md bg-gray-200 hover:cursor-pointer"
 						size={24}
 						onclick={() => alter('maxDepartures', 'minus')}
 					/>
 					{localConfig.maxDepartures}
 					<Plus
-						class="rounded-md bg-gray-200"
+						class="rounded-md bg-gray-200 hover:cursor-pointer"
 						size={24}
 						onclick={() => alter('maxDepartures', 'add')}
 					/>
@@ -111,13 +111,13 @@
 				Screen Update Interval (seconds)
 				<span class="flex items-center gap-x-3 text-2xl font-bold whitespace-nowrap">
 					<Minus
-						class="rounded-md bg-gray-200"
+						class="rounded-md bg-gray-200 hover:cursor-pointer"
 						size={24}
 						onclick={() => alter('updateInterval', 'minus')}
 					/>
 					{localConfig.updateInterval}
 					<Plus
-						class="rounded-md bg-gray-200"
+						class="rounded-md bg-gray-200 hover:cursor-pointer"
 						size={24}
 						onclick={() => alter('updateInterval', 'add')}
 					/>
