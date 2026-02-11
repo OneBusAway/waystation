@@ -70,20 +70,42 @@
 		<div
 			class="flex w-full max-w-7xl flex-col justify-between gap-3 rounded-3xl bg-white p-4 text-xl md:flex-row md:items-center md:text-2xl"
 		>
-			<span class="flex items-center gap-1 font-bold whitespace-nowrap lg:gap-2 lg:text-3xl">
-				<Power class="text-oba-green size-5 lg:size-7" strokeWidth={3.5} />
-				Uptime
+			<span class="flex items-center gap-x-2 font-bold whitespace-nowrap lg:gap-x-3 lg:text-3xl">
+				<img src={PUBLIC_OBA_LOGO_URL} alt="Logo" class="h-6 rounded-md lg:h-8" />
+				Admin Dashboard
 			</span>
 			<div
-				class="text-md text-oba-green flex items-center justify-center gap-x-2 rounded-2xl bg-gray-100 p-3 md:text-lg lg:text-xl"
+				class="text-oba-green flex items-center justify-center gap-x-2 rounded-2xl bg-gray-100 p-3 text-base md:text-lg lg:text-xl"
 			>
+				<Power class="text-oba-green size-5 lg:size-7" strokeWidth={3.5} />
 				{runningTime}
 			</div>
 		</div>
+		{#snippet stepper(label, key)}
+			<div class="flex w-full flex-col gap-y-3 rounded-xl border-4 border-gray-300 p-3">
+				<span>{label}</span>
+				<span class="flex items-center gap-x-3 text-2xl font-bold whitespace-nowrap">
+					<Minus
+						class="cursor-pointer rounded-md bg-gray-200"
+						size={24}
+						aria-label="Decrease {label.toLowerCase()}"
+						onclick={() => alter(key, 'minus')}
+					/>
+					{localConfig[key]}
+					<Plus
+						class="cursor-pointer rounded-md bg-gray-200"
+						size={24}
+						aria-label="Increase {label.toLowerCase()}"
+						onclick={() => alter(key, 'add')}
+					/>
+				</span>
+			</div>
+		{/snippet}
+
 		<div class="flex w-full max-w-7xl flex-col gap-3 rounded-3xl bg-white p-5 text-xl md:flex-row">
 			<div class="flex w-full flex-col gap-y-3 rounded-xl border-4 border-gray-300 p-3">
-				Display Language
-				<select bind:value={selector} class="hover:cursor-pointer">
+				<label for="language-select">Display Language</label>
+				<select id="language-select" bind:value={selector}>
 					<option value="en">English</option>
 					<option value="ar">Arabic</option>
 					<option value="es">Spanish</option>
@@ -91,52 +113,22 @@
 					<option value="de">German</option>
 				</select>
 			</div>
-			<div class="flex w-full flex-col gap-y-3 rounded-xl border-4 border-gray-300 p-3">
-				Departures Display Limit
-				<span class="flex items-center gap-x-3 text-2xl font-bold whitespace-nowrap">
-					<Minus
-						class="rounded-md bg-gray-200 hover:cursor-pointer"
-						size={24}
-						onclick={() => alter('maxDepartures', 'minus')}
-					/>
-					{localConfig.maxDepartures}
-					<Plus
-						class="rounded-md bg-gray-200 hover:cursor-pointer"
-						size={24}
-						onclick={() => alter('maxDepartures', 'add')}
-					/>
-				</span>
-			</div>
-			<div class="flex w-full flex-col gap-y-3 rounded-xl border-4 border-gray-300 p-3">
-				Screen Update Interval (seconds)
-				<span class="flex items-center gap-x-3 text-2xl font-bold whitespace-nowrap">
-					<Minus
-						class="rounded-md bg-gray-200 hover:cursor-pointer"
-						size={24}
-						onclick={() => alter('updateInterval', 'minus')}
-					/>
-					{localConfig.updateInterval}
-					<Plus
-						class="rounded-md bg-gray-200 hover:cursor-pointer"
-						size={24}
-						onclick={() => alter('updateInterval', 'add')}
-					/>
-				</span>
-			</div>
+			{@render stepper('Departures Display Limit', 'maxDepartures')}
+			{@render stepper('Screen Update Interval (seconds)', 'updateInterval')}
 		</div>
 		<div
-			class="flex w-full max-w-7xl justify-around gap-x-10 rounded-3xl bg-white p-3 px-6 text-xl"
+			class="flex w-full max-w-7xl justify-around gap-x-10 rounded-3xl bg-white px-6 py-3 text-xl"
 		>
 			<button
 				type="button"
-				class="text-brand-red hover:bg-brand-red/10 cursor-pointer rounded-4xl px-5 py-1"
+				class="text-brand-red hover:bg-brand-red/10 rounded-4xl px-5 py-1"
 				onclick={resetChanges}
 			>
 				Set to default
 			</button>
 			<button
 				type="button"
-				class="text-oba-green hover:bg-oba-green/10 cursor-pointer rounded-4xl px-5 py-1 font-bold"
+				class="text-oba-green hover:bg-oba-green/10 rounded-4xl px-5 py-1 font-bold"
 				onclick={saveChanges}
 			>
 				Save changes

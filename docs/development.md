@@ -25,13 +25,13 @@ This guide provides the essentials for setting up a development environment, run
 Define the following keys in `.env`:
 
 ```env
-PUBLIC_OBA_LOGO_URL="https://onebusaway.org/wp-content/uploads/oba_logo-1.png"
+PUBLIC_OBA_LOGO_URL="https://opentransitsoftwarefoundation.org/images/logos/onebusaway.svg"
 PUBLIC_OBA_REGION_NAME="Sound Transit"
 PUBLIC_OBA_SERVER_URL="https://api.pugetsound.onebusaway.org/"
 PRIVATE_OBA_API_KEY="test"
 ```
 
-> [!TIP]  
+> [!TIP]
 > OBA API usage may be rate-limited. Contact the project admins via [Slack](https://opentransitsoftwarefoundation.org/join-our-slack/) if you encounter issues.
 
 ### 4. Testing

@@ -31,7 +31,7 @@ describe('Header', () => {
 
 		expect(getByText('Transit Board')).toBeTruthy();
 		expect(getByAltText('Homepage').getAttribute('src')).toBe(
-			'https://onebusaway.org/wp-content/uploads/oba_logo-1.png'
+			'https://opentransitsoftwarefoundation.org/images/logos/onebusaway.svg'
 		);
 	});
 
