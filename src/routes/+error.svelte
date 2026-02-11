@@ -1,7 +1,8 @@
 <script>
 	import { PUBLIC_OBA_LOGO_URL, PUBLIC_OBA_REGION_NAME } from '$env/static/public';
 
-	let icon = PUBLIC_OBA_LOGO_URL ?? 'https://onebusaway.org/wp-content/uploads/oba_logo-1.png';
+	let icon =
+		PUBLIC_OBA_LOGO_URL ?? 'https://opentransitsoftwarefoundation.org/images/logos/onebusaway.svg';
 	let name = PUBLIC_OBA_REGION_NAME ?? 'Waystation';
 </script>
 

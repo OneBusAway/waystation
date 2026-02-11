@@ -5,7 +5,7 @@
 	let interval;
 
 	let defaultTitle = 'Transit Board';
-	let defaultIcon = 'https://onebusaway.org/wp-content/uploads/oba_logo-1.png';
+	let defaultIcon = 'https://opentransitsoftwarefoundation.org/images/logos/onebusaway.svg';
 
 	let { imageUrl = defaultIcon, title = defaultTitle } = $props();
 
