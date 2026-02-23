@@ -9,9 +9,15 @@
 
 	let title = $state('');
 	let translatedTitle = $state('');
+	let dateStart = $state('');
+	let dateEnd = $state('');
 
 	$effect(() => {
+		const activeWindow = situation?.activeWindows?.[0];
+
 		title = situation?.summary?.value?.trim?.() ?? '';
+		dateStart = formatTimestamp(activeWindow?.from);
+		dateEnd = formatTimestamp(activeWindow?.to);
 
 		if (getLocale() !== 'en') {
 			translate(title, getLocale()).then((result) => {
@@ -19,10 +25,6 @@
 			});
 		}
 	});
-
-	const activeWindow = situation?.activeWindows?.[0];
-	const dateStart = formatTimestamp(activeWindow?.from);
-	const dateEnd = formatTimestamp(activeWindow?.to);
 </script>
 
 {#if displayMode}
