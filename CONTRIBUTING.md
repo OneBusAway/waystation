@@ -1,4 +1,4 @@
-# Contribution Guidlelines
+# Contribution Guidelines
 
 Contributions are welcome. Before submitting, ensure you have read and comply with the OneBusAway [Code of Conduct](https://github.com/OneBusAway/onebusaway/blob/master/CODE_OF_CONDUCT.md).
 
