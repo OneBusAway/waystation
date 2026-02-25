@@ -15,6 +15,7 @@
 
 	let { stopIDs = [] } = $props();
 
+	let alertIndex = $state(0);
 	let footerHeight = $state(0);
 	let sideDisplay = $state(false);
 
@@ -26,6 +27,12 @@
 		config,
 		REFRESH_INTERVAL = 30_000,
 		MAX_DEPARTURES = 99;
+
+	function cycleAlerts() {
+		if (situations.length >= 2) {
+			alertIndex = (alertIndex + 1) % situations.length;
+		}
+	}
 
 	function stopRequestDataModel(dep, stopID, stopName) {
 		const status = formatArrivalStatus(dep.predictedDepartureTime, dep.scheduledDepartureTime);
@@ -84,6 +91,8 @@
 			allDepartures = removeDuplicates(allDepartures);
 			allDepartures = sortEarliestDepartures(allDepartures);
 			allDepartures = allDepartures.slice(0, MAX_DEPARTURES);
+
+			cycleAlerts();
 		} catch (error) {
 			console.error('Error fetching stops:', error);
 			allDepartures = [];
@@ -139,11 +148,11 @@
 	{#if situations.length > 0 && situations[0].summary?.value && allDepartures.length > 0}
 		{#if sideDisplay}
 			<div class="flex-shrink-0 basis-[35%] overflow-y-auto">
-				<Alerts {situations} displayMode={sideDisplay} />
+				<Alerts situation={situations[alertIndex]} displayMode={sideDisplay} />
 			</div>
 		{:else}
 			<div class="fixed" style={`bottom: ${footerHeight}px`}>
-				<Alerts {situations} displayMode={sideDisplay} />
+				<Alerts situation={situations[alertIndex]} displayMode={sideDisplay} />
 			</div>
 		{/if}
 	{/if}
