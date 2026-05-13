@@ -35,7 +35,7 @@ describe('formatters', () => {
 		});
 
 		test('formatDate includes weekday and full date', () => {
-			const date = new Date('2025-07-01');
+			const date = new Date('2025-07-01T00:00:00');
 			expect(formatDate(date)).toMatch(/Tuesday, July 1/);
 		});
 
@@ -45,7 +45,7 @@ describe('formatters', () => {
 		});
 
 		test('formatTimestamp gives readable short format', () => {
-			const ts = new Date('2025-06-18').getTime();
+			const ts = new Date('2025-06-18T00:00:00').getTime();
 			expect(formatTimestamp(ts)).toMatch(/Wed, Jun 18, 2025/);
 		});
 	});
