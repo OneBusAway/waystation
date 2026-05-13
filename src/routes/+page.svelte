@@ -15,7 +15,7 @@
 		<nav class="flex-1 overflow-y-auto">
 			{#each agencies as agency (agency.id)}
 				<a
-					href="/?agency={agency.id}"
+					href="/?agency={encodeURIComponent(agency.id)}"
 					aria-current={agency.id === selectedAgencyId ? 'page' : undefined}
 					class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors {agency.id ===
 					selectedAgencyId
@@ -35,9 +35,13 @@
 
 	<!-- Detail pane -->
 	<main class="flex flex-1 flex-col overflow-hidden">
-		{#if !selectedAgency}
+		{#if !selectedAgencyId}
 			<div class="flex flex-1 items-center justify-center text-sm text-gray-400">
 				Select an agency to view its stops.
+			</div>
+		{:else if !selectedAgency}
+			<div class="flex flex-1 items-center justify-center text-sm text-gray-400">
+				Agency not found.
 			</div>
 		{:else}
 			<div class="flex-1 overflow-y-auto">
