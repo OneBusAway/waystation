@@ -19,7 +19,7 @@ export async function load({ url }) {
 	}
 
 	return {
-		agencies: agencyRefs,
+		agencies: agencyRefs.sort((a, b) => a.name.localeCompare(b.name)),
 		selectedAgencyId,
 		stopIDs
 	};

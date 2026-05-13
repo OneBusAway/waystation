@@ -25,7 +25,7 @@
 					<span
 						class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-gray-100 text-xs font-semibold text-gray-600"
 					>
-						{agency.name.charAt(0)}
+						{agency.id}
 					</span>
 					{agency.name}
 				</a>
