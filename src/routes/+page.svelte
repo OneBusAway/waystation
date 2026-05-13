@@ -16,6 +16,7 @@
 			{#each agencies as agency (agency.id)}
 				<a
 					href="/?agency={agency.id}"
+					aria-current={agency.id === selectedAgencyId ? 'page' : undefined}
 					class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors {agency.id ===
 					selectedAgencyId
 						? 'bg-brand-lightgray text-brand-darkblue font-semibold'
@@ -63,6 +64,11 @@
 											View
 										</a>
 									</td>
+								</tr>
+							{:else}
+								<tr>
+									<td colspan="2" class="py-6 text-center text-sm text-gray-400">No stops found.</td
+									>
 								</tr>
 							{/each}
 						</tbody>
