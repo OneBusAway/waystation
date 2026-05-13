@@ -1,10 +1,8 @@
 <script>
-	import { goto } from '$app/navigation';
-
 	let { data } = $props();
-	let agencies = data.agencies;
-	let selectedAgencyId = data.selectedAgencyId;
-	let stopIDs = data.stopIDs;
+	let agencies = $derived(data.agencies);
+	let selectedAgencyId = $derived(data.selectedAgencyId);
+	let stopIDs = $derived(data.stopIDs);
 	let selectedAgency = $derived(agencies.find((a) => a.id === selectedAgencyId));
 </script>
 
@@ -16,8 +14,8 @@
 		</div>
 		<nav class="flex-1 overflow-y-auto">
 			{#each agencies as agency (agency.id)}
-				<button
-					onclick={() => goto(`/?agency=${agency.id}`)}
+				<a
+					href="/?agency={agency.id}"
 					class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors {agency.id ===
 					selectedAgencyId
 						? 'bg-brand-lightgray text-brand-darkblue font-semibold'
@@ -29,7 +27,7 @@
 						{agency.name.charAt(0)}
 					</span>
 					{agency.name}
-				</button>
+				</a>
 			{/each}
 		</nav>
 	</aside>
@@ -51,7 +49,9 @@
 						<thead>
 							<tr class="border-b border-gray-200">
 								<th class="pb-2 text-left font-medium text-gray-900">Stop ID</th>
-								<th class="pb-2 text-right font-medium text-gray-900"></th>
+								<th class="pb-2 text-right font-medium text-gray-900">
+									<span class="sr-only">Actions</span>
+								</th>
 							</tr>
 						</thead>
 						<tbody>
