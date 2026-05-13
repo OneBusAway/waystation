@@ -33,18 +33,14 @@
 						<thead>
 							<tr class="border-b border-gray-200">
 								<th class="pb-2 text-left font-medium text-gray-900">Stop ID</th>
-								<th class="pb-2 text-right font-medium text-gray-900">
-									<span class="sr-only">Actions</span>
-								</th>
 							</tr>
 						</thead>
 						<tbody>
 							{#each stopIDs as stopID (stopID)}
 								<tr class="border-b border-gray-100">
-									<td class="py-2.5 font-mono text-gray-700">{stopID}</td>
-									<td class="py-2.5 text-right">
+									<td class="py-2.5">
 										<a href="/stops/{stopID}" class="text-brand-blue font-medium hover:underline">
-											View
+											{stopID}
 										</a>
 									</td>
 								</tr>
