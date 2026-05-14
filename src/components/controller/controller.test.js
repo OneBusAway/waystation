@@ -145,3 +145,51 @@ test('cycles through situations on 2+ fetches', async () => {
 		expect(getByText(/Conan Gray/)).toBeTruthy();
 	});
 });
+
+test('renders side-display alerts without crashing on wide screens', async () => {
+	// Regression test: on wide screens sideDisplay flips true after the fetch completes,
+	// which previously caused a Svelte branch-switch crash in destroy_effect → get_next_sibling.
+	vi.spyOn(window, 'innerWidth', 'get').mockReturnValue(1800);
+
+	vi.stubGlobal(
+		'fetch',
+		vi.fn(() =>
+			Promise.resolve({
+				json: () =>
+					Promise.resolve({
+						data: {
+							entry: {
+								arrivalsAndDepartures: [
+									{
+										predictedDepartureTime: Date.now() + 5 * 60_000,
+										scheduledDepartureTime: Date.now() + 7 * 60_000,
+										tripId: 'trip1',
+										stopId: 'agency_123',
+										routeShortName: '10',
+										tripHeadsign: 'Test Trip',
+										stopName: 'Test Stop'
+									}
+								]
+							},
+							references: {
+								stops: { agency_123: { id: 'agency_123', name: 'Test Stop' } },
+								situations: [{ summary: { lang: 'en', value: 'Test service alert' } }]
+							}
+						}
+					})
+			})
+		)
+	);
+
+	document.getElementById = vi.fn().mockImplementation((id) => {
+		if (id === 'footer') return { offsetHeight: 50 };
+		return null;
+	});
+
+	const { getByText } = render(Controller, { props: { stopIDs: ['agency_123'] } });
+
+	await waitFor(() => {
+		expect(getByText('Test Trip')).toBeTruthy();
+		expect(getByText('Test service alert')).toBeTruthy();
+	});
+});
