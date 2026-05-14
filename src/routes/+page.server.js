@@ -6,21 +6,48 @@ export async function load({ url }) {
 	const agencyRefs = agenciesBody.data.references.agencies;
 
 	const selectedAgencyId = url.searchParams.get('agency');
+
 	let stopIDs = [];
+	let stops = [];
 
 	if (selectedAgencyId) {
-		try {
-			const response = await oba.stopIdsForAgency.list(selectedAgencyId);
-			const json = await handleOBAResponse(response, 'stop-ids').json();
-			stopIDs = json.data.list;
-		} catch {
-			stopIDs = [];
+		stops = await stopsForAgency(selectedAgencyId);
+		if (stops) {
+			console.log(stops);
+			stopIDs = stops.map((s) => s.id);
+		} else {
+			stopIDs = await stopIdsForAgency(selectedAgencyId);
 		}
 	}
 
 	return {
 		agencies: agencyRefs.sort((a, b) => a.name.localeCompare(b.name)),
 		selectedAgencyId,
-		stopIDs
+		stopIDs,
+		stops
 	};
+}
+
+async function stopIdsForAgency(agencyID) {
+	try {
+		const response = await oba.stopIdsForAgency.list(agencyID);
+		const json = await handleOBAResponse(response, 'stop-ids').json();
+		return json.data.list;
+	} catch {
+		return [];
+	}
+}
+
+async function stopsForAgency(agencyID) {
+	let stops = null;
+	try {
+		const response = await oba.stopsForAgency.list(agencyID);
+		const json = await handleOBAResponse(response, 'stops').json();
+		stops = json.data.list;
+	} catch (e) {
+		console.error('stopsForAgency failed:', e);
+		stops = null;
+	}
+
+	return stops;
 }
