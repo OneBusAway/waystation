@@ -1,27 +1,44 @@
 <script>
+	import Sidebar from '$components/navigation/sidebar.svelte';
+	import StopIdTable from '$components/stops/stopIdTable.svelte';
+	import StopTable from '$components/stops/stopTable.svelte';
+
 	let { data } = $props();
-	let agencies = data.agencies;
+	let agencies = $derived(data.agencies);
+	let selectedAgencyId = $derived(data.selectedAgencyId);
+	let stops = $derived(data.stops);
+	let stopIDs = $derived(data.stopIDs);
+	let selectedAgency = $derived(agencies.find((a) => a.id === selectedAgencyId));
 </script>
 
-<main>
-	<table>
-		<thead>
-			<tr>
-				<th> ID </th>
-				<th> Name </th>
-			</tr>
-		</thead>
-		<tbody>
-			{#each agencies as agency (agency.id)}
-				<tr>
-					<td>
-						{agency.id}
-					</td>
-					<td>
-						<a href="/agencies/{agency.id}" class="text-blue-600">{agency.name}</a>
-					</td>
-				</tr>
-			{/each}
-		</tbody>
-	</table>
-</main>
+<div class="flex h-screen overflow-hidden bg-gray-50">
+	<!-- Sidebar -->
+	<Sidebar {agencies} {selectedAgencyId} />
+
+	<!-- Detail pane -->
+	<main class="flex flex-1 flex-col overflow-hidden">
+		{#if !selectedAgencyId}
+			<div class="flex flex-1 items-center justify-center text-sm text-gray-400">
+				Select an agency to view its stops.
+			</div>
+		{:else if !selectedAgency}
+			<div class="flex flex-1 items-center justify-center text-sm text-gray-400">
+				Agency not found.
+			</div>
+		{:else}
+			<div class="flex-1 overflow-y-auto">
+				<div class="border-b border-gray-200 bg-white px-6 py-4">
+					<h1 class="text-base font-semibold text-gray-900">{selectedAgency.name}</h1>
+					<p class="text-sm text-gray-500">{stopIDs.length} stops</p>
+				</div>
+				<div class="px-6 py-4">
+					{#if stops}
+						<StopTable {stops} />
+					{:else}
+						<StopIdTable {stopIDs} />
+					{/if}
+				</div>
+			</div>
+		{/if}
+	</main>
+</div>

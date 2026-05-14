@@ -30,3 +30,4 @@ coverage
 
 # Workspace
 .vscode/extensions.json
+settings.local.json
