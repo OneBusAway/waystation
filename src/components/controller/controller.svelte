@@ -19,6 +19,10 @@
 	let footerHeight = $state(0);
 	let sideDisplay = $state(false);
 
+	$effect(() => {
+		sideDisplay = window.innerWidth > 1680;
+	});
+
 	let allDepartures = $state([]);
 	let situations = $state([]);
 	let loading = $state(true);
@@ -114,7 +118,6 @@
 
 		if (browser) {
 			clearInterval(interval);
-			sideDisplay = window.innerWidth > 1680;
 			interval = setInterval(fetchStops, REFRESH_INTERVAL);
 			const footer = document.getElementById('footer');
 			if (footer) footerHeight = footer.offsetHeight;
