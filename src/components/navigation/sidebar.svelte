@@ -1,5 +1,9 @@
 <script>
 	let { agencies, selectedAgencyId } = $props();
+
+	function avatarLabel(id) {
+		return /^\d+$/.test(id) ? id : id.charAt(0).toUpperCase();
+	}
 </script>
 
 <aside class="flex w-64 flex-shrink-0 flex-col border-r border-gray-200 bg-white">
@@ -19,7 +23,7 @@
 				<span
 					class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-gray-100 text-xs font-semibold text-gray-600"
 				>
-					{agency.id}
+					{avatarLabel(agency.id)}
 				</span>
 				{agency.name}
 			</a>

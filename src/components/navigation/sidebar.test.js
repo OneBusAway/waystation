@@ -60,4 +60,18 @@ describe('Sidebar', () => {
 
 		expect(container.querySelectorAll('a').length).toBe(0);
 	});
+
+	test('avatar shows first letter uppercased for word IDs', () => {
+		const { getByText } = render(Sidebar, {
+			props: { agencies: [{ id: 'unitrans', name: 'Unitrans' }], selectedAgencyId: null }
+		});
+		expect(getByText('U')).toBeTruthy();
+	});
+
+	test('avatar shows full number for numeric IDs', () => {
+		const { getByText } = render(Sidebar, {
+			props: { agencies: [{ id: '40', name: 'Metro Transit' }], selectedAgencyId: null }
+		});
+		expect(getByText('40')).toBeTruthy();
+	});
 });

@@ -13,7 +13,6 @@ export async function load({ url }) {
 	if (selectedAgencyId) {
 		stops = await stopsForAgency(selectedAgencyId);
 		if (stops) {
-			console.log(stops);
 			stopIDs = stops.map((s) => s.id);
 		} else {
 			stopIDs = await stopIdsForAgency(selectedAgencyId);

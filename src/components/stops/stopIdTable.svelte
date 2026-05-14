@@ -19,7 +19,7 @@
 			</tr>
 		{:else}
 			<tr>
-				<td colspan="2" class="py-6 text-center text-sm text-gray-400"> No stops found. </td>
+				<td class="py-6 text-center text-sm text-gray-400"> No stops found. </td>
 			</tr>
 		{/each}
 	</tbody>
