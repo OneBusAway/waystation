@@ -15,7 +15,8 @@ import {
 	formatTextColor,
 	generateRandomID,
 	sortEarliestDepartures,
-	removeDuplicates
+	removeDuplicates,
+	formatBoardDeparture
 } from '$lib/formatters';
 
 afterEach(() => {
@@ -106,6 +107,96 @@ describe('formatters', () => {
 			];
 			const filtered = removeDuplicates(deps);
 			expect(filtered.length).toBe(2);
+		});
+	});
+
+	describe('formatBoardDeparture', () => {
+		const NOW = new Date('2026-05-26T17:00:00');
+		const baseDep = {
+			routeShortName: '30',
+			routeLongName: 'Old Town – UTC',
+			tripHeadsign: 'UTC',
+			tripId: 'MTS_abc',
+			scheduledDepartureTime: NOW.getTime() + 5 * 60_000
+		};
+
+		test('marks CANCEL when tripStatus.status is CANCELED, regardless of predicted time', () => {
+			const dep = {
+				...baseDep,
+				predictedDepartureTime: NOW.getTime() + 5 * 60_000,
+				tripStatus: { status: 'CANCELED' }
+			};
+			const a = formatBoardDeparture(dep, NOW);
+			expect(a.status).toBe('CANCEL');
+			expect(a.delta).toBeNull();
+		});
+
+		test('returns SCHED when predicted is 0 (no realtime data)', () => {
+			const dep = { ...baseDep, predictedDepartureTime: 0 };
+			const a = formatBoardDeparture(dep, NOW);
+			expect(a.status).toBe('SCHED');
+			expect(a.delta).toBeNull();
+			expect(a.departureAt).toBe(baseDep.scheduledDepartureTime);
+		});
+
+		test('returns SCHED when predicted is undefined', () => {
+			const dep = { ...baseDep };
+			const a = formatBoardDeparture(dep, NOW);
+			expect(a.status).toBe('SCHED');
+		});
+
+		test('marks EARLY at the delta=-1 boundary', () => {
+			const dep = {
+				...baseDep,
+				predictedDepartureTime: baseDep.scheduledDepartureTime - 60_000
+			};
+			const a = formatBoardDeparture(dep, NOW);
+			expect(a.status).toBe('EARLY');
+			expect(a.delta).toBe(-1);
+		});
+
+		test('marks LATE at the delta=1 boundary', () => {
+			const dep = {
+				...baseDep,
+				predictedDepartureTime: baseDep.scheduledDepartureTime + 60_000
+			};
+			const a = formatBoardDeparture(dep, NOW);
+			expect(a.status).toBe('LATE');
+			expect(a.delta).toBe(1);
+		});
+
+		test('marks ONTIME when delta rounds to 0', () => {
+			const dep = {
+				...baseDep,
+				predictedDepartureTime: baseDep.scheduledDepartureTime + 20_000
+			};
+			const a = formatBoardDeparture(dep, NOW);
+			expect(a.status).toBe('ONTIME');
+			expect(a.delta).toBe(0);
+		});
+
+		test('min uses Math.floor for departures in the past', () => {
+			const dep = {
+				...baseDep,
+				scheduledDepartureTime: NOW.getTime() - 90_000,
+				predictedDepartureTime: NOW.getTime() - 90_000
+			};
+			const a = formatBoardDeparture(dep, NOW);
+			expect(a.min).toBe(-2);
+		});
+
+		test('falls back to ? for missing route and to tripHeadsign for missing routeLongName', () => {
+			const dep = { tripHeadsign: 'Downtown', scheduledDepartureTime: NOW.getTime() + 60_000 };
+			const a = formatBoardDeparture(dep, NOW);
+			expect(a.route).toBe('?');
+			expect(a.name).toBe('Downtown');
+			expect(a.dest).toBe('Downtown');
+		});
+
+		test('falls back to ? for empty routeShortName', () => {
+			const dep = { ...baseDep, routeShortName: '' };
+			const a = formatBoardDeparture(dep, NOW).route;
+			expect(a).toBe('?');
 		});
 	});
 });

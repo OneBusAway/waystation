@@ -333,6 +333,43 @@ export function removeDuplicates(departures) {
 }
 
 /**
+ * Map an OBA arrival/departure into the Board UI's row model.
+ *
+ * @param {Object} dep - OBA arrivalAndDeparture record (with stopName already attached)
+ * @param {Date} [now=new Date()]
+ * @returns {{route: string, name: string, dest: string, min: number, delta: number|null, status: 'ONTIME'|'EARLY'|'LATE'|'SCHED'|'CANCEL', stopName: string, departureAt: number, tripId: string|undefined}}
+ */
+export function formatBoardDeparture(dep, now = new Date()) {
+	const predicted = dep.predictedDepartureTime;
+	const scheduled = dep.scheduledDepartureTime;
+	const departureAt = predicted && predicted > 0 ? predicted : scheduled;
+	const min = Math.floor((departureAt - now.getTime()) / 60000);
+
+	let delta = null;
+	let status = 'SCHED';
+	if (dep.tripStatus?.status === 'CANCELED') {
+		status = 'CANCEL';
+	} else if (predicted && predicted > 0) {
+		delta = Math.round((predicted - scheduled) / 60000);
+		if (delta <= -1) status = 'EARLY';
+		else if (delta >= 1) status = 'LATE';
+		else status = 'ONTIME';
+	}
+
+	return {
+		route: dep.routeShortName || '?',
+		name: dep.routeLongName || dep.tripHeadsign || '',
+		dest: dep.tripHeadsign || '',
+		min,
+		delta,
+		status,
+		stopName: dep.stopName ?? '',
+		departureAt,
+		tripId: dep.tripId
+	};
+}
+
+/**
  * Translates a given text into the specified target language by proxying
  * through Google’s unofficial translate endpoint.
  *
