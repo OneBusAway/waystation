@@ -284,15 +284,17 @@ export function generateRandomID(tripID, stopID) {
  * @returns {Array} - Sorted array of valid departures in chronological order
  */
 export function sortEarliestDepartures(departures) {
+	// OBA returns predictedDepartureTime: 0 when no real-time prediction exists, so we use
+	// `||` (not `??`) to fall through to scheduledDepartureTime for scheduled-only departures.
 	const validDepartures = departures.filter((dep) => {
-		const time = dep.predictedDepartureTime ?? dep.scheduledDepartureTime;
+		const time = dep.predictedDepartureTime || dep.scheduledDepartureTime;
 
 		return time && time > 0;
 	});
 
 	const sortedDepartures = validDepartures.sort((x, y) => {
-		const timeX = x.predictedDepartureTime ?? x.scheduledDepartureTime;
-		const timeY = y.predictedDepartureTime ?? y.scheduledDepartureTime;
+		const timeX = x.predictedDepartureTime || x.scheduledDepartureTime;
+		const timeY = y.predictedDepartureTime || y.scheduledDepartureTime;
 
 		return timeX - timeY;
 	});
