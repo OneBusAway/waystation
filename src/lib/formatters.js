@@ -343,7 +343,8 @@ export function formatBoardDeparture(dep, now = new Date()) {
 	const predicted = dep.predictedDepartureTime;
 	const scheduled = dep.scheduledDepartureTime;
 	const departureAt = predicted && predicted > 0 ? predicted : scheduled;
-	const min = Math.floor((departureAt - now.getTime()) / 60000);
+	const hasValidTime = Number.isFinite(departureAt) && departureAt > 0;
+	const min = hasValidTime ? Math.floor((departureAt - now.getTime()) / 60000) : -Infinity;
 
 	let delta = null;
 	let status = 'SCHED';

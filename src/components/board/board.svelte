@@ -1,9 +1,10 @@
 <script>
-	import AlertBadge from './alert-badge.svelte';
-	import ClockBlock from './clock-block.svelte';
-	import DepartureRow from './departure-row.svelte';
-	import Legend from './legend.svelte';
-	import LiveDot from './live-dot.svelte';
+	import { getLocale } from '$lib/paraglide/runtime.js';
+	import AlertBadge from '$components/board/alert-badge.svelte';
+	import ClockBlock from '$components/board/clock-block.svelte';
+	import DepartureRow from '$components/board/departure-row.svelte';
+	import Legend from '$components/board/legend.svelte';
+	import LiveDot from '$components/board/live-dot.svelte';
 
 	const STALE_THRESHOLD_MS = 90_000;
 
@@ -201,13 +202,13 @@
 					{#if !updatedDate}
 						UPDATING…
 					{:else if stale}
-						STALE · LAST {updatedDate.toLocaleTimeString('en-US', {
+						STALE · LAST {updatedDate.toLocaleTimeString(getLocale(), {
 							hour: 'numeric',
 							minute: '2-digit',
 							second: '2-digit'
 						})}
 					{:else}
-						UPDATED {updatedDate.toLocaleTimeString('en-US', {
+						UPDATED {updatedDate.toLocaleTimeString(getLocale(), {
 							hour: 'numeric',
 							minute: '2-digit',
 							second: '2-digit'

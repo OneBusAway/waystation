@@ -117,7 +117,8 @@
 			if (!res.ok) throw new Error(`/api/config returned ${res.status}`);
 			const config = await res.json();
 			refreshIntervalMs = (Number(config.updateInterval) || 30) * 1000;
-			maxDepartures = Number(config.maxDepartures) || 5;
+			const parsedMax = Math.floor(Number(config.maxDepartures));
+			maxDepartures = Number.isFinite(parsedMax) && parsedMax > 0 ? parsedMax : 5;
 		} catch (err) {
 			console.error('Config fetch failed; using defaults (30s refresh, 5 departures):', err);
 		}

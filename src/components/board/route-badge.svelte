@@ -1,6 +1,7 @@
 <script>
 	let { route } = $props();
-	const size = $derived(route.length <= 1 ? 96 : route.length === 2 ? 80 : 60);
+	const len = $derived(route?.length ?? 0);
+	const size = $derived(len <= 1 ? 96 : len === 2 ? 80 : 60);
 </script>
 
 <div

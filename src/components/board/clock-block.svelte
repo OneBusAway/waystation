@@ -1,11 +1,12 @@
 <script>
 	import { formatDate } from '$lib/formatters.js';
+	import { getLocale } from '$lib/paraglide/runtime.js';
 
 	let { now } = $props();
 
 	const dateText = $derived(formatDate(now));
 	const timeText = $derived(
-		now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
+		now.toLocaleTimeString(getLocale(), { hour: 'numeric', minute: '2-digit', hour12: true })
 	);
 	const seconds = $derived(now.getSeconds().toString().padStart(2, '0'));
 </script>

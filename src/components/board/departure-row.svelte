@@ -1,8 +1,8 @@
 <script>
 	import { formatTime } from '$lib/formatters.js';
-	import ArrivalHero from './arrival-hero.svelte';
-	import RouteBadge from './route-badge.svelte';
-	import StatusPip from './status-pip.svelte';
+	import ArrivalHero from '$components/board/arrival-hero.svelte';
+	import RouteBadge from '$components/board/route-badge.svelte';
+	import StatusPip from '$components/board/status-pip.svelte';
 
 	let { arrival, showStopName = false } = $props();
 

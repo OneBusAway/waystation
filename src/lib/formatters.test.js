@@ -198,5 +198,12 @@ describe('formatters', () => {
 			const a = formatBoardDeparture(dep, NOW).route;
 			expect(a).toBe('?');
 		});
+
+		test('produces a finite min (not NaN) when both timestamps are missing', () => {
+			const dep = { routeShortName: '99', tripHeadsign: 'Nowhere' };
+			const a = formatBoardDeparture(dep, NOW);
+			expect(Number.isNaN(a.min)).toBe(false);
+			expect(a.min).toBeLessThan(-2);
+		});
 	});
 });
