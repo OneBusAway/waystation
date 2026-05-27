@@ -26,3 +26,197 @@ body::before {
 	--shadow-gray: 0 0 0.52vw 0.52vw rgba(0, 0, 0, 0.08);
 	--color-oba-green: oklch(0.692 0.1728 138.8);
 }
+
+/* =========================================================
+   Waystation — Departure Board theme (Light + Dark)
+   Designed at 1920×1080 (landscape kiosk).
+   Light mode reads cleanly on e-ink; Dark mode glows like a Solari board.
+   ========================================================= */
+
+body.board-body {
+	margin: 0;
+	padding: 0;
+	background: #000;
+	overflow: hidden;
+	width: 100vw;
+	height: 100vh;
+	font-family: 'IBM Plex Sans', system-ui, sans-serif;
+}
+body.board-body::before {
+	display: none;
+}
+
+.board-stage-wrap {
+	position: fixed;
+	inset: 0;
+	background: #000;
+	overflow: hidden;
+}
+.board-stage {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 1920px;
+	height: 1080px;
+	transform-origin: 0 0;
+	overflow: hidden;
+}
+
+.theme-departure {
+	font-family: 'IBM Plex Sans', system-ui, sans-serif;
+	background: var(--bg);
+	color: var(--ink);
+}
+.theme-departure .mono {
+	font-family: 'IBM Plex Mono', ui-monospace, monospace;
+	font-variant-numeric: tabular-nums;
+}
+.theme-departure .display {
+	font-family: 'IBM Plex Sans Condensed', 'IBM Plex Sans', sans-serif;
+	font-feature-settings: 'ss01';
+}
+
+/* THEME — DARK (Solari split-flap glow) */
+.theme-departure.theme-dark {
+	--bg: #0e1014;
+	--bg-elev: #15181f;
+	--rule: #2a2f3a;
+	--rule-strong: #3d4453;
+	--ink: #f4ecd8;
+	--ink-dim: #9b9685;
+	--ink-mute: #5e5a4f;
+	--accent: #d4b14a;
+	--accent-dim: #8a7530;
+	--badge-bg-1: #1a1d24;
+	--badge-bg-2: #14171c;
+	--badge-edge: #3d4453;
+	--badge-ink: #d4b14a;
+	--ontime: #7bdc8a;
+	--early: #ffb14a;
+	--late: #ff8b6a;
+	--cancel: #ff8b6a;
+	--sched: #9bb6d9;
+}
+
+/* THEME — LIGHT (paper timetable; reads on e-ink) */
+.theme-departure.theme-light {
+	--bg: #f5f3ee;
+	--bg-elev: #ffffff;
+	--rule: #c7c4bd;
+	--rule-strong: #1a1a1a;
+	--ink: #0a0a0a;
+	--ink-dim: #3a3a3a;
+	--ink-mute: #6a6a6a;
+	--accent: #0a0a0a;
+	--accent-dim: #3a3a3a;
+	--badge-bg-1: #ffffff;
+	--badge-bg-2: #ebe9e3;
+	--badge-edge: #0a0a0a;
+	--badge-ink: #0a0a0a;
+	--ontime: var(--ink);
+	--early: var(--ink);
+	--late: var(--ink);
+	--cancel: var(--ink);
+	--sched: var(--ink);
+}
+
+.theme-departure .status-ONTIME {
+	--status-tone: var(--ontime);
+}
+.theme-departure .status-EARLY {
+	--status-tone: var(--early);
+}
+.theme-departure .status-LATE {
+	--status-tone: var(--late);
+}
+.theme-departure .status-CANCEL {
+	--status-tone: var(--cancel);
+}
+.theme-departure .status-SCHED {
+	--status-tone: var(--sched);
+}
+
+.theme-departure .tnum {
+	font-variant-numeric: tabular-nums;
+}
+.theme-departure .sc {
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+}
+.theme-departure .canceled-time {
+	text-decoration: line-through;
+	text-decoration-thickness: 0.08em;
+}
+
+.theme-departure .alert-badge {
+	border: 1px solid var(--rule);
+	background: var(--bg-elev);
+	color: var(--ink);
+}
+.theme-departure .alert-badge .alert-glyph {
+	color: var(--accent);
+}
+.theme-dark .alert-advisory {
+	border-left: 6px solid #d4b14a;
+	background: rgba(212, 177, 74, 0.08);
+}
+.theme-dark .alert-advisory .alert-glyph {
+	color: #d4b14a;
+}
+.theme-dark .alert-info {
+	border-left: 6px solid #9bb6d9;
+	background: rgba(155, 182, 217, 0.08);
+}
+.theme-dark .alert-info .alert-glyph {
+	color: #9bb6d9;
+}
+.theme-dark .alert-alert {
+	border-left: 6px solid #ff8b6a;
+	background: rgba(255, 139, 106, 0.08);
+}
+.theme-dark .alert-alert .alert-glyph {
+	color: #ff8b6a;
+}
+.theme-light .alert-advisory,
+.theme-light .alert-info {
+	border-left: 6px solid #0a0a0a;
+	background: #ffffff;
+}
+.theme-light .alert-alert {
+	border-left: 6px solid #0a0a0a;
+	background: #ffffff;
+	box-shadow:
+		inset 4px 0 0 #0a0a0a,
+		0 0 0 1px #0a0a0a;
+}
+.theme-light .alert-badge .alert-glyph {
+	color: #0a0a0a;
+}
+
+.theme-dark .route-badge {
+	background: linear-gradient(180deg, #1a1d24 0%, #1a1d24 49%, #14171c 51%, #14171c 100%);
+	border: 1px solid var(--rule-strong);
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.04),
+		inset 0 -1px 0 rgba(0, 0, 0, 0.4),
+		0 2px 0 rgba(0, 0, 0, 0.5);
+	--badge-ink: #d4b14a;
+	--badge-meta: rgba(244, 236, 216, 0.4);
+}
+.theme-light .route-badge {
+	background: #0a0a0a;
+	border: 1px solid #0a0a0a;
+	box-shadow: 0 2px 0 rgba(0, 0, 0, 0.06);
+	--badge-ink: #f5f3ee;
+	--badge-meta: rgba(245, 243, 238, 0.55);
+}
+
+@keyframes board-live-pulse {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.45;
+	}
+}
