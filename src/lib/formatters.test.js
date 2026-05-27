@@ -99,6 +99,18 @@ describe('formatters', () => {
 			expect(sorted[0].scheduledDepartureTime).toBe(1000);
 		});
 
+		test('sortEarliestDepartures keeps scheduled-only departures (predictedDepartureTime === 0)', () => {
+			const deps = [
+				{ predictedDepartureTime: 0, scheduledDepartureTime: 3000 },
+				{ predictedDepartureTime: 0, scheduledDepartureTime: 1000 },
+				{ predictedDepartureTime: 0, scheduledDepartureTime: 2000 }
+			];
+			const sorted = sortEarliestDepartures(deps);
+			expect(sorted.length).toBe(3);
+			expect(sorted[0].scheduledDepartureTime).toBe(1000);
+			expect(sorted[2].scheduledDepartureTime).toBe(3000);
+		});
+
 		test('removeDuplicates filters duplicates correctly', () => {
 			const deps = [
 				{ tripId: '1', scheduledDepartureTime: 1000 },
