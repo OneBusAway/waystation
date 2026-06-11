@@ -3,6 +3,7 @@
 	import AlertBadge from '$components/board/alert-badge.svelte';
 	import ClockBlock from '$components/board/clock-block.svelte';
 	import DepartureRow from '$components/board/departure-row.svelte';
+	import EmptyBoard from '$components/board/empty-board.svelte';
 	import Legend from '$components/board/legend.svelte';
 	import LiveDot from '$components/board/live-dot.svelte';
 
@@ -33,6 +34,7 @@
 	const ageMs = $derived(updatedDate ? now.getTime() - updatedDate.getTime() : null);
 	const stale = $derived(isStale || (ageMs != null && ageMs > STALE_THRESHOLD_MS));
 	const showLive = $derived(liveCount > 0 && !stale);
+	const emptyMode = $derived(!updatedDate ? 'connecting' : stale ? 'stale' : 'empty');
 </script>
 
 <div
@@ -152,19 +154,23 @@
 	</div>
 
 	<!-- ROWS -->
-	<div
-		style:display="grid"
-		style:grid-template-rows="repeat({rowCount}, 1fr)"
-		style:gap="6px"
-		style:min-height="0"
-	>
-		{#each visible as arrival (arrival.tripId ?? `${arrival.route}-${arrival.departureAt}`)}
-			<DepartureRow {arrival} {showStopName} />
-		{/each}
-		{#each Array.from({ length: emptyCount }, (_, i) => i) as i (i)}
-			<div style:border-bottom="1px dashed var(--rule)"></div>
-		{/each}
-	</div>
+	{#if visible.length === 0}
+		<EmptyBoard mode={emptyMode} {rowCount} />
+	{:else}
+		<div
+			style:display="grid"
+			style:grid-template-rows="repeat({rowCount}, 1fr)"
+			style:gap="6px"
+			style:min-height="0"
+		>
+			{#each visible as arrival (arrival.tripId ?? `${arrival.route}-${arrival.departureAt}`)}
+				<DepartureRow {arrival} {showStopName} />
+			{/each}
+			{#each Array.from({ length: emptyCount }, (_, i) => i) as i (i)}
+				<div style:border-bottom="1px dashed var(--rule)"></div>
+			{/each}
+		</div>
+	{/if}
 
 	<!-- FOOTER -->
 	{#if showFooter}
