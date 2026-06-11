@@ -6,6 +6,7 @@
 	import Board from '$components/board/board.svelte';
 	import {
 		formatBoardDeparture,
+		parseStopDepartures,
 		removeDuplicates,
 		sortEarliestDepartures
 	} from '$lib/formatters.js';
@@ -42,23 +43,10 @@
 		if (!response.ok) throw new Error(`HTTP ${response.status} for stop ${id}`);
 		const json = await response.json();
 
-		if (!json?.data?.references?.stops || !json?.data?.entry?.arrivalsAndDepartures) {
-			throw new Error(`malformed response for stop ${id}`);
-		}
-
-		const stopRecord = Object.values(json.data.references.stops).find((s) => s.id === id);
-		const resolvedName = stopRecord?.name ?? `Stop #${id.split('_')[1] ?? id}`;
-
-		return {
-			stopId: id,
-			stopName: resolvedName,
-			stale: json.stale === true,
-			departures: json.data.entry.arrivalsAndDepartures.map((dep) => ({
-				...dep,
-				stopName: resolvedName
-			})),
-			situations: json.data.references.situations ?? []
-		};
+		// Upstream OBA returns `null` (HTTP 200) for some valid stops with no
+		// real-time data; parseStopDepartures normalizes that into an empty result
+		// rather than throwing, so the board shows an empty state instead of failing.
+		return parseStopDepartures(json, id);
 	}
 
 	async function fetchAll() {

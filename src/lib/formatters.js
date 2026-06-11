@@ -373,6 +373,35 @@ export function formatBoardDeparture(dep, now = new Date()) {
 }
 
 /**
+ * Normalize an OBA arrivals-and-departures-for-stop response into the board's
+ * per-stop result model.
+ *
+ * Upstream OBA returns the literal body `null` (HTTP 200) for some valid stops
+ * that have no available real-time data (e.g. MTS_75057). A response without a
+ * departures array is treated as an empty result rather than an error, so the
+ * board renders an empty state instead of failing.
+ *
+ * @param {Object|null} json - Parsed proxy response (may be null)
+ * @param {string} id - Stop ID (e.g. "MTS_75057")
+ * @returns {{stopId: string, stopName: string, stale: boolean, departures: Array, situations: Array}}
+ */
+export function parseStopDepartures(json, id) {
+	const stopsRef = json?.data?.references?.stops;
+	const stopRecord = stopsRef ? Object.values(stopsRef).find((s) => s.id === id) : null;
+	const stopName = stopRecord?.name ?? `Stop #${id.split('_')[1] ?? id}`;
+
+	const departures = json?.data?.entry?.arrivalsAndDepartures;
+
+	return {
+		stopId: id,
+		stopName,
+		stale: json?.stale === true,
+		departures: Array.isArray(departures) ? departures.map((dep) => ({ ...dep, stopName })) : [],
+		situations: json?.data?.references?.situations ?? []
+	};
+}
+
+/**
  * Translates a given text into the specified target language by proxying
  * through Google’s unofficial translate endpoint.
  *

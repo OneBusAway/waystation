@@ -16,7 +16,8 @@ import {
 	generateRandomID,
 	sortEarliestDepartures,
 	removeDuplicates,
-	formatBoardDeparture
+	formatBoardDeparture,
+	parseStopDepartures
 } from '$lib/formatters';
 
 afterEach(() => {
@@ -216,6 +217,64 @@ describe('formatters', () => {
 			const a = formatBoardDeparture(dep, NOW);
 			expect(Number.isNaN(a.min)).toBe(false);
 			expect(a.min).toBeLessThan(-2);
+		});
+	});
+
+	describe('parseStopDepartures', () => {
+		const validResponse = {
+			data: {
+				references: {
+					stops: [{ id: 'MTS_75057', name: 'Stadium Station' }],
+					situations: [{ summary: { value: 'Detour' } }]
+				},
+				entry: {
+					arrivalsAndDepartures: [
+						{ tripId: 'MTS_1', routeShortName: '530' },
+						{ tripId: 'MTS_2', routeShortName: '530' }
+					]
+				}
+			}
+		};
+
+		test('returns an empty result without throwing when the response is null', () => {
+			// Upstream OBA returns the literal body `null` (HTTP 200) for some valid
+			// stops with no available real-time data, e.g. MTS_75057.
+			const result = parseStopDepartures(null, 'MTS_75057');
+			expect(result.stopId).toBe('MTS_75057');
+			expect(result.departures).toEqual([]);
+			expect(result.situations).toEqual([]);
+			expect(result.stale).toBe(false);
+		});
+
+		test('falls back to "Stop #<code>" for the name when references are absent', () => {
+			const result = parseStopDepartures(null, 'MTS_75057');
+			expect(result.stopName).toBe('Stop #75057');
+		});
+
+		test('resolves the stop name and attaches it to each departure', () => {
+			const result = parseStopDepartures(validResponse, 'MTS_75057');
+			expect(result.stopName).toBe('Stadium Station');
+			expect(result.departures).toHaveLength(2);
+			expect(result.departures[0].stopName).toBe('Stadium Station');
+			expect(result.departures[0].tripId).toBe('MTS_1');
+			expect(result.situations).toHaveLength(1);
+		});
+
+		test('returns an empty departures list (with resolved name) for a valid stop with no departures', () => {
+			const response = {
+				data: {
+					references: { stops: [{ id: 'MTS_75057', name: 'Stadium Station' }] },
+					entry: { arrivalsAndDepartures: [] }
+				}
+			};
+			const result = parseStopDepartures(response, 'MTS_75057');
+			expect(result.departures).toEqual([]);
+			expect(result.stopName).toBe('Stadium Station');
+		});
+
+		test('passes through the stale flag', () => {
+			const result = parseStopDepartures({ ...validResponse, stale: true }, 'MTS_75057');
+			expect(result.stale).toBe(true);
 		});
 	});
 });
