@@ -9,7 +9,11 @@ export async function GET({ params }) {
 	try {
 		const response = await oba.arrivalAndDeparture.list(stopID);
 
-		cache.set(stopID, response);
+		// Upstream returns `null` (HTTP 200) for some valid stops with no real-time
+		// data. Only cache responses with real data so we never serve null as stale.
+		if (response?.data?.entry?.arrivalsAndDepartures) {
+			cache.set(stopID, response);
+		}
 
 		return new Response(JSON.stringify(response), {
 			headers: { 'Content-Type': 'application/json' }

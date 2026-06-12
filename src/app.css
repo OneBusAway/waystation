@@ -220,3 +220,41 @@ body.board-body::before {
 		opacity: 0.45;
 	}
 }
+
+@keyframes board-empty-sweep {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes board-empty-rise {
+	from {
+		opacity: 0;
+		transform: translateY(14px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.board-empty-rise {
+	animation: board-empty-rise 0.6s ease both;
+}
+
+.board-empty-sweep {
+	transform-origin: 100px 100px;
+	animation: board-empty-sweep 8s linear infinite;
+}
+
+.board-empty-pulse {
+	animation: board-live-pulse 2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.board-empty-sweep,
+	.board-empty-rise,
+	.board-empty-pulse {
+		animation: none !important;
+	}
+}
