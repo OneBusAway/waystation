@@ -98,8 +98,6 @@
 	}
 
 	onMount(async () => {
-		document.body.classList.add('board-body');
-
 		try {
 			const res = await fetch('/api/config');
 			if (!res.ok) throw new Error(`/api/config returned ${res.status}`);
@@ -127,7 +125,6 @@
 	onDestroy(() => {
 		cancelled = true;
 		if (browser) {
-			document.body.classList.remove('board-body');
 			window.removeEventListener('resize', fitStage);
 		}
 		clearInterval(clockTimer);
