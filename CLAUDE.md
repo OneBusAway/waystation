@@ -54,5 +54,8 @@ Component tests mock `fetch` and use `@testing-library/svelte` for rendering/que
 - **Svelte 5 runes**: Components use `$state`, `$props`, `$effect` — not Svelte 4 stores.
 - **Path aliases**: `$components` → `./src/components`, `$lib` → `./src/lib` (SvelteKit default).
 - **Formatting**: Tabs, single quotes, no trailing commas, 100-char line width (see `.prettierrc`). Prettier plugins for Svelte and Tailwind.
-- **Styling**: Tailwind CSS v4 with custom theme colors defined as CSS variables in `src/app.css` (e.g., `--color-brand-red`). Uses viewport-width units (vw) for responsive sizing on display screens.
+- **Styling**: Tailwind CSS v4 with custom theme colors defined as CSS variables in `src/app.css` (e.g., `--color-brand-red`).
+- **Sizing conventions**: Two intentional conventions exist:
+  - **`vw` units**: default for non-kiosk routes and shared chrome (header, nav, etc.). Keeps elements responsive across screen sizes.
+  - **Fixed `px`**: used exclusively in `/stops/[stopID]` and `src/components/board/*`. This route renders inside a 1920x1080 stage that is uniformly scaled to fit the viewport via a JS-computed CSS transform (`fitStage()` in `src/routes/stops/[stopID]/+page.svelte`, `.board-stage-wrap` / `.board-stage` in `src/app.css`). Fixed px is correct here because the stage itself handles scaling.
 - **Environment variables**: Defined in `.env` (see `.env.example`). Public vars prefixed `PUBLIC_OBA_*`, private as `PRIVATE_OBA_*`. Accessed via SvelteKit's `$env/static/public` and `$env/static/private`.
