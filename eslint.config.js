@@ -30,5 +30,10 @@ export default [
 				svelteConfig
 			}
 		}
+	},
+	{
+		rules: {
+			'svelte/no-navigation-without-resolve': 'off'
+		}
 	}
 ];
