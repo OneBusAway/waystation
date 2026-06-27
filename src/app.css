@@ -33,19 +33,6 @@ body::before {
    Light mode reads cleanly on e-ink; Dark mode glows like a Solari board.
    ========================================================= */
 
-body.board-body {
-	margin: 0;
-	padding: 0;
-	background: #000;
-	overflow: hidden;
-	width: 100vw;
-	height: 100vh;
-	font-family: 'IBM Plex Sans', system-ui, sans-serif;
-}
-body.board-body::before {
-	display: none;
-}
-
 .board-stage-wrap {
 	position: fixed;
 	inset: 0;
