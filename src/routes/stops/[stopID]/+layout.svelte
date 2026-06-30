@@ -10,10 +10,11 @@
 	.board-body {
 		margin: 0;
 		padding: 0;
-		background: #000;
 		overflow: hidden;
-		width: 100vw;
-		height: 100vh;
 		font-family: 'IBM Plex Sans', system-ui, sans-serif;
+	}
+
+	:global(body)::before {
+		display: none;
 	}
 </style>
