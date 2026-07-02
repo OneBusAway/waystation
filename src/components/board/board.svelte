@@ -20,6 +20,7 @@
 		now,
 		lastUpdatedAt = null,
 		isStale = false,
+		fetchFailed = false,
 		showStopName = false,
 		rowCount = 5,
 		showFooter = true,
@@ -34,7 +35,9 @@
 	const ageMs = $derived(updatedDate ? now.getTime() - updatedDate.getTime() : null);
 	const stale = $derived(isStale || (ageMs != null && ageMs > STALE_THRESHOLD_MS));
 	const showLive = $derived(liveCount > 0 && !stale);
-	const emptyMode = $derived(!updatedDate ? 'connecting' : stale ? 'stale' : 'empty');
+	const emptyMode = $derived(
+		!updatedDate && fetchFailed ? 'error' : !updatedDate ? 'connecting' : stale ? 'stale' : 'empty'
+	);
 </script>
 
 <div
