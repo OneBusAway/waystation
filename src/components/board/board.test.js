@@ -1,14 +1,13 @@
 // @vitest-environment jsdom
-
 import { render, cleanup } from '@testing-library/svelte';
 import { describe, test, expect, afterEach } from 'vitest';
 import Board from './board.svelte';
 
 // When a stop has no departures, the board renders the EmptyBoard whose headline
-// is driven by `emptyMode = !updatedDate ? 'connecting' : stale ? 'stale' : 'empty'`.
+// is driven by `emptyMode = !updatedDate && fetchFailed ? 'error' : !updatedDate ? 'connecting' : stale ? 'stale' : 'empty'`.
 // These tests pin that branching — the ternary ordering is easy to invert, and a
 // regression would silently show a rider the wrong state (e.g. "CONNECTING" forever
-// when the live feed is actually stale).
+// when the live feed is actually stale or down).
 describe('Board empty state', () => {
 	afterEach(() => {
 		cleanup();
@@ -23,6 +22,11 @@ describe('Board empty state', () => {
 	test('shows CONNECTING before the first fetch resolves', () => {
 		const { container } = renderEmpty({ lastUpdatedAt: null });
 		expect(container.innerHTML).toContain('CONNECTING');
+	});
+
+	test('shows NO DATA when all fetches fail on first load', () => {
+		const { container } = renderEmpty({ lastUpdatedAt: null, fetchFailed: true });
+		expect(container.innerHTML).toContain('NO DATA');
 	});
 
 	test('shows NO DEPARTURES once loaded with no service', () => {

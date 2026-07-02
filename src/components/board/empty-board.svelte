@@ -24,6 +24,13 @@
 			sub: 'Real-time feed unavailable — retrying',
 			chip: 'ATTEMPTING TO RECONNECT',
 			accent: 'var(--late)'
+		},
+		error: {
+			kicker: 'SIGNAL LOST',
+			head: 'NO DATA',
+			sub: 'Real-time data unavailable — check network',
+			chip: 'RETRYING',
+			accent: 'var(--late)'
 		}
 	};
 
