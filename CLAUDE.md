@@ -41,7 +41,9 @@ Component tests mock `fetch` and use `@testing-library/svelte` for rendering/que
 - `/api/config` — GET/POST for JSON-based config stored at `src/lib/config/settings.json`
 - `/api/oba/*` — Server-side proxy to OneBusAway API with in-memory `Map()` caching. On upstream failure, returns cached data with a `stale: true` flag; otherwise 503.
 
-**Controller component** (`src/components/controller/controller.svelte`): Central orchestrator that fetches departure data on a configurable interval, transforms API responses through formatters, and manages loading/error state.
+**Page orchestration** (`src/routes/stops/[stopID]/+page.svelte`): Fetches departure data on a configurable interval, transforms API responses through formatters, and manages loading/error/stale state. The controller component that previously handled this was removed in PR #81.
+
+**Board component** (`src/components/board/board.svelte`): Pure display component. Receives formatted arrivals, alerts, and status flags as props and renders the departure board, empty states, and footer.
 
 **Formatters** (`src/lib/formatters.js`): Pure functions for arrival status, time display, color coding, sorting, and deduplication of departures. This is the most heavily tested module.
 
