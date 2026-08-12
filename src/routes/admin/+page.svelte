@@ -129,17 +129,23 @@
 			<div class="flex w-full flex-col gap-y-3 rounded-xl border-4 border-gray-300 p-3">
 				<span>{label}</span>
 				<span class="flex items-center gap-x-3 text-2xl font-bold whitespace-nowrap">
-					<Minus
-						class="cursor-pointer rounded-md bg-gray-200"
-						size={24}
+					<button
+						type="button"
+						class="cursor-pointer rounded-md bg-gray-200 p-1"
+						aria-label="Decrease {label.toLowerCase()}"
 						onclick={() => alter(key, 'minus')}
-					/>
+					>
+						<Minus size={24} />
+					</button>
 					{localConfig[key]}
-					<Plus
-						class="cursor-pointer rounded-md bg-gray-200"
-						size={24}
+					<button
+						type="button"
+						class="cursor-pointer rounded-md bg-gray-200 p-1"
+						aria-label="Increase {label.toLowerCase()}"
 						onclick={() => alter(key, 'add')}
-					/>
+					>
+						<Plus size={24} />
+					</button>
 				</span>
 			</div>
 		{/snippet}
