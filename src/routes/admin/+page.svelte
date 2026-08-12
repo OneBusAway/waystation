@@ -37,38 +37,47 @@
 		logoUrlError = validateLogoUrl(localConfig.theme.logoUrl);
 		if (logoUrlError) return;
 
-		setLocale(selector);
+		try {
+			const response = await fetch('/api/config', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(localConfig)
+			});
 
-		await fetch('/api/config', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(localConfig)
-		});
+			if (!response.ok) {
+				throw new Error(`Server responded with ${response.status}`);
+			}
 
-		const theme = localConfig.theme;
-		const siteOverrides = Object.entries(SITE_TOKENS)
-			.filter(([key]) => theme[key])
-			.map(([key, { cssVar }]) => `${cssVar}:${theme[key]}`)
-			.join(';');
-		const boardOverrides = Object.entries(BOARD_TOKENS)
-			.filter(([key]) => theme[key])
-			.map(([key, { cssVar }]) => {
-				const base = `${cssVar}:${theme[key]}`;
-				if (key === 'boardLate') return `${base};--cancel:${theme[key]}`;
-				if (key === 'boardBadgeBg') return `${base};--badge-bg-2:${theme[key]}`;
-				return base;
-			})
-			.join(';');
-		const parts = [];
-		if (siteOverrides) parts.push(`:root{${siteOverrides}}`);
-		if (boardOverrides) parts.push(`:root .theme-departure.theme-dark{${boardOverrides}}`);
-		let styleEl = document.getElementById('waystation-theme');
-		if (!styleEl) {
-			styleEl = document.createElement('style');
-			styleEl.id = 'waystation-theme';
-			document.head.appendChild(styleEl);
+			setLocale(selector);
+
+			const theme = localConfig.theme;
+			const siteOverrides = Object.entries(SITE_TOKENS)
+				.filter(([key]) => theme[key])
+				.map(([key, { cssVar }]) => `${cssVar}:${theme[key]}`)
+				.join(';');
+			const boardOverrides = Object.entries(BOARD_TOKENS)
+				.filter(([key]) => theme[key])
+				.map(([key, { cssVar }]) => {
+					const base = `${cssVar}:${theme[key]}`;
+					if (key === 'boardLate') return `${base};--cancel:${theme[key]}`;
+					if (key === 'boardBadgeBg') return `${base};--badge-bg-2:${theme[key]}`;
+					return base;
+				})
+				.join(';');
+			const parts = [];
+			if (siteOverrides) parts.push(`:root{${siteOverrides}}`);
+			if (boardOverrides) parts.push(`:root .theme-departure.theme-dark{${boardOverrides}}`);
+			let styleEl = document.getElementById('waystation-theme');
+			if (!styleEl) {
+				styleEl = document.createElement('style');
+				styleEl.id = 'waystation-theme';
+				document.head.appendChild(styleEl);
+			}
+			styleEl.textContent = parts.join('');
+		} catch (error) {
+			console.error('Failed to save configuration:', error);
+			alert('Failed to save configuration. Please try again.');
 		}
-		styleEl.textContent = parts.join('');
 	}
 
 	async function resetChanges() {
