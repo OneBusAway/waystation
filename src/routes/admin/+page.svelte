@@ -23,8 +23,6 @@
 	const logoUrl = $derived(localConfig.theme.logoUrl || PUBLIC_OBA_LOGO_URL);
 	const regionName = $derived(localConfig.theme.regionName || PUBLIC_OBA_REGION_NAME);
 
-	const ALL_TOKENS = { ...SITE_TOKENS, ...BOARD_TOKENS };
-
 	function validateLogoUrl(url) {
 		if (!url) return '';
 		try {

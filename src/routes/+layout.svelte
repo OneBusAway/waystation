@@ -38,7 +38,8 @@
 	<title>{regionName}</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	{#if themeStyle}
-		{@html `<style>${themeStyle}</style>`}
+		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+		{@html `<style id="waystation-theme">${themeStyle}</style>`}
 	{/if}
 </svelte:head>
 
