@@ -1,4 +1,29 @@
 {
 	"maxDepartures": 4,
-	"updateInterval": 30
+	"updateInterval": 30,
+	"theme": {
+		"brandRed": "",
+		"brandBlue": "",
+		"brandDarkblue": "",
+		"brandDarkerblue": "",
+		"brandGray": "",
+		"obaGreen": "",
+		"boardBg": "",
+		"boardBgElevated": "",
+		"boardInk": "",
+		"boardInkDim": "",
+		"boardInkMute": "",
+		"boardRule": "",
+		"boardRuleStrong": "",
+		"boardAccent": "",
+		"boardBadgeBg": "",
+		"boardBadgeEdge": "",
+		"boardBadgeInk": "",
+		"boardOntime": "",
+		"boardEarly": "",
+		"boardLate": "",
+		"boardSched": "",
+		"logoUrl": "",
+		"regionName": ""
+	}
 }
