@@ -54,3 +54,25 @@ export const THEME_DEFAULTS = {
 	logoUrl: '',
 	regionName: ''
 };
+
+export function buildThemeCss(theme) {
+	const siteOverrides = Object.entries(SITE_TOKENS)
+		.filter(([key]) => theme[key])
+		.map(([key, { cssVar }]) => `${cssVar}:${theme[key]}`)
+		.join(';');
+
+	const boardOverrides = Object.entries(BOARD_TOKENS)
+		.filter(([key]) => theme[key])
+		.map(([key, { cssVar }]) => {
+			const base = `${cssVar}:${theme[key]}`;
+			if (key === 'boardLate') return `${base};--cancel:${theme[key]}`;
+			if (key === 'boardBadgeBg') return `${base};--badge-bg-2:${theme[key]}`;
+			return base;
+		})
+		.join(';');
+
+	const parts = [];
+	if (siteOverrides) parts.push(`:root{${siteOverrides}}`);
+	if (boardOverrides) parts.push(`:root .theme-departure.theme-dark{${boardOverrides}}`);
+	return parts.join('');
+}

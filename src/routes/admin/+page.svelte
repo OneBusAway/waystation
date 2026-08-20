@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import { formatSeconds } from '$lib/formatters';
 	import { setLocale } from '$lib/paraglide/runtime';
-	import { SITE_TOKENS, BOARD_TOKENS, THEME_DEFAULTS } from '$lib/config/theme.js';
+	import { SITE_TOKENS, BOARD_TOKENS, THEME_DEFAULTS, buildThemeCss } from '$lib/config/theme.js';
 	import { Power, Plus, Minus } from '@lucide/svelte';
 
 	import Header from '$components/navigation/header.svelte';
@@ -37,47 +37,22 @@
 		logoUrlError = validateLogoUrl(localConfig.theme.logoUrl);
 		if (logoUrlError) return;
 
-		try {
-			const response = await fetch('/api/config', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(localConfig)
-			});
+		setLocale(selector);
 
-			if (!response.ok) {
-				throw new Error(`Server responded with ${response.status}`);
-			}
+		await fetch('/api/config', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(localConfig)
+		});
 
-			setLocale(selector);
-
-			const theme = localConfig.theme;
-			const siteOverrides = Object.entries(SITE_TOKENS)
-				.filter(([key]) => theme[key])
-				.map(([key, { cssVar }]) => `${cssVar}:${theme[key]}`)
-				.join(';');
-			const boardOverrides = Object.entries(BOARD_TOKENS)
-				.filter(([key]) => theme[key])
-				.map(([key, { cssVar }]) => {
-					const base = `${cssVar}:${theme[key]}`;
-					if (key === 'boardLate') return `${base};--cancel:${theme[key]}`;
-					if (key === 'boardBadgeBg') return `${base};--badge-bg-2:${theme[key]}`;
-					return base;
-				})
-				.join(';');
-			const parts = [];
-			if (siteOverrides) parts.push(`:root{${siteOverrides}}`);
-			if (boardOverrides) parts.push(`:root .theme-departure.theme-dark{${boardOverrides}}`);
-			let styleEl = document.getElementById('waystation-theme');
-			if (!styleEl) {
-				styleEl = document.createElement('style');
-				styleEl.id = 'waystation-theme';
-				document.head.appendChild(styleEl);
-			}
-			styleEl.textContent = parts.join('');
-		} catch (error) {
-			console.error('Failed to save configuration:', error);
-			alert('Failed to save configuration. Please try again.');
+		const css = buildThemeCss(localConfig.theme);
+		let styleEl = document.getElementById('waystation-theme');
+		if (!styleEl) {
+			styleEl = document.createElement('style');
+			styleEl.id = 'waystation-theme';
+			document.head.appendChild(styleEl);
 		}
+		styleEl.textContent = css;
 	}
 
 	async function resetChanges() {
@@ -129,23 +104,17 @@
 			<div class="flex w-full flex-col gap-y-3 rounded-xl border-4 border-gray-300 p-3">
 				<span>{label}</span>
 				<span class="flex items-center gap-x-3 text-2xl font-bold whitespace-nowrap">
-					<button
-						type="button"
-						class="cursor-pointer rounded-md bg-gray-200 p-1"
-						aria-label="Decrease {label.toLowerCase()}"
+					<Minus
+						class="cursor-pointer rounded-md bg-gray-200"
+						size={24}
 						onclick={() => alter(key, 'minus')}
-					>
-						<Minus size={24} />
-					</button>
+					/>
 					{localConfig[key]}
-					<button
-						type="button"
-						class="cursor-pointer rounded-md bg-gray-200 p-1"
-						aria-label="Increase {label.toLowerCase()}"
+					<Plus
+						class="cursor-pointer rounded-md bg-gray-200"
+						size={24}
 						onclick={() => alter(key, 'add')}
-					>
-						<Plus size={24} />
-					</button>
+					/>
 				</span>
 			</div>
 		{/snippet}
