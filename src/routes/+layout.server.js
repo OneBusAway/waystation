@@ -4,7 +4,8 @@ export function load() {
 	try {
 		const config = getConfig();
 		return { theme: config.theme };
-	} catch {
+	} catch (err) {
+		console.error('[waystation] Failed to load theme config:', err);
 		return { theme: {} };
 	}
 }

@@ -26,7 +26,10 @@
 	function validateLogoUrl(url) {
 		if (!url) return '';
 		try {
-			new URL(url);
+			const parsed = new URL(url);
+			if (!['http:', 'https:'].includes(parsed.protocol)) {
+				return 'URL must use http or https';
+			}
 			return '';
 		} catch {
 			return 'Must be a valid URL (e.g. https://example.com/logo.png)';
