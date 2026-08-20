@@ -181,20 +181,18 @@ body::before {
 }
 
 .theme-dark .route-badge {
-	background: linear-gradient(180deg, #1a1d24 0%, #1a1d24 49%, #14171c 51%, #14171c 100%);
-	border: 1px solid var(--rule-strong);
+	background: linear-gradient(180deg, var(--badge-bg-1) 0%, var(--badge-bg-1) 49%, var(--badge-bg-2) 51%, var(--badge-bg-2) 100%);
+	border: 1px solid var(--badge-edge);
 	box-shadow:
 		inset 0 1px 0 rgba(255, 255, 255, 0.04),
 		inset 0 -1px 0 rgba(0, 0, 0, 0.4),
 		0 2px 0 rgba(0, 0, 0, 0.5);
-	--badge-ink: #d4b14a;
 	--badge-meta: rgba(244, 236, 216, 0.4);
 }
 .theme-light .route-badge {
 	background: #0a0a0a;
 	border: 1px solid #0a0a0a;
 	box-shadow: 0 2px 0 rgba(0, 0, 0, 0.06);
-	--badge-ink: #f5f3ee;
 	--badge-meta: rgba(245, 243, 238, 0.55);
 }
 
