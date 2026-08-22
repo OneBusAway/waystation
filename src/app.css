@@ -199,6 +199,7 @@ body::before {
 	background: #0a0a0a;
 	border: 1px solid #0a0a0a;
 	box-shadow: 0 2px 0 rgba(0, 0, 0, 0.06);
+	--badge-ink: #f5f3ee;
 	--badge-meta: rgba(245, 243, 238, 0.55);
 }
 

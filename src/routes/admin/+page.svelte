@@ -42,11 +42,21 @@
 
 		setLocale(selector);
 
-		await fetch('/api/config', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(localConfig)
-		});
+		try {
+			const res = await fetch('/api/config', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(localConfig)
+			});
+
+			if (!res.ok) {
+				alert('Failed to save configuration. Please try again.');
+				return;
+			}
+		} catch (error) {
+			alert('Failed to save configuration: ' + error);
+			return;
+		}
 
 		const css = buildThemeCss(localConfig.theme);
 		let styleEl = document.getElementById('waystation-theme');
@@ -60,18 +70,29 @@
 
 	async function resetChanges() {
 		selector = 'en';
-		localConfig = { maxDepartures: 4, updateInterval: 30, theme: { ...THEME_DEFAULTS } };
+		localConfig = {
+			maxDepartures: 4,
+			updateInterval: 30,
+			theme: { ...THEME_DEFAULTS }
+		};
 		logoUrlError = '';
 		await saveChanges();
 	}
 
 	async function alter(key, type) {
-		if (type === 'add') localConfig[key]++;
-		else if (type === 'minus' && localConfig[key] > 1) localConfig[key]--;
+		switch (type) {
+			case 'add':
+				localConfig[key]++;
+				break;
+			case 'minus':
+				if (localConfig[key] > 1) localConfig[key]--;
+				break;
+		}
 	}
 
 	const upTime = () => {
-		runningTime = formatSeconds(Math.floor((Date.now() - data.startTime) / 1000));
+		runningTime = Math.floor((Date.now() - data.startTime) / 1000);
+		runningTime = formatSeconds(runningTime);
 	};
 
 	onMount(async () => {
@@ -80,6 +101,7 @@
 		if (config) {
 			localConfig = { ...config, theme: { ...THEME_DEFAULTS, ...(config.theme ?? {}) } };
 		}
+
 		upTime();
 		setInterval(upTime, 1000);
 	});
@@ -110,12 +132,14 @@
 					<Minus
 						class="cursor-pointer rounded-md bg-gray-200"
 						size={24}
+						aria-label="Decrease {label.toLowerCase()}"
 						onclick={() => alter(key, 'minus')}
 					/>
 					{localConfig[key]}
 					<Plus
 						class="cursor-pointer rounded-md bg-gray-200"
 						size={24}
+						aria-label="Increase {label.toLowerCase()}"
 						onclick={() => alter(key, 'add')}
 					/>
 				</span>
@@ -151,7 +175,6 @@
 			</div>
 		{/snippet}
 
-		<!-- Display settings -->
 		<div class="flex w-full max-w-7xl flex-col gap-3 rounded-3xl bg-white p-5 text-xl md:flex-row">
 			<div class="flex w-full flex-col gap-y-3 rounded-xl border-4 border-gray-300 p-3">
 				<label for="language-select">Display Language</label>
@@ -213,7 +236,9 @@
 						class="rounded border border-gray-300 px-3 py-2 text-base"
 						class:border-red-400={logoUrlError}
 					/>
-					{#if logoUrlError}<span class="text-sm text-red-500">{logoUrlError}</span>{/if}
+					{#if logoUrlError}
+						<span class="text-sm text-red-500">{logoUrlError}</span>
+					{/if}
 				</div>
 			</div>
 			<div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -232,13 +257,17 @@
 			<button
 				type="button"
 				class="text-brand-red hover:bg-brand-red/10 rounded-4xl px-5 py-1"
-				onclick={resetChanges}>Set to default</button
+				onclick={resetChanges}
 			>
+				Set to default
+			</button>
 			<button
 				type="button"
 				class="text-oba-green hover:bg-oba-green/10 rounded-4xl px-5 py-1 font-bold"
-				onclick={saveChanges}>Save changes</button
+				onclick={saveChanges}
 			>
+				Save changes
+			</button>
 		</div>
 	</div>
 </div>
