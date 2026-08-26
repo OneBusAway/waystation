@@ -1461,8 +1461,21 @@ Add to `src/components/board/multi-stop-board.svelte.test.js`, inside the existi
 Then update the two existing assertions the earlier tasks invalidated:
 
 ```js
+	// A stop with no departures now collapses to a one-line card with no meta line, and the
+	// collapsed line carries name · bay · direction but deliberately NO stop code (§2). This
+	// test is named for the full card's meta line, so give the stops live arrivals — changing
+	// only the asserted string leaves it red.
+	const { container } = render(MultiStopBoard, {
+		props: {
+			stops: [stop('1_100', [arrival()]), stop('1_200', [arrival()])],
+			now,
+			lastUpdatedAt: now.getTime()
+		}
+	});
+	expect(container.querySelectorAll('section').length).toBe(2);
 	// was: expect(container.innerHTML).toContain('STOP #100');
 	expect(container.innerHTML).toContain('#100');
+	expect(container.innerHTML).toContain('Northbound');
 ```
 
 ```js
