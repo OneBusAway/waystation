@@ -357,7 +357,7 @@ export function computeGridLayout({
 - [ ] **Step 4: Run test to verify it passes**
 
 Run: `npx vitest run src/lib/board-layout.test.js`
-Expected: PASS, 10 tests.
+Expected: PASS, 11 tests.
 
 Reference values from a verified run of exactly this solver, useful if a number comes out different: `[3, 3, 2, 2]` at `maxDepartures: 4` with an alert and a footer yields `{cols: 2, gridRows: 2, perCard: 4, rowHeight: 95, numeralSize: 64}` and consumes 699 of the 700 available pixels. Six stops of six departures yields `{cols: 3, gridRows: 2, perCard: 3, rowHeight: 79, numeralSize: 56}` and consumes 698. `[3, 3, 0, 0]` yields `rowHeight: 96` — the ceiling — because the collapsed row frees 46px.
 
