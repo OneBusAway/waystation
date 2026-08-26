@@ -6,27 +6,25 @@
 
 	const dateText = $derived(formatDate(now));
 
-	// Force Latin numerals via Unicode extension (ar-u-nu-latn).
-	// Split into hm (numeric, always LTR) and ap (period marker, locale-aware).
-	// In the board's LTR rendering context, ap is placed first in DOM so it
-	// appears on the LEFT — which is the RTL end the user reads last.
+	// Force Latin numerals via Unicode extension (ar-u-nu-latn) and keep the numeric group
+	// (hour, separator, minute) LTR while the meridiem stays locale-ordered. Seconds are gone:
+	// the footer already reports the update time to the second, and the meridiem landing after
+	// a ticking seconds group made the clock parse as three unrelated numbers.
 	const timeParts = $derived.by(() => {
-		const locale = getLocale();
-		const latinLocale = `${locale}-u-nu-latn`;
+		const latinLocale = `${getLocale()}-u-nu-latn`;
 		const parts = new Intl.DateTimeFormat(latinLocale, {
 			hour: 'numeric',
 			minute: '2-digit',
 			hour12: true
 		}).formatToParts(now);
-		const hm = parts
-			.filter((p) => ['hour', 'literal', 'minute'].includes(p.type))
-			.map((p) => p.value)
-			.join('');
-		const ap = parts.find((p) => p.type === 'dayPeriod')?.value ?? '';
-		return { hm, ap };
+		return {
+			hour: parts.find((p) => p.type === 'hour')?.value ?? '',
+			separator: parts.find((p) => p.type === 'literal')?.value ?? ':',
+			minute: parts.find((p) => p.type === 'minute')?.value ?? '',
+			meridiem: parts.find((p) => p.type === 'dayPeriod')?.value ?? ''
+		};
 	});
 
-	const seconds = $derived(now.getSeconds().toString().padStart(2, '0'));
 	const isRTL = $derived(getLocale() === 'ar');
 </script>
 
@@ -41,7 +39,8 @@
 		{dateText}
 	</div>
 	<div
-		class="mono display"
+		data-testid="clock"
+		class="mono display tnum"
 		style:font-size="52px"
 		style:font-weight="600"
 		style:line-height="1"
@@ -51,23 +50,23 @@
 		style:display="flex"
 		style:align-items="baseline"
 		style:justify-content="flex-end"
-		style:gap="4px"
+		style:gap="8px"
 	>
-		{#if isRTL && timeParts.ap}
+		{#if isRTL && timeParts.meridiem}
 			<span style:color="var(--ink-dim)" style:font-weight="400" style:font-size="28px"
-				>{timeParts.ap}</span
+				>{timeParts.meridiem}</span
 			>
 		{/if}
 		<span dir="ltr"
-			>{timeParts.hm}<span
-				style:color="var(--ink-dim)"
-				style:font-weight="400"
-				style:font-size="32px">:{seconds}</span
-			></span
+			>{timeParts.hour}<span
+				data-testid="clock-separator"
+				style:margin="0 -0.04em"
+				style:display="inline-block">{timeParts.separator}</span
+			>{timeParts.minute}</span
 		>
-		{#if !isRTL && timeParts.ap}
+		{#if !isRTL && timeParts.meridiem}
 			<span style:color="var(--ink-dim)" style:font-weight="400" style:font-size="28px"
-				>{timeParts.ap}</span
+				>{timeParts.meridiem}</span
 			>
 		{/if}
 	</div>
