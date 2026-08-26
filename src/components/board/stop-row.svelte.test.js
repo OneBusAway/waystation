@@ -108,7 +108,8 @@ describe('StopRow route tile', () => {
 		const { container } = render(StopRow, { props: { arrival: arrival({ route: '2 Line' }) } });
 		const tile = container.querySelector('.route-badge');
 		expect(tile.style.width).toBe('auto');
-		expect(tile.style.padding).toBe('0 12px');
+		// CSSOM serialises a zero length as `0px`, so the shorthand reads back normalised.
+		expect(tile.style.padding).toBe('0px 12px');
 	});
 
 	test('keeps the fixed tile for a numeric route', () => {
