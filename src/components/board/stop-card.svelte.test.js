@@ -106,6 +106,39 @@ describe('StopCard collapsed variant', () => {
 	});
 });
 
+describe('StopCard chrome height contract', () => {
+	afterEach(() => cleanup());
+
+	// GEOMETRY CONTRACT — these values are load-bearing, not styling preferences.
+	// board-layout.js's CARD_CHROME_HEIGHT = 102 is the sum of exactly these numbers, and the
+	// layout solver fills the 1080px stage on the assumption that it is accurate. Changing any
+	// value here without updating CARD_CHROME_HEIGHT makes the board silently over- or
+	// under-fill the panel, with no other test going red. Update both sides together.
+	test('pins the padding, rule and title/meta sizing that CARD_CHROME_HEIGHT is derived from', () => {
+		const { container } = render(StopCard, { props: { stop: stop() } });
+		const card = container.querySelector('section');
+		const title = container.querySelector('[data-testid="stop-title"]');
+		const meta = container.querySelector('[data-testid="stop-meta"]');
+		const headingWrapper = title.parentElement;
+
+		// 16px top padding + 10px bottom padding (card border contributes the remaining 2px,
+		// already pinned by the "uses the container radius and the card edge token" test above).
+		expect(card.style.padding).toBe('16px 20px 10px');
+
+		// 10px heading padding-bottom + 1px heading rule.
+		expect(headingWrapper.style.paddingBottom).toBe('10px');
+		expect(headingWrapper.style.borderBottom).toBe('1px solid var(--rule)');
+
+		// 36px title at line-height 1.12 (≈41px).
+		expect(title.style.fontSize).toBe('36px');
+		expect(title.style.lineHeight).toBe('1.12');
+
+		// 6px meta margin + 16px meta line (13px font-size at the browser's default line-height).
+		expect(meta.style.marginTop).toBe('6px');
+		expect(meta.style.fontSize).toBe('13px');
+	});
+});
+
 describe('StopCard sizing', () => {
 	afterEach(() => cleanup());
 
