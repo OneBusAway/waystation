@@ -9,18 +9,17 @@
 		SCHED: { glyph: '○', weight: 500 }
 	};
 
-	// The glyph and the footer legend already carry "nothing is wrong"; spelling it out again
-	// was a third encoding of one fact. Only deviations still say themselves in words. CANCEL
-	// is excluded here too: the minutes column already renders CANCELED (see below), so adding
-	// it here would print the same word twice on one row.
-	const SPELLED_OUT = new Set(['EARLY', 'LATE']);
-
 	let { arrival, last = false, rowHeight = 64, numeralSize = 48 } = $props();
 
 	const isCancel = $derived(arrival.status === 'CANCEL');
 	const isNow = $derived(!isCancel && arrival.min <= 0);
 	const s = $derived(STATUS[arrival.status] ?? STATUS.SCHED);
-	const showPhrase = $derived(SPELLED_OUT.has(arrival.status));
+
+	// Which statuses say themselves in words lives here and nowhere else: an empty string means
+	// the row stays silent, and the template renders the line only when there is one. The glyph
+	// and the footer legend already carry "nothing is wrong", so ONTIME and SCHED say nothing;
+	// CANCEL says nothing here either because the minutes column already renders CANCELED, and
+	// printing it twice on one row is the duplication this whole change set out to remove.
 	const phrase = $derived.by(() => {
 		const { status, delta } = arrival;
 		if (status === 'LATE' && delta != null) return t.board_status_min_late({ delta });
@@ -28,7 +27,6 @@
 			return t.board_status_min_early({ delta: Math.abs(delta) });
 		if (status === 'EARLY') return t.board_status_early();
 		if (status === 'LATE') return t.board_status_delayed();
-		if (status === 'CANCEL') return t.board_status_canceled();
 		return '';
 	});
 
@@ -105,7 +103,7 @@
 		>
 			{arrival.dest || arrival.name}
 		</div>
-		{#if showPhrase}
+		{#if phrase}
 			<div
 				class="sc tnum"
 				style:font-size="12px"

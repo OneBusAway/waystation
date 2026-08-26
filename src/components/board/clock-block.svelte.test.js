@@ -50,6 +50,33 @@ describe('ClockBlock', () => {
 		const b = render(ClockBlock, { props: { now: new Date(2026, 7, 25, 19, 52, 48) } });
 		expect(b.container.querySelector('[data-testid="clock"]').textContent).toBe(first);
 	});
+
+	// The complement of the test above, and the one that matters more. The derivations are keyed
+	// off the truncated minute so they don't rebuild an Intl.DateTimeFormat 86,400 times a day.
+	// These must update a LIVE instance via rerender rather than mounting a second component:
+	// two separate renders always re-derive, so they would catch a wrong truncation granularity
+	// but never a clock that has stopped tracking its dependency — which is the failure that
+	// would strand a kiosk showing the same time for days while every other test still passed.
+	test('advances a live instance when the minute rolls over', async () => {
+		const { container, rerender } = render(ClockBlock, { props: { now } });
+		const clock = () => container.querySelector('[data-testid="clock"]').textContent;
+		expect(clock().replace(/\s+/g, '')).toBe('7:52PM');
+
+		await rerender({ now: new Date(2026, 7, 25, 19, 52, 59) });
+		expect(clock().replace(/\s+/g, '')).toBe('7:52PM');
+
+		await rerender({ now: new Date(2026, 7, 25, 19, 53, 4) });
+		expect(clock().replace(/\s+/g, '')).toBe('7:53PM');
+	});
+
+	test('advances the date line of a live instance across midnight', async () => {
+		const { container, rerender } = render(ClockBlock, {
+			props: { now: new Date(2026, 7, 25, 23, 59, 30) }
+		});
+		const before = container.textContent;
+		await rerender({ now: new Date(2026, 7, 26, 0, 0, 30) });
+		expect(container.textContent).not.toBe(before);
+	});
 });
 
 describe('ClockBlock (Arabic/RTL)', () => {

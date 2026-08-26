@@ -4,7 +4,15 @@
 
 	let { now } = $props();
 
-	const dateText = $derived(formatDate(now));
+	// `now` is bumped every second by the page, but nothing this component renders changes more
+	// than once a minute. Truncating to the minute means the derivations below re-run ~1,440
+	// times a day instead of ~86,400 to produce the same string — worth it on a kiosk that stays
+	// open for days, where constructing an Intl.DateTimeFormat is the costly part. Deriving a
+	// real truncated Date (rather than reading `now` for a value we then discard) keeps the
+	// dependency honest: these only recompute when the minute actually changes.
+	const minute = $derived(new Date(Math.floor(now.getTime() / 60_000) * 60_000));
+
+	const dateText = $derived(formatDate(minute));
 
 	// Force Latin numerals via Unicode extension (ar-u-nu-latn) and keep the numeric group
 	// (hour, separator, minute) LTR while the meridiem stays locale-ordered. Seconds are gone:
@@ -16,7 +24,7 @@
 			hour: 'numeric',
 			minute: '2-digit',
 			hour12: true
-		}).formatToParts(now);
+		}).formatToParts(minute);
 		return {
 			hour: parts.find((p) => p.type === 'hour')?.value ?? '',
 			// Assumes first literal in parts is the hour:minute separator (colon); order-dependent on 12-hour pattern
