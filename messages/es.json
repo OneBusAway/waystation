@@ -69,5 +69,7 @@
 	"board_dir_NE": "Hacia el noreste",
 	"board_dir_NW": "Hacia el noroeste",
 	"board_dir_SE": "Hacia el sureste",
-	"board_dir_SW": "Hacia el suroeste"
+	"board_dir_SW": "Hacia el suroeste",
+	"board_stop_code": "#{stopId}",
+	"board_no_departures_inline": "No hay próximas salidas"
 }

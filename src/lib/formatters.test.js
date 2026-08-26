@@ -16,7 +16,10 @@ import {
 	removeDuplicates,
 	formatBoardDeparture,
 	parseStopDepartures,
-	diffArrivals
+	diffArrivals,
+	alertTone,
+	formatAlertWindow,
+	splitStopName
 } from '$lib/formatters';
 
 afterEach(() => {
@@ -404,5 +407,90 @@ describe('parseStopDepartures stop metadata', () => {
 			}
 		};
 		expect(parseStopDepartures(json, '1_74439').stopCode).toBe('74439');
+	});
+});
+
+describe('splitStopName', () => {
+	test('lifts a hyphenated bay suffix out of the stop name', () => {
+		expect(splitStopName('120th Ave NE & NE Spring Blvd - Bay 1')).toEqual({
+			name: '120th Ave NE & NE Spring Blvd',
+			bay: 'Bay 1'
+		});
+	});
+
+	test('handles en dash and em dash separators', () => {
+		expect(splitStopName('Main St – Bay 4').bay).toBe('Bay 4');
+		expect(splitStopName('Main St — Bay 4').bay).toBe('Bay 4');
+	});
+
+	test('handles a parenthesised bay', () => {
+		expect(splitStopName('Transit Center (Bay C)')).toEqual({
+			name: 'Transit Center',
+			bay: 'Bay C'
+		});
+	});
+
+	test('normalises the word Bay but preserves the bay identifier', () => {
+		expect(splitStopName('Depot - BAY D-3').bay).toBe('Bay D-3');
+	});
+
+	test('leaves a name with no bay untouched', () => {
+		expect(splitStopName('Pine St & 3rd Ave')).toEqual({
+			name: 'Pine St & 3rd Ave',
+			bay: ''
+		});
+	});
+
+	test('does not mistake a hyphenated place name for a bay', () => {
+		expect(splitStopName('Bellevue - Downtown')).toEqual({
+			name: 'Bellevue - Downtown',
+			bay: ''
+		});
+	});
+
+	test('tolerates missing or non-string input', () => {
+		expect(splitStopName(undefined)).toEqual({ name: '', bay: '' });
+		expect(splitStopName(null)).toEqual({ name: '', bay: '' });
+	});
+});
+
+describe('formatAlertWindow', () => {
+	test('drops the weekday and the year', () => {
+		const result = formatAlertWindow(new Date('2026-08-18T12:00:00Z').getTime());
+		expect(result).toContain('18');
+		expect(result).not.toMatch(/2026/);
+		expect(result).not.toMatch(/Tue|Tuesday/i);
+	});
+});
+
+describe('alertTone', () => {
+	test('maps the OBA severity vocabulary onto the three painted tones', () => {
+		expect(alertTone('severe')).toBe('alert');
+		expect(alertTone('verySevere')).toBe('alert');
+		expect(alertTone('normal')).toBe('advisory');
+		expect(alertTone('slight')).toBe('info');
+		expect(alertTone('verySlight')).toBe('info');
+		expect(alertTone('noImpact')).toBe('info');
+	});
+
+	test('passes through a value that is already a board tone', () => {
+		expect(alertTone('info')).toBe('info');
+		expect(alertTone('advisory')).toBe('advisory');
+		expect(alertTone('alert')).toBe('alert');
+	});
+
+	test('is insensitive to case, spaces and separators', () => {
+		expect(alertTone('VERY_SEVERE')).toBe('alert');
+		expect(alertTone('very severe')).toBe('alert');
+		expect(alertTone('very-severe')).toBe('alert');
+	});
+
+	// Regression: an unmapped value used to produce a class with no --alert-tone,
+	// which is why the 6px severity bar never drew on the deployed board.
+	test('falls back to advisory so a tone is always defined', () => {
+		expect(alertTone('unknown')).toBe('advisory');
+		expect(alertTone('')).toBe('advisory');
+		expect(alertTone(undefined)).toBe('advisory');
+		expect(alertTone(null)).toBe('advisory');
 	});
 });
