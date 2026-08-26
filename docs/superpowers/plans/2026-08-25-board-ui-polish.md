@@ -1338,7 +1338,7 @@ Replace the entire contents of `src/components/board/stop-card.svelte`:
 - [ ] **Step 4: Run test to verify it passes**
 
 Run: `npx vitest run src/components/board/stop-card.svelte.test.js`
-Expected: PASS, 9 tests.
+Expected: PASS, 10 tests.
 
 - [ ] **Step 5: Format, lint, commit**
 
