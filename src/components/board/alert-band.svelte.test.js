@@ -15,6 +15,21 @@ vi.mock('$lib/paraglide/runtime.js', async (importOriginal) => {
 	};
 });
 
+// Keep alertTone/formatAlertWindow real; stub only translate() so the RTL test below (which
+// forces mockLocale = 'ar' and takes the component's translation $effect branch) can never
+// reach the real network, regardless of which describe block runs it.
+vi.mock('$lib/formatters.js', async (importOriginal) => ({
+	...(await importOriginal()),
+	translate: (text) => Promise.resolve(text)
+}));
+
+// File-scoped so locale can never leak between describe blocks: this used to live inside
+// `describe('AlertBand content')` only, which let 'AlertBand severity' and 'AlertBand
+// geometry' inherit whatever locale the previous test left behind.
+beforeEach(() => {
+	mockLocale = 'en';
+});
+
 const HEADLINE =
 	'Starting Monday, several routes serving downtown will have changes ranging from minor stop relocations to full reroutes';
 const BODY = 'Check the agency website for the full list of affected trips.';
@@ -35,10 +50,6 @@ function situation(overrides = {}) {
 }
 
 describe('AlertBand content', () => {
-	beforeEach(() => {
-		mockLocale = 'en';
-	});
-
 	afterEach(() => cleanup());
 
 	// Punch list §5: the headline was single-line clipped and the body never rendered.
