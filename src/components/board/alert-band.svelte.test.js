@@ -1,7 +1,19 @@
 import { render, cleanup } from '@testing-library/svelte';
-import { describe, test, expect, afterEach } from 'vitest';
+import { describe, test, expect, afterEach, beforeEach, vi } from 'vitest';
 import AlertBand from './alert-band.svelte';
 import { ALERT_HEIGHT } from '$lib/board-layout.js';
+
+// Mock state for controlling getLocale(), so the RTL arrow-direction test can flip locale
+// without depending on which locale the environment happens to default to.
+let mockLocale = 'en';
+
+vi.mock('$lib/paraglide/runtime.js', async (importOriginal) => {
+	const actual = await importOriginal();
+	return {
+		...actual,
+		getLocale: () => mockLocale
+	};
+});
 
 const HEADLINE =
 	'Starting Monday, several routes serving downtown will have changes ranging from minor stop relocations to full reroutes';
@@ -23,6 +35,10 @@ function situation(overrides = {}) {
 }
 
 describe('AlertBand content', () => {
+	beforeEach(() => {
+		mockLocale = 'en';
+	});
+
 	afterEach(() => cleanup());
 
 	// Punch list §5: the headline was single-line clipped and the body never rendered.
@@ -73,6 +89,27 @@ describe('AlertBand content', () => {
 			props: { situation: situation({ activeWindows: [] }) }
 		});
 		expect(container.querySelector('[data-testid="alert-window"]').textContent.trim()).toBe('');
+	});
+
+	// Regression: a `→` starting a new line inside an {#if} had its leading whitespace
+	// collapsed by Svelte, so the rail rendered "Aug 18→ Sep 5" — a space after the arrow but
+	// none before it. Pins the exact separator spacing so a future reflow of this markup can't
+	// silently re-break it. The rail carries class="sc" (text-transform: uppercase), which
+	// doesn't affect textContent, so this asserts the untransformed casing.
+	test('separates the date window bounds with a space on both sides of the arrow', () => {
+		const { container } = render(AlertBand, { props: { situation: situation() } });
+		const rail = container.querySelector('[data-testid="alert-window"]').textContent.trim();
+		expect(rail).toBe('Aug 18 → Sep 5');
+	});
+
+	test('separates the date window bounds with a space on both sides of the RTL arrow', () => {
+		// Arabic locale formats the dates themselves (Arabic month names/numerals), so this
+		// checks the separator spacing rather than pinning exact date text.
+		mockLocale = 'ar';
+		const { container } = render(AlertBand, { props: { situation: situation() } });
+		const rail = container.querySelector('[data-testid="alert-window"]').textContent.trim();
+		expect(rail).toContain('←');
+		expect(rail).toContain(' ← ');
 	});
 });
 
