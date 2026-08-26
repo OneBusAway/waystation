@@ -19,6 +19,7 @@
 		}).formatToParts(now);
 		return {
 			hour: parts.find((p) => p.type === 'hour')?.value ?? '',
+			// Assumes first literal in parts is the hour:minute separator (colon); order-dependent on 12-hour pattern
 			separator: parts.find((p) => p.type === 'literal')?.value ?? ':',
 			minute: parts.find((p) => p.type === 'minute')?.value ?? '',
 			meridiem: parts.find((p) => p.type === 'dayPeriod')?.value ?? ''
