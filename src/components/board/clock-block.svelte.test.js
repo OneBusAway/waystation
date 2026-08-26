@@ -77,6 +77,38 @@ describe('ClockBlock', () => {
 		await rerender({ now: new Date(2026, 7, 26, 0, 0, 30) });
 		expect(container.textContent).not.toBe(before);
 	});
+
+	// Pins the efficiency claim the comment above `minuteMs` makes, rather than trusting it. An
+	// earlier attempt truncated to a `Date` object instead of a number; because $derived compares
+	// with ===, a fresh object invalidated its dependents every single tick and the optimisation
+	// silently did nothing while every other test still passed. This is the test that catches it.
+	test('rebuilds the formatter once per minute, not once per second', async () => {
+		const RealDateTimeFormat = Intl.DateTimeFormat;
+		let constructions = 0;
+		// Construct through to the real implementation — a bare spy returns an object whose
+		// prototype chain breaks `formatToParts`.
+		const spy = vi.spyOn(Intl, 'DateTimeFormat').mockImplementation(function (...args) {
+			constructions += 1;
+			return Reflect.construct(RealDateTimeFormat, args);
+		});
+
+		try {
+			const { rerender } = render(ClockBlock, {
+				props: { now: new Date(2026, 7, 25, 19, 52, 0) }
+			});
+			const afterMount = constructions;
+
+			for (let second = 1; second <= 59; second += 1) {
+				await rerender({ now: new Date(2026, 7, 25, 19, 52, second) });
+			}
+			expect(constructions).toBe(afterMount);
+
+			await rerender({ now: new Date(2026, 7, 25, 19, 53, 0) });
+			expect(constructions).toBeGreaterThan(afterMount);
+		} finally {
+			spy.mockRestore();
+		}
+	});
 });
 
 describe('ClockBlock (Arabic/RTL)', () => {

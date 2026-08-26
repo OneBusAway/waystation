@@ -88,7 +88,7 @@
 				style:overflow="hidden"
 				style:text-overflow="ellipsis"
 			>
-				{#each meta as part, i (part)}{#if i > 0}<span
+				{#each meta as part, i (i)}{#if i > 0}<span
 							style:margin="0 8px"
 							style:color="var(--rule-strong)">·</span
 						>{/if}{part}{/each}
