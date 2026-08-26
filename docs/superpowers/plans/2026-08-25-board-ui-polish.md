@@ -1709,7 +1709,8 @@ describe('ClockBlock', () => {
 	test('kerns the colon tighter than the default advance width', () => {
 		const { container } = render(ClockBlock, { props: { now } });
 		const separator = container.querySelector('[data-testid="clock-separator"]');
-		expect(separator.style.margin).toBe('0 -0.04em');
+		// CSSOM serialises a zero length as `0px`, so the shorthand reads back normalised.
+		expect(separator.style.margin).toBe('0px -0.04em');
 	});
 
 	test('renders the same string one second later', () => {
