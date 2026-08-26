@@ -129,13 +129,17 @@ describe('MultiStopBoard', () => {
 	});
 
 	// Punch list §1: leftover panel height becomes bigger type, not a dead zone.
+	// This must use a fixture where gridRows > 1: at gridRows === 1 the deleted hardcoded
+	// formula (rowHeight = gridRows === 1 ? 78 : 64) also clears 64px, so a 2-stop/1-row
+	// fixture cannot tell the solver apart from the formula it replaced. This 5-stop/3-column
+	// shape (same fixture as "spells out status phrase...") solves gridRows === 2, where the
+	// old formula gives exactly 64 (fails > 64) and the solver gives 77 (passes) — confirmed
+	// via computeGridLayout({ rowCounts: [8,8,8,8,8], maxDepartures: 6 }).
 	test('grows rows above the 64px floor when the board is sparse', () => {
+		const many = Array.from({ length: 8 }, () => arrival());
+		const stops = Array.from({ length: 5 }, (_, i) => stop(`1_${i}`, many));
 		const { container } = render(MultiStopBoard, {
-			props: {
-				stops: [stop('1_1', [arrival()]), stop('1_2', [arrival()])],
-				now,
-				lastUpdatedAt: now.getTime()
-			}
+			props: { stops, now, lastUpdatedAt: now.getTime() }
 		});
 		const row = container.querySelector('.route-badge').closest('[class^="status-"]');
 		expect(parseInt(row.style.height, 10)).toBeGreaterThan(64);
@@ -157,6 +161,27 @@ describe('MultiStopBoard', () => {
 			}
 		});
 		expect(five.container.querySelectorAll('[data-testid="column-rule"]').length).toBe(2);
+	});
+
+	// Punch list §16: a bare `50%` midpoint is only correct at 2 columns. This test pins the
+	// actual placement at 3 columns, where a `50%` simplification would be wrong but would
+	// leave the rule *count* (asserted above) unchanged, so a regression there would otherwise
+	// go undetected. jsdom preserves the calc() string verbatim (confirmed against a bare
+	// jsdom element before writing this assertion) so exact-string comparison is reliable here.
+	test('places each column rule at its track midpoint, not a bare 50%', () => {
+		const many = Array.from({ length: 4 }, () => arrival());
+		const { container } = render(MultiStopBoard, {
+			props: {
+				stops: Array.from({ length: 5 }, (_, i) => stop(`1_${i}`, many)),
+				now,
+				lastUpdatedAt: now.getTime()
+			}
+		});
+		const rules = [...container.querySelectorAll('[data-testid="column-rule"]')];
+		expect(rules.map((r) => r.style.left)).toEqual([
+			'calc(1 * (100% - 40px) / 3 + 10px - 0.5px)',
+			'calc(2 * (100% - 40px) / 3 + 30px - 0.5px)'
+		]);
 	});
 
 	// Punch list §18: the mark and the wordmark were butted together with no separator.
