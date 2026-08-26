@@ -6,6 +6,14 @@
 	import Legend from '$components/board/legend.svelte';
 	import LiveDot from '$components/board/live-dot.svelte';
 	import StopCard from '$components/board/stop-card.svelte';
+	import {
+		ALERT_HEIGHT,
+		CARD_GAP,
+		FOOTER_HEIGHT,
+		HEADER_HEIGHT,
+		SECTION_GAP,
+		computeGridLayout
+	} from '$lib/board-layout.js';
 
 	const STALE_THRESHOLD_MS = 90_000;
 
@@ -22,16 +30,36 @@
 		showAlerts = true
 	} = $props();
 
-	// Grid shape follows the design table: 2 stops → 2 cols × 6 rows;
-	// 3–4 → 2 cols × 4 rows; 5–6 → 3 cols × 4 rows. The admin departure
-	// limit still caps rows per card.
-	const n = $derived(stops.length);
-	const cols = $derived(n <= 2 ? Math.max(n, 1) : n <= 4 ? 2 : 3);
-	const gridRows = $derived(Math.ceil(n / cols));
-	const perCard = $derived(Math.min(maxDepartures, gridRows === 1 ? 6 : 4));
-	const rowHeight = $derived(gridRows === 1 ? 78 : 64);
+	// Stops with departures come first; an empty or failed stop collapses to one line at the
+	// back rather than taking a prime position at full card height.
+	const isEmpty = (s) => s.failed || s.arrivals.length === 0;
+	// Array.prototype.sort is stable, so the configured order survives inside each group.
+	const ordered = $derived([...stops].sort((a, b) => Number(isEmpty(a)) - Number(isEmpty(b))));
+	const rowCounts = $derived(ordered.map((s) => (s.failed ? 0 : s.arrivals.length)));
 
 	const hasAlert = $derived(showAlerts && !!alert);
+
+	// Every dimension of the 1920×1080 stage is known, so the grid is solved rather than
+	// measured: leftover height is spent on row height and numeral size (punch list §1).
+	const layout = $derived(computeGridLayout({ rowCounts, maxDepartures, hasAlert, showFooter }));
+	const templateRows = $derived(
+		[
+			`${HEADER_HEIGHT}px`,
+			'1fr',
+			hasAlert ? `${ALERT_HEIGHT}px` : null,
+			showFooter ? `${FOOTER_HEIGHT}px` : null
+		]
+			.filter(Boolean)
+			.join(' ')
+	);
+	// A 1px rule at each gap's midpoint. The track expression mirrors the grid's own sizing so
+	// the rule lands exactly between columns at both 2 and 3 columns.
+	const ruleOffsets = $derived(
+		Array.from({ length: layout.cols - 1 }, (_, i) => {
+			const track = `(100% - ${(layout.cols - 1) * CARD_GAP}px) / ${layout.cols}`;
+			return `calc(${i + 1} * ${track} + ${i * CARD_GAP + CARD_GAP / 2}px - 0.5px)`;
+		})
+	);
 	const liveCount = $derived(
 		stops.reduce((c, s) => c + s.arrivals.filter((a) => a.delta != null).length, 0)
 	);
@@ -57,8 +85,8 @@
 	style:color="var(--ink)"
 	style:padding="26px 32px 22px"
 	style:display="grid"
-	style:grid-template-rows={hasAlert ? '104px 1fr auto auto' : '104px 1fr auto'}
-	style:gap="18px"
+	style:grid-template-rows={templateRows}
+	style:gap="{SECTION_GAP}px"
 	style:z-index="1"
 >
 	<!-- HEADER -->
@@ -69,7 +97,7 @@
 		style:border-bottom="2px solid var(--rule-strong)"
 		style:padding-bottom="16px"
 	>
-		<div style:display="flex" style:align-items="center" style:gap="16px">
+		<div style:display="flex" style:align-items="center" style:gap="24px">
 			{#if agencyLogo}
 				<img
 					src={agencyLogo}
@@ -79,9 +107,20 @@
 					style:object-fit="contain"
 				/>
 			{/if}
+			{#if agencyLogo && agencyName}
+				<div
+					data-testid="lockup-divider"
+					aria-hidden="true"
+					style:width="1px"
+					style:height="44px"
+					style:background="var(--rule)"
+				></div>
+			{/if}
 			{#if agencyName}
 				<div
 					class="display"
+					style:display="flex"
+					style:align-items="center"
 					style:font-size="30px"
 					style:font-weight="700"
 					style:line-height="1.05"
@@ -108,15 +147,33 @@
 
 	<!-- STOP GRID -->
 	<div
+		style:position="relative"
 		style:display="grid"
-		style:grid-template-columns="repeat({cols}, 1fr)"
+		style:grid-template-columns="repeat({layout.cols}, 1fr)"
 		style:grid-auto-rows="min-content"
-		style:align-content="start"
-		style:gap="20px"
+		style:align-content="center"
+		style:gap="{CARD_GAP}px"
 		style:min-height="0"
 	>
-		{#each stops as stop (stop.id)}
-			<StopCard {stop} limit={perCard} {rowHeight} />
+		{#each ruleOffsets as left, i (i)}
+			<div
+				data-testid="column-rule"
+				aria-hidden="true"
+				style:position="absolute"
+				style:top="0"
+				style:bottom="0"
+				style:left
+				style:width="1px"
+				style:background="var(--rule)"
+			></div>
+		{/each}
+		{#each ordered as stop (stop.id)}
+			<StopCard
+				{stop}
+				limit={layout.perCard}
+				rowHeight={layout.rowHeight}
+				numeralSize={layout.numeralSize}
+			/>
 		{/each}
 	</div>
 
@@ -131,6 +188,7 @@
 			style:grid-template-columns="auto 1fr auto"
 			style:align-items="center"
 			style:gap="32px"
+			style:height="{FOOTER_HEIGHT}px"
 			style:border-top="1px solid var(--rule)"
 			style:padding-top="12px"
 		>
