@@ -163,3 +163,35 @@ describe('AlertBand geometry', () => {
 		expect(container.querySelector('.alert-glyph').style.borderRadius).toBe('var(--radius-chip)');
 	});
 });
+
+describe('AlertBand chrome height contract', () => {
+	afterEach(() => cleanup());
+
+	// GEOMETRY CONTRACT — these values are load-bearing, not styling preferences.
+	// board-layout.js's ALERT_HEIGHT = 128 rests on the assumption that this content fits inside
+	// it: eyebrow (12px + 4px margin) + two clamped 24px/1.2 headline lines + 3px margin + one
+	// 18px/1.25 body line ≈ 103px against ~106px of content box (128px minus the band's 10px top
+	// and bottom padding). That's ~3px of slack, not a guarantee — a third line or a larger
+	// eyebrow would overflow silently. Changing any value here without updating ALERT_HEIGHT in
+	// src/lib/board-layout.js makes the band silently over- or under-fill its reserved height,
+	// with no other test going red. Update both sides together.
+	test('pins the eyebrow, headline and body sizing that ALERT_HEIGHT is derived from', () => {
+		const { container } = render(AlertBand, { props: { situation: situation() } });
+		const eyebrow = container.querySelector('[data-testid="alert-eyebrow"]');
+		const headline = container.querySelector('[data-testid="alert-headline"]');
+		const body = container.querySelector('[data-testid="alert-body"]');
+
+		expect(eyebrow.style.fontSize).toBe('12px');
+		expect(eyebrow.style.marginBottom).toBe('4px');
+
+		expect(headline.style.fontSize).toBe('24px');
+		expect(headline.style.lineHeight).toBe('1.2');
+		expect(
+			headline.style.webkitLineClamp || headline.style.getPropertyValue('-webkit-line-clamp')
+		).toBe('2');
+
+		expect(body.style.fontSize).toBe('18px');
+		expect(body.style.lineHeight).toBe('1.25');
+		expect(body.style.marginTop).toBe('3px');
+	});
+});

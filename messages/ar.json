@@ -60,7 +60,6 @@
 	"board_empty_error_head": "لا بيانات",
 	"board_empty_error_sub": "البيانات الفورية غير متاحة — تحقق من الشبكة",
 	"board_empty_error_chip": "جارٍ إعادة المحاولة",
-	"board_no_departures": "لا توجد مغادرات قادمة",
 	"board_data_unavailable": "البيانات غير متاحة",
 	"board_dir_N": "باتجاه الشمال",
 	"board_dir_S": "باتجاه الجنوب",

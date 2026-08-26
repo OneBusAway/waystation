@@ -10,8 +10,10 @@
 	};
 
 	// The glyph and the footer legend already carry "nothing is wrong"; spelling it out again
-	// was a third encoding of one fact. Only deviations still say themselves in words.
-	const SPELLED_OUT = new Set(['EARLY', 'LATE', 'CANCEL']);
+	// was a third encoding of one fact. Only deviations still say themselves in words. CANCEL
+	// is excluded here too: the minutes column already renders CANCELED (see below), so adding
+	// it here would print the same word twice on one row.
+	const SPELLED_OUT = new Set(['EARLY', 'LATE']);
 
 	let { arrival, last = false, rowHeight = 64, numeralSize = 48 } = $props();
 
@@ -45,8 +47,11 @@
 			: Math.round(badgeHeight * numericScale)
 	);
 
-	// A single fixed, right-aligned column so every card's numerals form one vertical edge —
-	// wide enough for NOW and three digits at the final size.
+	// A single fixed, right-aligned column so every card's numerals form one vertical edge.
+	// Comfortably fits a status glyph, two digits and the MIN label at the final size (125px
+	// at numeralSize: 48); a three-digit minutes value is unverified and, with the column's
+	// overflow: hidden + flex-end alignment, would be a candidate to clip. In practice OBA's
+	// arrival window keeps `min` well under 100, so this is latent.
 	const minutesColumn = $derived(Math.round(numeralSize * 2.6));
 	const glyphSize = $derived(Math.round(numeralSize * 0.32));
 	const minLabelSize = $derived(Math.round(numeralSize * 0.33));

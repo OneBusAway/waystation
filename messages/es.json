@@ -60,7 +60,6 @@
 	"board_empty_error_head": "SIN DATOS",
 	"board_empty_error_sub": "Datos en tiempo real no disponibles — verificar red",
 	"board_empty_error_chip": "REINTENTANDO",
-	"board_no_departures": "SIN SALIDAS PRÓXIMAS",
 	"board_data_unavailable": "DATOS NO DISPONIBLES",
 	"board_dir_N": "Hacia el norte",
 	"board_dir_S": "Hacia el sur",

@@ -60,7 +60,6 @@
 	"board_empty_error_head": "NO DATA",
 	"board_empty_error_sub": "Real-time data unavailable — check network",
 	"board_empty_error_chip": "RETRYING",
-	"board_no_departures": "NO UPCOMING DEPARTURES",
 	"board_data_unavailable": "DATA UNAVAILABLE",
 	"board_dir_N": "Northbound",
 	"board_dir_S": "Southbound",

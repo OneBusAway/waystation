@@ -60,7 +60,6 @@
 	"board_empty_error_head": "PAS DE DONNÉES",
 	"board_empty_error_sub": "Données temps réel indisponibles — vérifier le réseau",
 	"board_empty_error_chip": "NOUVELLE TENTATIVE",
-	"board_no_departures": "AUCUN DÉPART À VENIR",
 	"board_data_unavailable": "DONNÉES INDISPONIBLES",
 	"board_dir_N": "Direction nord",
 	"board_dir_S": "Direction sud",

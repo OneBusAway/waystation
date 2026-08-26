@@ -11,6 +11,8 @@
 		CARD_GAP,
 		FOOTER_HEIGHT,
 		HEADER_HEIGHT,
+		PAD_BOTTOM,
+		PAD_TOP,
 		SECTION_GAP,
 		computeGridLayout
 	} from '$lib/board-layout.js';
@@ -83,7 +85,7 @@
 	style:inset="0"
 	style:background="var(--bg)"
 	style:color="var(--ink)"
-	style:padding="26px 32px 22px"
+	style:padding="{PAD_TOP}px 32px {PAD_BOTTOM}px"
 	style:display="grid"
 	style:grid-template-rows={templateRows}
 	style:gap="{SECTION_GAP}px"
@@ -119,8 +121,6 @@
 			{#if agencyName}
 				<div
 					class="display"
-					style:display="flex"
-					style:align-items="center"
 					style:font-size="30px"
 					style:font-weight="700"
 					style:line-height="1.05"

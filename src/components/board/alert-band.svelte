@@ -11,6 +11,7 @@
 	const activeWindow = $derived(situation?.activeWindows?.[0]);
 	const windowStart = $derived(activeWindow?.from ? formatAlertWindow(activeWindow.from) : '');
 	const windowEnd = $derived(activeWindow?.to ? formatAlertWindow(activeWindow.to) : '');
+	const isRTL = $derived(getLocale() === 'ar');
 	// Built as a single string rather than left to template whitespace: a `→` sitting on its
 	// own line inside an {#if} has its leading whitespace collapsed by Svelte, which silently
 	// produced "Aug 18→ Sep 5" (space after the arrow only, none before it).
@@ -20,7 +21,6 @@
 	// OBA's severity vocabulary does not match the three tones app.css paints; without this
 	// mapping the class matched no rule and the severity bar never drew.
 	const tone = $derived(alertTone(situation?.severity));
-	const isRTL = $derived(getLocale() === 'ar');
 
 	let translated = $state({ headline: '', body: '' });
 

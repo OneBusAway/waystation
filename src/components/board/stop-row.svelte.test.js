@@ -39,9 +39,10 @@ describe('StopRow status vocabulary', () => {
 		expect(early.container.textContent).toContain('3 MIN EARLY');
 	});
 
-	test('still spells out a cancellation', () => {
+	test('still spells out a cancellation, exactly once', () => {
 		const { container } = render(StopRow, { props: { arrival: arrival({ status: 'CANCEL' }) } });
-		expect(container.textContent).toContain('CANCELED');
+		const matches = container.textContent.match(/CANCELED/g) ?? [];
+		expect(matches.length).toBe(1);
 	});
 });
 
