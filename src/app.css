@@ -53,6 +53,11 @@ body::before {
 	font-family: 'IBM Plex Sans', system-ui, sans-serif;
 	background: var(--bg);
 	color: var(--ink);
+
+	/* Two radii only: containers (cards, alert band) and chips (route tiles, glyph boxes).
+	   Previously these were four different inline values between 0 and 8px. */
+	--radius-container: 8px;
+	--radius-chip: 6px;
 }
 .theme-departure .mono {
 	font-family: 'IBM Plex Mono', ui-monospace, monospace;
@@ -73,6 +78,7 @@ body::before {
 	--bg-elev: var(--brand-bg-elev, #15181f);
 	--rule: var(--brand-rule, #2a2f3a);
 	--rule-strong: var(--brand-rule-strong, #3d4453);
+	--card-edge: var(--brand-card-edge, var(--rule));
 	--ink: var(--brand-ink, #f4ecd8);
 	--ink-dim: var(--brand-ink-dim, #9b9685);
 	--ink-mute: var(--brand-ink-mute, #5e5a4f);
@@ -95,6 +101,9 @@ body::before {
 	--bg-elev: var(--brand-bg-elev, #ffffff);
 	--rule: var(--brand-rule, #c7c4bd);
 	--rule-strong: var(--brand-rule-strong, #1a1a1a);
+	/* A #c7c4bd hairline on #f5f3ee is invisible at kiosk distance; ink at 12% is crisp
+	   without turning the paper board into a web card. No blur, no soft shadow. */
+	--card-edge: var(--brand-card-edge, color-mix(in srgb, var(--ink) 12%, transparent));
 	--ink: var(--brand-ink, #0a0a0a);
 	--ink-dim: var(--brand-ink-dim, #3a3a3a);
 	--ink-mute: var(--brand-ink-mute, #6a6a6a);
@@ -103,7 +112,9 @@ body::before {
 	--badge-bg-1: var(--brand-badge-bg-1, #1a1d24);
 	--badge-bg-2: var(--brand-badge-bg-1, #14171c);
 	--badge-edge: var(--brand-badge-edge, #0a0a0a);
-	--badge-ink: var(--brand-badge-ink, #d4b14a);
+	/* Cream on the near-black tile, per the design spec. Warm amber was a dark-theme value
+	   that leaked into light mode. */
+	--badge-ink: var(--brand-badge-ink, #f5f3ee);
 	--ontime: var(--brand-ontime, #1f7a3a);
 	--early: var(--brand-early, #a35f08);
 	--late: var(--brand-late, #b8402a);

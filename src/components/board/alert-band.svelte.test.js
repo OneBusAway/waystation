@@ -1,0 +1,197 @@
+import { render, cleanup } from '@testing-library/svelte';
+import { describe, test, expect, afterEach, beforeEach, vi } from 'vitest';
+import AlertBand from './alert-band.svelte';
+import { ALERT_HEIGHT } from '$lib/board-layout.js';
+
+// Mock state for controlling getLocale(), so the RTL arrow-direction test can flip locale
+// without depending on which locale the environment happens to default to.
+let mockLocale = 'en';
+
+vi.mock('$lib/paraglide/runtime.js', async (importOriginal) => {
+	const actual = await importOriginal();
+	return {
+		...actual,
+		getLocale: () => mockLocale
+	};
+});
+
+// Keep alertTone/formatAlertWindow real; stub only translate() so the RTL test below (which
+// forces mockLocale = 'ar' and takes the component's translation $effect branch) can never
+// reach the real network, regardless of which describe block runs it.
+vi.mock('$lib/formatters.js', async (importOriginal) => ({
+	...(await importOriginal()),
+	translate: (text) => Promise.resolve(text)
+}));
+
+// File-scoped so locale can never leak between describe blocks: this used to live inside
+// `describe('AlertBand content')` only, which let 'AlertBand severity' and 'AlertBand
+// geometry' inherit whatever locale the previous test left behind.
+beforeEach(() => {
+	mockLocale = 'en';
+});
+
+const HEADLINE =
+	'Starting Monday, several routes serving downtown will have changes ranging from minor stop relocations to full reroutes';
+const BODY = 'Check the agency website for the full list of affected trips.';
+
+function situation(overrides = {}) {
+	return {
+		summary: { value: HEADLINE },
+		description: { value: BODY },
+		severity: 'severe',
+		activeWindows: [
+			{
+				from: new Date('2026-08-18T12:00:00Z').getTime(),
+				to: new Date('2026-09-05T12:00:00Z').getTime()
+			}
+		],
+		...overrides
+	};
+}
+
+describe('AlertBand content', () => {
+	afterEach(() => cleanup());
+
+	// Punch list §5: the headline was single-line clipped and the body never rendered.
+	test('clamps the headline to two lines rather than one', () => {
+		const { container } = render(AlertBand, { props: { situation: situation() } });
+		const headline = container.querySelector('[data-testid="alert-headline"]');
+		expect(headline.textContent).toContain('ranging from');
+		expect(
+			headline.style.webkitLineClamp || headline.style.getPropertyValue('-webkit-line-clamp')
+		).toBe('2');
+	});
+
+	test('renders the body below the headline', () => {
+		const { container } = render(AlertBand, { props: { situation: situation() } });
+		const body = container.querySelector('[data-testid="alert-body"]');
+		expect(body).not.toBeNull();
+		expect(body.textContent).toContain('affected trips');
+	});
+
+	test('omits the body element when the situation has no description', () => {
+		const { container } = render(AlertBand, {
+			props: { situation: situation({ description: undefined }) }
+		});
+		expect(container.querySelector('[data-testid="alert-body"]')).toBeNull();
+	});
+
+	// Punch list §5: SERVICE ADVISORY becomes a left-aligned eyebrow above the headline.
+	test('places SERVICE ADVISORY above the headline as an eyebrow, not in the right rail', () => {
+		const { container } = render(AlertBand, { props: { situation: situation() } });
+		const eyebrow = container.querySelector('[data-testid="alert-eyebrow"]');
+		const rail = container.querySelector('[data-testid="alert-window"]');
+		expect(eyebrow.textContent).toContain('SERVICE ADVISORY');
+		expect(rail.textContent).not.toContain('SERVICE ADVISORY');
+	});
+
+	// Punch list §5: the header already says the year and today's date.
+	test('shows the date window without weekday or year', () => {
+		const { container } = render(AlertBand, { props: { situation: situation() } });
+		const rail = container.querySelector('[data-testid="alert-window"]').textContent;
+		expect(rail).toContain('Aug 18');
+		expect(rail).toContain('Sep 5');
+		expect(rail).not.toMatch(/2026/);
+		expect(rail).not.toMatch(/Tue|Sat/i);
+	});
+
+	test('renders nothing in the rail when the situation has no active window', () => {
+		const { container } = render(AlertBand, {
+			props: { situation: situation({ activeWindows: [] }) }
+		});
+		expect(container.querySelector('[data-testid="alert-window"]').textContent.trim()).toBe('');
+	});
+
+	// Regression: a `→` starting a new line inside an {#if} had its leading whitespace
+	// collapsed by Svelte, so the rail rendered "Aug 18→ Sep 5" — a space after the arrow but
+	// none before it. Pins the exact separator spacing so a future reflow of this markup can't
+	// silently re-break it. The rail carries class="sc" (text-transform: uppercase), which
+	// doesn't affect textContent, so this asserts the untransformed casing.
+	test('separates the date window bounds with a space on both sides of the arrow', () => {
+		const { container } = render(AlertBand, { props: { situation: situation() } });
+		const rail = container.querySelector('[data-testid="alert-window"]').textContent.trim();
+		expect(rail).toBe('Aug 18 → Sep 5');
+	});
+
+	test('separates the date window bounds with a space on both sides of the RTL arrow', () => {
+		// Arabic locale formats the dates themselves (Arabic month names/numerals), so this
+		// checks the separator spacing rather than pinning exact date text.
+		mockLocale = 'ar';
+		const { container } = render(AlertBand, { props: { situation: situation() } });
+		const rail = container.querySelector('[data-testid="alert-window"]').textContent.trim();
+		expect(rail).toContain('←');
+		expect(rail).toContain(' ← ');
+	});
+});
+
+describe('AlertBand severity', () => {
+	afterEach(() => cleanup());
+
+	// Regression: OBA severity values never matched the three tone classes, so the 6px
+	// severity bar and the background tint never drew on the deployed board.
+	test('maps an OBA severity onto a tone class the stylesheet defines', () => {
+		const { container } = render(AlertBand, { props: { situation: situation() } });
+		expect(container.querySelector('.alert-alert')).not.toBeNull();
+	});
+
+	test('maps a low severity to the info tone', () => {
+		const { container } = render(AlertBand, {
+			props: { situation: situation({ severity: 'slight' }) }
+		});
+		expect(container.querySelector('.alert-info')).not.toBeNull();
+	});
+
+	test('always lands on a defined tone for an unknown severity', () => {
+		const { container } = render(AlertBand, {
+			props: { situation: situation({ severity: 'somethingNew' }) }
+		});
+		expect(container.querySelector('.alert-advisory')).not.toBeNull();
+	});
+});
+
+describe('AlertBand geometry', () => {
+	afterEach(() => cleanup());
+
+	test('is exactly the height the layout solver reserves for it', () => {
+		const { container } = render(AlertBand, { props: { situation: situation() } });
+		expect(container.firstElementChild.style.height).toBe(`${ALERT_HEIGHT}px`);
+	});
+
+	test('uses the container radius on the band and the chip radius on the glyph box', () => {
+		const { container } = render(AlertBand, { props: { situation: situation() } });
+		expect(container.firstElementChild.style.borderRadius).toBe('var(--radius-container)');
+		expect(container.querySelector('.alert-glyph').style.borderRadius).toBe('var(--radius-chip)');
+	});
+});
+
+describe('AlertBand chrome height contract', () => {
+	afterEach(() => cleanup());
+
+	// GEOMETRY CONTRACT — these values are load-bearing, not styling preferences.
+	// board-layout.js's ALERT_HEIGHT = 128 rests on the assumption that this content fits inside
+	// it: eyebrow (12px + 4px margin) + two clamped 24px/1.2 headline lines + 3px margin + one
+	// 18px/1.25 body line ≈ 103px against ~106px of content box (128px minus the band's 10px top
+	// and bottom padding). That's ~3px of slack, not a guarantee — a third line or a larger
+	// eyebrow would overflow silently. Changing any value here without updating ALERT_HEIGHT in
+	// src/lib/board-layout.js makes the band silently over- or under-fill its reserved height,
+	// with no other test going red. Update both sides together.
+	test('pins the eyebrow, headline and body sizing that ALERT_HEIGHT is derived from', () => {
+		const { container } = render(AlertBand, { props: { situation: situation() } });
+		const eyebrow = container.querySelector('[data-testid="alert-eyebrow"]');
+		const headline = container.querySelector('[data-testid="alert-headline"]');
+		const body = container.querySelector('[data-testid="alert-body"]');
+
+		expect(eyebrow.style.fontSize).toBe('12px');
+		expect(eyebrow.style.marginBottom).toBe('4px');
+
+		expect(headline.style.fontSize).toBe('24px');
+		expect(headline.style.lineHeight).toBe('1.2');
+		expect(
+			headline.style.webkitLineClamp || headline.style.getPropertyValue('-webkit-line-clamp')
+		).toBe('2');
+
+		expect(body.style.fontSize).toBe('18px');
+		expect(body.style.lineHeight).toBe('1.25');
+		expect(body.style.marginTop).toBe('3px');
+	});
+});

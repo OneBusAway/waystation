@@ -9,46 +9,78 @@
 		SCHED: { glyph: '○', weight: 500 }
 	};
 
-	let { arrival, last = false } = $props();
+	let { arrival, last = false, rowHeight = 64, numeralSize = 48 } = $props();
 
 	const isCancel = $derived(arrival.status === 'CANCEL');
-	const isSched = $derived(arrival.status === 'SCHED');
+	const isNow = $derived(!isCancel && arrival.min <= 0);
 	const s = $derived(STATUS[arrival.status] ?? STATUS.SCHED);
+
+	// Which statuses say themselves in words lives here and nowhere else: an empty string means
+	// the row stays silent, and the template renders the line only when there is one. The glyph
+	// and the footer legend already carry "nothing is wrong", so ONTIME and SCHED say nothing;
+	// CANCEL says nothing here either because the minutes column already renders CANCELED, and
+	// printing it twice on one row is the duplication this whole change set out to remove.
 	const phrase = $derived.by(() => {
 		const { status, delta } = arrival;
 		if (status === 'LATE' && delta != null) return t.board_status_min_late({ delta });
 		if (status === 'EARLY' && delta != null)
 			return t.board_status_min_early({ delta: Math.abs(delta) });
-		if (status === 'ONTIME') return t.board_status_ontime();
 		if (status === 'EARLY') return t.board_status_early();
 		if (status === 'LATE') return t.board_status_delayed();
-		if (status === 'CANCEL') return t.board_status_canceled();
-		return t.board_status_scheduled();
+		return '';
 	});
-	const len = $derived(String(arrival.route).length);
-	const badgeSize = $derived(54 * (len <= 2 ? 0.62 : len <= 3 ? 0.54 : len <= 4 ? 0.42 : 0.36));
+
+	// Word routes ("2 Line", "B Line") get a content-sized pill; a fixed 104px tile around
+	// two small words reads as a black blob. Numeric routes keep the fixed tile.
+	const route = $derived(String(arrival.route ?? ''));
+	const isWordRoute = $derived(/[a-z]/i.test(route) && route.includes(' '));
+	const badgeHeight = $derived(Math.max(48, Math.min(64, rowHeight - 22)));
+	const badgeWidth = $derived(Math.round(badgeHeight * 1.9));
+	const numericScale = $derived(
+		route.length <= 2 ? 0.62 : route.length <= 3 ? 0.54 : route.length <= 4 ? 0.42 : 0.36
+	);
+	const badgeFontSize = $derived(
+		isWordRoute
+			? Math.min(26, Math.round(badgeHeight * 0.4))
+			: Math.round(badgeHeight * numericScale)
+	);
+
+	// A single fixed, right-aligned column so every card's numerals form one vertical edge.
+	// Comfortably fits a status glyph, two digits and the MIN label at the final size (125px
+	// at numeralSize: 48); a three-digit minutes value is unverified and, with the column's
+	// overflow: hidden + flex-end alignment, would be a candidate to clip. In practice OBA's
+	// arrival window keeps `min` well under 100, so this is latent.
+	const minutesColumn = $derived(Math.round(numeralSize * 2.6));
+	const glyphSize = $derived(Math.round(numeralSize * 0.32));
+	const minLabelSize = $derived(Math.round(numeralSize * 0.33));
+	const cancelSize = $derived(Math.round(numeralSize * 0.54));
+	// Destination sits clearly below the 36px card title but grows a little with the row.
+	const destSize = $derived(Math.min(28, Math.round(24 + (numeralSize - 48) * 0.25)));
 </script>
 
 <div
 	class="status-{arrival.status}"
 	style:display="grid"
-	style:grid-template-columns="auto minmax(0, 1fr) 130px"
+	style:grid-template-columns="auto minmax(0, 1fr) {minutesColumn}px"
 	style:gap="14px"
 	style:align-items="center"
+	style:height="{rowHeight}px"
 	style:border-bottom={last ? 'none' : '1px solid var(--rule)'}
 	style:opacity={isCancel ? 0.7 : 1}
 >
 	<div
 		class="route-badge"
-		style:width="104px"
-		style:height="54px"
-		style:border-radius="8px"
+		style:width={isWordRoute ? 'auto' : `${badgeWidth}px`}
+		style:min-width={isWordRoute ? `${badgeHeight}px` : null}
+		style:padding={isWordRoute ? '0 12px' : null}
+		style:height="{badgeHeight}px"
+		style:border-radius="var(--radius-chip)"
 		style:display="grid"
 		style:place-items="center"
 	>
 		<div
 			class="display tnum"
-			style:font-size="{badgeSize}px"
+			style:font-size="{badgeFontSize}px"
 			style:font-weight="800"
 			style:line-height="1"
 			style:letter-spacing="-0.01em"
@@ -62,7 +94,7 @@
 	<div style:min-width="0">
 		<div
 			class="display"
-			style:font-size="27px"
+			style:font-size="{destSize}px"
 			style:font-weight="600"
 			style:line-height="1.15"
 			style:white-space="nowrap"
@@ -71,59 +103,73 @@
 		>
 			{arrival.dest || arrival.name}
 		</div>
-		<div
-			class="sc tnum"
-			style:font-size="12px"
-			style:letter-spacing="0.16em"
-			style:margin-top="2px"
-			style:color={isSched ? 'var(--ink-mute)' : 'var(--status-tone)'}
-			style:font-weight={s.weight}
-		>
-			{phrase}
-		</div>
+		{#if phrase}
+			<div
+				class="sc tnum"
+				style:font-size="12px"
+				style:letter-spacing="0.10em"
+				style:margin-top="2px"
+				style:color="var(--status-tone)"
+				style:font-weight={s.weight}
+			>
+				{phrase}
+			</div>
+		{/if}
 	</div>
 
 	<div
+		data-testid="minutes-group"
 		dir="ltr"
 		style:display="flex"
 		style:align-items="baseline"
-		style:gap="7px"
+		style:gap="6px"
 		style:justify-content="flex-end"
 		style:overflow="hidden"
 	>
-		<span
-			aria-hidden="true"
-			style:font-size="16px"
-			style:color="var(--status-tone)"
-			style:font-weight={s.weight}
-			style:align-self="center">{s.glyph}</span
-		>
+		{#if !isNow}
+			<span
+				data-testid="status-glyph"
+				aria-hidden="true"
+				style:font-size="{glyphSize}px"
+				style:color="var(--status-tone)"
+				style:font-weight={s.weight}>{s.glyph}</span
+			>
+		{/if}
 		{#if isCancel}
 			<span
+				data-testid="minutes"
 				class="sc display"
-				style:font-size="26px"
+				style:font-size="{cancelSize}px"
 				style:font-weight="700"
 				style:color="var(--status-tone)">{t.board_status_canceled()}</span
 			>
+		{:else if isNow}
+			<span
+				data-testid="minutes"
+				class="sc display"
+				style:font-size="{numeralSize}px"
+				style:font-weight="800"
+				style:line-height="0.9"
+				style:letter-spacing="-0.01em"
+				style:color="var(--accent)">{t.board_now()}</span
+			>
 		{:else}
 			<span
-				class="display mono"
-				style:font-size="48px"
+				data-testid="minutes"
+				class="display mono tnum"
+				style:font-size="{numeralSize}px"
 				style:font-weight="700"
 				style:line-height="0.9"
 				style:letter-spacing="-0.03em"
-				style:color={isSched ? 'var(--ink)' : 'var(--accent)'}
-				>{arrival.min <= 0 ? t.board_now() : arrival.min}</span
+				style:color="var(--ink)">{arrival.min}</span
 			>
-			{#if arrival.min > 0}
-				<span
-					class="sc display"
-					style:font-size="16px"
-					style:font-weight="700"
-					style:letter-spacing="0.06em"
-					style:color="var(--ink-mute)">{t.board_min()}</span
-				>
-			{/if}
+			<span
+				class="sc display"
+				style:font-size="{minLabelSize}px"
+				style:font-weight="700"
+				style:letter-spacing="0.06em"
+				style:color="var(--ink-mute)">{t.board_min()}</span
+			>
 		{/if}
 	</div>
 </div>

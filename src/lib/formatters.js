@@ -317,6 +317,77 @@ export function formatTimestamp(timestamp) {
 	});
 }
 
+// A trailing bay belongs in the card's meta line next to the stop code and direction, not in
+// the title. Both separators the feeds use are matched; a bare hyphenated place name
+// ("Bellevue - Downtown") must not be treated as a bay, hence the explicit "bay" keyword.
+const BAY_SUFFIX = /\s*[-–—]\s*(bay\s+[\w-]+)\s*$/i;
+const BAY_PARENTHESISED = /\s*\((bay\s+[\w-]+)\)\s*$/i;
+
+/**
+ * Split a trailing bay designator off a stop name.
+ *
+ * @param {string} name - Raw stop name from the feed
+ * @returns {{name: string, bay: string}} - Title text and bay label ('' when there is no bay)
+ */
+export function splitStopName(name) {
+	const raw = typeof name === 'string' ? name.trim() : '';
+
+	for (const pattern of [BAY_SUFFIX, BAY_PARENTHESISED]) {
+		const match = raw.match(pattern);
+		if (match) {
+			// Normalise the keyword's casing but leave the identifier alone, so "BAY D-3" becomes
+			// "Bay D-3" rather than "Bay d-3".
+			const bay = match[1].replace(/\s+/g, ' ').replace(/^bay/i, 'Bay');
+			return { name: raw.slice(0, match.index).trim(), bay };
+		}
+	}
+
+	return { name: raw, bay: '' };
+}
+
+/**
+ * Format an alert's active-window boundary for the board's right rail. The board already
+ * states today's date in the header, so the weekday and year are noise here.
+ *
+ * @param {number} timestamp - Unix timestamp in milliseconds
+ * @returns {string} - A short date like "Aug 18"
+ */
+export function formatAlertWindow(timestamp) {
+	return new Date(timestamp).toLocaleDateString(`${getLocale()}`, {
+		month: 'short',
+		day: 'numeric'
+	});
+}
+
+// OBA reports severity with the GTFS-RT vocabulary, which has seven values; the board paints
+// three tones. Without this mapping the severity class matched no CSS rule, so --alert-tone
+// was never set and the 6px severity bar and background tint silently did not render.
+const SEVERITY_TONES = {
+	noimpact: 'info',
+	veryslight: 'info',
+	slight: 'info',
+	normal: 'advisory',
+	severe: 'alert',
+	verysevere: 'alert',
+	// A feed that already speaks the board's own vocabulary passes straight through.
+	info: 'info',
+	advisory: 'advisory',
+	alert: 'alert'
+};
+
+/**
+ * Map an OBA situation severity onto one of the board's three alert tones.
+ *
+ * @param {string} severity - Raw severity string from OBA
+ * @returns {'info'|'advisory'|'alert'} - Always a tone the stylesheet defines
+ */
+export function alertTone(severity) {
+	const key = String(severity ?? '')
+		.toLowerCase()
+		.replace(/[\s_-]/g, '');
+	return SEVERITY_TONES[key] ?? 'advisory';
+}
+
 /**
  * Remove duplicate departures based on tripId and scheduledDepartureTime
  *

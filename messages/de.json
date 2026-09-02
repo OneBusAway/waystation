@@ -60,7 +60,6 @@
 	"board_empty_error_head": "KEINE DATEN",
 	"board_empty_error_sub": "Echtzeitdaten nicht verfügbar — Netzwerk prüfen",
 	"board_empty_error_chip": "ERNEUTER VERSUCH",
-	"board_no_departures": "KEINE ABFAHRTEN",
 	"board_data_unavailable": "DATEN NICHT VERFÜGBAR",
 	"board_dir_N": "Richtung Norden",
 	"board_dir_S": "Richtung Süden",
@@ -69,5 +68,7 @@
 	"board_dir_NE": "Richtung Nordosten",
 	"board_dir_NW": "Richtung Nordwesten",
 	"board_dir_SE": "Richtung Südosten",
-	"board_dir_SW": "Richtung Südwesten"
+	"board_dir_SW": "Richtung Südwesten",
+	"board_stop_code": "#{stopId}",
+	"board_no_departures_inline": "Keine bevorstehenden Abfahrten"
 }
