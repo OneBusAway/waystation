@@ -1,8 +1,11 @@
 import { describe, test, expect } from 'vitest';
 import {
+	cardWidth,
+	columnRuleOffsets,
 	computeGridLayout,
 	columnsFor,
 	gridAreaHeight,
+	gridAreaWidth,
 	CARD_GAP,
 	CARD_CHROME_HEIGHT,
 	COLLAPSED_CARD_HEIGHT,
@@ -48,6 +51,32 @@ describe('gridAreaHeight', () => {
 		expect(bare).toBeGreaterThan(withFooter);
 		expect(withFooter).toBeGreaterThan(withBoth);
 		expect(withBoth).toBe(700);
+	});
+});
+
+describe('cardWidth', () => {
+	test('divides the padded stage among the columns, gaps included', () => {
+		expect(gridAreaWidth()).toBe(1856);
+		expect(cardWidth(2)).toBe((1856 - CARD_GAP) / 2);
+		expect(cardWidth(3) * 3 + CARD_GAP * 2).toBeCloseTo(gridAreaWidth(), 1);
+	});
+
+	test('never divides by zero columns', () => {
+		expect(cardWidth(0)).toBe(gridAreaWidth());
+	});
+});
+
+describe('columnRuleOffsets', () => {
+	test('puts a rule in the middle of every gap and nowhere else', () => {
+		expect(columnRuleOffsets(1)).toEqual([]);
+		// One gap, so the rule lands on the centerline of the grid.
+		expect(columnRuleOffsets(2)).toEqual([gridAreaWidth() / 2 - 0.5]);
+
+		const [first, second] = columnRuleOffsets(3);
+		expect(first).toBeCloseTo(cardWidth(3) + CARD_GAP / 2 - 0.5, 1);
+		expect(second).toBeCloseTo(2 * cardWidth(3) + CARD_GAP + CARD_GAP / 2 - 0.5, 1);
+		// Symmetric about the stage, which is what makes a misplaced rule visible.
+		expect(gridAreaWidth() - second).toBeCloseTo(first + 1, 1);
 	});
 });
 

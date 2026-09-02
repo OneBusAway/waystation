@@ -2064,8 +2064,7 @@ Replace the entire markup block (everything from `<div class="alert-badge ...">`
 		style:text-align="right"
 		style:white-space="nowrap"
 	>
-		{#if windowStart}{windowStart}{#if windowEnd}
-				{isRTL ? '←' : '→'} {windowEnd}{/if}{/if}
+		{#if windowStart}{windowStart}{#if windowEnd}{isRTL ? ' ← ' : ' → '}{windowEnd}{/if}{/if}
 	</div>
 </div>
 ```

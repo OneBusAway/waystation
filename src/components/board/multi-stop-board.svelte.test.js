@@ -163,12 +163,11 @@ describe('MultiStopBoard', () => {
 		expect(five.container.querySelectorAll('[data-testid="column-rule"]').length).toBe(2);
 	});
 
-	// Punch list §16: a bare `50%` midpoint is only correct at 2 columns. This test pins the
-	// actual placement at 3 columns, where a `50%` simplification would be wrong but would
-	// leave the rule *count* (asserted above) unchanged, so a regression there would otherwise
-	// go undetected. jsdom preserves the calc() string verbatim (confirmed against a bare
-	// jsdom element before writing this assertion) so exact-string comparison is reliable here.
-	test('places each column rule at its track midpoint, not a bare 50%', () => {
+	// Punch list §16: the midpoint of the stage is only the right place for a rule at 2
+	// columns. This test pins the actual placement at 3 columns, where a single centered rule
+	// would be wrong but would leave the rule *count* (asserted above) unchanged, so a
+	// regression there would otherwise go undetected.
+	test('places each column rule at its gap, not at the middle of the stage', () => {
 		const many = Array.from({ length: 4 }, () => arrival());
 		const { container } = render(MultiStopBoard, {
 			props: {
@@ -178,10 +177,8 @@ describe('MultiStopBoard', () => {
 			}
 		});
 		const rules = [...container.querySelectorAll('[data-testid="column-rule"]')];
-		expect(rules.map((r) => r.style.left)).toEqual([
-			'calc(1 * (100% - 40px) / 3 + 10px - 0.5px)',
-			'calc(2 * (100% - 40px) / 3 + 30px - 0.5px)'
-		]);
+		// (1920 - 64 - 40) / 3 = 605.33px cards; the rules sit in the 20px gaps between them.
+		expect(rules.map((r) => r.style.left)).toEqual(['614.83px', '1240.16px']);
 	});
 
 	// Punch list §18: the mark and the wordmark were butted together with no separator.

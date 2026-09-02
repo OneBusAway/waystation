@@ -10,9 +10,11 @@
  * bigger type instead of a dead zone under the last card.
  */
 
+export const STAGE_WIDTH = 1920;
 export const STAGE_HEIGHT = 1080;
 export const PAD_TOP = 26;
 export const PAD_BOTTOM = 22;
+export const PAD_X = 32;
 export const HEADER_HEIGHT = 104;
 export const SECTION_GAP = 18;
 
@@ -46,6 +48,45 @@ export const MAX_ROWS_PER_CARD = 6;
 export function columnsFor(stopCount) {
 	if (stopCount <= 2) return Math.max(stopCount, 1);
 	return stopCount <= 4 ? 2 : 3;
+}
+
+/**
+ * Width available to the stop grid once the stage padding is subtracted.
+ * @returns {number}
+ */
+export function gridAreaWidth() {
+	return STAGE_WIDTH - PAD_X * 2;
+}
+
+/**
+ * Width of one card. The stage never reflows, so the columns are sized in px rather than
+ * left to `1fr`: that keeps a long stop name from widening its own track and dragging the
+ * column rules off the gaps.
+ * @param {number} cols
+ * @returns {number}
+ */
+export function cardWidth(cols) {
+	const n = Math.max(Math.floor(cols) || 1, 1);
+	return round2((gridAreaWidth() - (n - 1) * CARD_GAP) / n);
+}
+
+/**
+ * Left offset of the 1px rule drawn in each gap between columns, measured from the grid's
+ * left edge. Half a pixel is shaved off so the rule straddles the gap's midpoint.
+ * @param {number} cols
+ * @returns {number[]} one offset per gap; empty at a single column
+ */
+export function columnRuleOffsets(cols) {
+	const n = Math.max(Math.floor(cols) || 1, 1);
+	const w = cardWidth(n);
+	return Array.from({ length: n - 1 }, (_, i) =>
+		round2((i + 1) * (w + CARD_GAP) - CARD_GAP / 2 - 0.5)
+	);
+}
+
+/** Sub-hundredth-of-a-pixel precision is noise; keep the emitted CSS readable. */
+function round2(px) {
+	return Math.round(px * 100) / 100;
 }
 
 /**

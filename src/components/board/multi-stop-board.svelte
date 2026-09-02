@@ -13,8 +13,11 @@
 		HEADER_HEIGHT,
 		PAD_BOTTOM,
 		PAD_TOP,
-		SECTION_GAP,
-		computeGridLayout
+		PAD_X,
+		cardWidth,
+		columnRuleOffsets,
+		computeGridLayout,
+		SECTION_GAP
 	} from '$lib/board-layout.js';
 
 	const STALE_THRESHOLD_MS = 90_000;
@@ -54,14 +57,10 @@
 			.filter(Boolean)
 			.join(' ')
 	);
-	// A 1px rule at each gap's midpoint. The track expression mirrors the grid's own sizing so
-	// the rule lands exactly between columns at both 2 and 3 columns.
-	const ruleOffsets = $derived(
-		Array.from({ length: layout.cols - 1 }, (_, i) => {
-			const track = `(100% - ${(layout.cols - 1) * CARD_GAP}px) / ${layout.cols}`;
-			return `calc(${i + 1} * ${track} + ${i * CARD_GAP + CARD_GAP / 2}px - 0.5px)`;
-		})
-	);
+	// Columns and the 1px rule in each gap are both solved from the fixed stage width, so the
+	// rule lands exactly between columns at both 2 and 3 columns.
+	const colWidth = $derived(cardWidth(layout.cols));
+	const ruleOffsets = $derived(columnRuleOffsets(layout.cols));
 	const liveCount = $derived(
 		stops.reduce((c, s) => c + s.arrivals.filter((a) => a.delta != null).length, 0)
 	);
@@ -85,7 +84,7 @@
 	style:inset="0"
 	style:background="var(--bg)"
 	style:color="var(--ink)"
-	style:padding="{PAD_TOP}px 32px {PAD_BOTTOM}px"
+	style:padding="{PAD_TOP}px {PAD_X}px {PAD_BOTTOM}px"
 	style:display="grid"
 	style:grid-template-rows={templateRows}
 	style:gap="{SECTION_GAP}px"
@@ -149,7 +148,7 @@
 	<div
 		style:position="relative"
 		style:display="grid"
-		style:grid-template-columns="repeat({layout.cols}, 1fr)"
+		style:grid-template-columns="repeat({layout.cols}, {colWidth}px)"
 		style:grid-auto-rows="min-content"
 		style:align-content="center"
 		style:gap="{CARD_GAP}px"
@@ -162,7 +161,7 @@
 				style:position="absolute"
 				style:top="0"
 				style:bottom="0"
-				style:left
+				style:left="{left}px"
 				style:width="1px"
 				style:background="var(--rule)"
 			></div>
