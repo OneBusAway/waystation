@@ -18,6 +18,10 @@ import {
 	parseStopDepartures,
 	diffArrivals,
 	alertTone,
+	parseScreenParams,
+	computeScreenWindow,
+	paginateArrivals,
+	MAX_BOARD_ROWS,
 	formatAlertWindow,
 	splitStopName
 } from '$lib/formatters';
@@ -492,5 +496,104 @@ describe('alertTone', () => {
 		expect(alertTone('')).toBe('advisory');
 		expect(alertTone(undefined)).toBe('advisory');
 		expect(alertTone(null)).toBe('advisory');
+	});
+});
+
+describe('parseScreenParams', () => {
+	test('defaults to a single screen when params are absent', () => {
+		expect(parseScreenParams(new URLSearchParams())).toEqual({ screen: 1, screens: 1 });
+	});
+
+	test('parses valid screen/screens', () => {
+		expect(parseScreenParams(new URLSearchParams('screen=2&screens=3'))).toEqual({
+			screen: 2,
+			screens: 3
+		});
+	});
+
+	test('clamps an out-of-range screen back to 1', () => {
+		expect(parseScreenParams(new URLSearchParams('screen=99&screens=3')).screen).toBe(1);
+		expect(parseScreenParams(new URLSearchParams('screen=0&screens=3')).screen).toBe(1);
+	});
+
+	test('falls back to defaults for a negative or non-numeric screens', () => {
+		expect(parseScreenParams(new URLSearchParams('screens=-1')).screens).toBe(1);
+		expect(parseScreenParams(new URLSearchParams('screens=abc')).screens).toBe(1);
+	});
+
+	test('rejects non-integer and non-finite numeric strings', () => {
+		expect(parseScreenParams(new URLSearchParams('screens=3.5')).screens).toBe(1);
+		expect(parseScreenParams(new URLSearchParams('screens=Infinity')).screens).toBe(1);
+		expect(parseScreenParams(new URLSearchParams('screen=1e3&screens=1e3')).screen).toBe(1000);
+	});
+});
+
+describe('computeScreenWindow', () => {
+	test('single screen gets the full maxDepartures budget, clamped to MAX_BOARD_ROWS', () => {
+		expect(computeScreenWindow(4, 1, 1)).toEqual({ start: 0, count: 4 });
+		expect(computeScreenWindow(12, 1, 1)).toEqual({ start: 0, count: MAX_BOARD_ROWS });
+	});
+
+	test('splits evenly across screens with no overlap and no gaps', () => {
+		const windows = [1, 2, 3].map((screen) => computeScreenWindow(9, screen, 3));
+		expect(windows).toEqual([
+			{ start: 0, count: 3 },
+			{ start: 3, count: 3 },
+			{ start: 6, count: 3 }
+		]);
+	});
+
+	// maxDepartures: 4 with screens: 3 must not leave a screen empty.
+	test('distributes the remainder to the earliest screens instead of leaving a screen empty', () => {
+		const windows = [1, 2, 3].map((screen) => computeScreenWindow(4, screen, 3));
+		expect(windows.map((w) => w.count)).toEqual([2, 1, 1]);
+		expect(windows.every((w) => w.count > 0)).toBe(true);
+
+		const totalCovered = windows.reduce((sum, w) => sum + w.count, 0);
+		expect(totalCovered).toBe(4);
+	});
+
+	test('every screen agrees on its window regardless of any live arrivals length', () => {
+		// no arrivals param - config/URL only.
+		const a = computeScreenWindow(10, 2, 3);
+		const b = computeScreenWindow(10, 2, 3);
+		expect(a).toEqual(b);
+	});
+
+	test('never hands a screen more rows than Board can render', () => {
+		// maxDepartures has no admin-side upper bound, so a large value plus a
+		// small screen count must still clamp per-screen count to MAX_BOARD_ROWS.
+		const windows = [1, 2].map((screen) => computeScreenWindow(12, screen, 2));
+		expect(windows.every((w) => w.count <= MAX_BOARD_ROWS)).toBe(true);
+	});
+
+	test('clamps invalid or zero maxDepartures to a non-negative budget', () => {
+		expect(computeScreenWindow(0, 1, 3)).toEqual({ start: 0, count: 0 });
+		expect(computeScreenWindow(-5, 1, 1)).toEqual({ start: 0, count: 0 });
+	});
+});
+
+describe('paginateArrivals', () => {
+	const nine = Array.from({ length: 9 }, (_, i) => ({ id: i }));
+
+	test('slices the window given by start/count', () => {
+		expect(paginateArrivals(nine, 0, 3)).toEqual(nine.slice(0, 3));
+		expect(paginateArrivals(nine, 3, 3)).toEqual(nine.slice(3, 6));
+	});
+
+	test('composing computeScreenWindow + paginateArrivals covers the full list with no overlap', () => {
+		const screens = 3;
+		const slices = [1, 2, 3].map((screen) => {
+			const { start, count } = computeScreenWindow(9, screen, screens);
+			return paginateArrivals(nine, start, count);
+		});
+		expect(slices.flat()).toEqual(nine);
+	});
+
+	test('a screen with fewer live rows than its window just renders what it has', () => {
+		const three = nine.slice(0, 3);
+		// Window says this screen owns 4 rows, but only 3 are currently live -
+		// e.g. a bus just crossed the departed cutoff. No error, no fabricated rows.
+		expect(paginateArrivals(three, 0, 4)).toEqual(three);
 	});
 });
