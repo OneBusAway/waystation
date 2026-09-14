@@ -19,7 +19,8 @@ import {
 	diffArrivals,
 	alertTone,
 	formatAlertWindow,
-	splitStopName
+	splitStopName,
+	formatOccupancy
 } from '$lib/formatters';
 
 afterEach(() => {
@@ -492,5 +493,31 @@ describe('alertTone', () => {
 		expect(alertTone('')).toBe('advisory');
 		expect(alertTone(undefined)).toBe('advisory');
 		expect(alertTone(null)).toBe('advisory');
+	});
+});
+
+describe('formatOccupancy', () => {
+	test('buckets seat-available statuses as light', () => {
+		expect(formatOccupancy('EMPTY')).toBe('light');
+		expect(formatOccupancy('MANY_SEATS_AVAILABLE')).toBe('light');
+	});
+
+	test('buckets limited-seating statuses as medium', () => {
+		expect(formatOccupancy('FEW_SEATS_AVAILABLE')).toBe('medium');
+		expect(formatOccupancy('STANDING_ROOM_ONLY')).toBe('medium');
+	});
+
+	test('buckets statuses with no room to board comfortably as full', () => {
+		expect(formatOccupancy('CRUSHED_STANDING_ROOM_ONLY')).toBe('full');
+		expect(formatOccupancy('FULL')).toBe('full');
+		expect(formatOccupancy('NOT_ACCEPTING_PASSENGERS')).toBe('full');
+	});
+
+	test('returns null for missing or unknown statuses so nothing renders', () => {
+		expect(formatOccupancy(null)).toBeNull();
+		expect(formatOccupancy(undefined)).toBeNull();
+		expect(formatOccupancy('UNKNOWN')).toBeNull();
+		expect(formatOccupancy('')).toBeNull();
+		expect(formatOccupancy('full')).toBeNull();
 	});
 });
