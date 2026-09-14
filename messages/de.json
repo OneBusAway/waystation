@@ -71,7 +71,7 @@
 	"board_dir_SW": "Richtung Südwesten",
 	"board_stop_code": "#{stopId}",
 	"board_no_departures_inline": "Keine bevorstehenden Abfahrten",
-	"BOARD_OCCUPANCY_LIGHT": "TODO",
-	"BOARD_OCCUPANCY_CROWDED": "TODO",
-	"BOARD_OCCUPANCY_FULL": "TODO"
+	"board_occupancy_light": "TODO",
+	"board_occupancy_medium": "TODO",
+	"board_occupancy_full": "TODO"
 }
