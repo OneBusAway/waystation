@@ -9,7 +9,7 @@ export const DEFAULT_CONFIG = {
 	theme: THEMES[0],
 	colorMode: COLOR_MODES[0],
 	branding: BRANDING_DEFAULTS,
-	showOccupancyStatus: false
+	showCrowding: false
 };
 
 function positiveInt(value, fallback) {
@@ -27,9 +27,7 @@ export function normalizeConfig(raw) {
 		theme: THEMES.includes(source.theme) ? source.theme : DEFAULT_CONFIG.theme,
 		colorMode: COLOR_MODES.includes(source.colorMode) ? source.colorMode : DEFAULT_CONFIG.colorMode,
 		branding: normalizeBranding(source.branding),
-		showOccupancyStatus:
-			typeof source.showOccupancyStatus === 'boolean'
-				? source.showOccupancyStatus
-				: DEFAULT_CONFIG.showOccupancyStatus
+		showCrowding:
+			typeof source.showCrowding === 'boolean' ? source.showCrowding : DEFAULT_CONFIG.showCrowding
 	};
 }

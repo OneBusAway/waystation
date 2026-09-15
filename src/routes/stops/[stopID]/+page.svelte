@@ -49,7 +49,7 @@
 	let fetchInFlight = false;
 	const refreshIntervalMs = $derived(data.config.updateInterval * 1000);
 	const maxDepartures = $derived(data.config.maxDepartures);
-	const showOccupancyStatus = $derived(data.config.showOccupancyStatus);
+	const showCrowding = $derived(data.config.showCrowding);
 
 	async function fetchStop(id) {
 		const response = await fetch(`/api/oba/arrivals-and-departures-for-stop/${id}`);
@@ -200,7 +200,7 @@
 				{fetchFailed}
 				{failedStopIds}
 				rowCount={Math.min(maxDepartures, 5)}
-				{showOccupancyStatus}
+				{showCrowding}
 			/>
 		{/if}
 	</div>
