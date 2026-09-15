@@ -151,7 +151,7 @@ body::before {
 }
 
 .theme-departure .occupancy-LIGHT {
-	--occupancy-tone: var(--ontime);
+	--occupancy-tone: var(--ink-dim);
 }
 .theme-departure .occupancy-MEDIUM {
 	--occupancy-tone: var(--early);
