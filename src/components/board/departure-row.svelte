@@ -109,7 +109,7 @@
 				{t.board_sched()} {clock}
 			{/if}
 		</div>
-		{#if showOccupancyStatus && arrival.occupancy}
+		{#if showOccupancyStatus && arrival.occupancy && !isCancel}
 			<div style:margin-top="6px">
 				<OccupancyPip level={arrival.occupancy} />
 			</div>
