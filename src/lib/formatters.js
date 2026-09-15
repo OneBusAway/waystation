@@ -410,7 +410,7 @@ export function removeDuplicates(departures) {
  *
  * @param {Object} dep - OBA arrivalAndDeparture record (with stopName already attached)
  * @param {Date} [now=new Date()]
- * @returns {{route: string, name: string, dest: string, min: number, delta: number|null, status: 'ONTIME'|'EARLY'|'LATE'|'SCHED'|'CANCEL', stopName: string, departureAt: number, tripId: string|undefined}}
+ * @returns {{route: string, name: string, dest: string, min: number, delta: number|null, status: 'ONTIME'|'EARLY'|'LATE'|'SCHED'|'CANCEL', stopName: string, departureAt: number, tripId: string|undefined, occupancy: 'LIGHT'|'MEDIUM'|'FULL'|null}}
  */
 export function formatBoardDeparture(dep, now = new Date()) {
 	const predicted = dep.predictedDepartureTime;
@@ -439,7 +439,8 @@ export function formatBoardDeparture(dep, now = new Date()) {
 		status,
 		stopName: dep.stopName ?? '',
 		departureAt,
-		tripId: dep.tripId
+		tripId: dep.tripId,
+		occupancy: formatOccupancy(dep.occupancyStatus)
 	};
 }
 

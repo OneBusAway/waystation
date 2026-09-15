@@ -221,6 +221,17 @@ describe('formatters', () => {
 			expect(Number.isNaN(a.min)).toBe(false);
 			expect(a.min).toBeLessThan(-2);
 		});
+
+		test('buckets occupancyStatus into occupancy', () => {
+			const dep = { ...baseDep, occupancyStatus: 'STANDING_ROOM_ONLY' };
+			const a = formatBoardDeparture(dep, NOW);
+			expect(a.occupancy).toBe('MEDIUM');
+		});
+
+		test('sets occupancy to null when occupancyStatus is missing', () => {
+			const a = formatBoardDeparture(baseDep, NOW);
+			expect(a.occupancy).toBeNull();
+		});
 	});
 
 	describe('parseStopDepartures', () => {
