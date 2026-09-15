@@ -1,5 +1,6 @@
 <script>
 	import * as t from '$lib/paraglide/messages.js';
+	import OccupancyPip from '$components/board/occupancy-pip.svelte';
 
 	const STATUS = {
 		ONTIME: { glyph: '●', weight: 500 },
@@ -9,9 +10,10 @@
 		SCHED: { glyph: '○', weight: 500 }
 	};
 
-	let { arrival, last = false, rowHeight = 64, numeralSize = 48 } = $props();
+	let { arrival, last = false, rowHeight = 64, numeralSize = 48, showCrowding = false } = $props();
 
 	const isCancel = $derived(arrival.status === 'CANCEL');
+	const showOccupancy = $derived(showCrowding && !!arrival.occupancy && !isCancel);
 	const isNow = $derived(!isCancel && arrival.min <= 0);
 	const s = $derived(STATUS[arrival.status] ?? STATUS.SCHED);
 
@@ -103,16 +105,28 @@
 		>
 			{arrival.dest || arrival.name}
 		</div>
-		{#if phrase}
+		{#if phrase || showOccupancy}
 			<div
-				class="sc tnum"
-				style:font-size="12px"
-				style:letter-spacing="0.10em"
+				style:display="flex"
+				style:align-items="center"
+				style:gap="14px"
 				style:margin-top="2px"
-				style:color="var(--status-tone)"
-				style:font-weight={s.weight}
+				style:white-space="nowrap"
 			>
-				{phrase}
+				{#if phrase}
+					<span
+						class="sc tnum"
+						style:font-size="12px"
+						style:letter-spacing="0.10em"
+						style:color="var(--status-tone)"
+						style:font-weight={s.weight}
+					>
+						{phrase}
+					</span>
+				{/if}
+				{#if showOccupancy}
+					<OccupancyPip level={arrival.occupancy} size={12} />
+				{/if}
 			</div>
 		{/if}
 	</div>

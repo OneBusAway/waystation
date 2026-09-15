@@ -32,7 +32,8 @@
 		isStale = false,
 		maxDepartures = 6,
 		showFooter = true,
-		showAlerts = true
+		showAlerts = true,
+		showCrowding = false
 	} = $props();
 
 	// Stops with departures come first; an empty or failed stop collapses to one line at the
@@ -172,6 +173,7 @@
 				limit={layout.perCard}
 				rowHeight={layout.rowHeight}
 				numeralSize={layout.numeralSize}
+				{showCrowding}
 			/>
 		{/each}
 	</div>

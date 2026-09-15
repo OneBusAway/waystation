@@ -185,6 +185,7 @@
 				{lastUpdatedAt}
 				{isStale}
 				{maxDepartures}
+				{showCrowding}
 			/>
 		{:else}
 			<Board

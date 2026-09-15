@@ -7,10 +7,9 @@
 		FULL: { filled: 3 }
 	};
 
-	let { level, large = false } = $props();
+	let { level, size = 22 } = $props();
 
 	const s = $derived(LEVELS[level]);
-	const size = $derived(large ? 28 : 22);
 	const label = $derived.by(() => {
 		if (!s) return '';
 		if (level === 'LIGHT') return t.board_occupancy_light();
@@ -26,7 +25,7 @@
 		dir="ltr"
 		style:display="inline-flex"
 		style:align-items="center"
-		style:gap="10px"
+		style:gap="{Math.round(size * 0.45)}px"
 		style:font-weight="500"
 		style:font-size="{size}px"
 		style:color="var(--occupancy-tone)"
