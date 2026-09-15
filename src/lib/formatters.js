@@ -468,7 +468,8 @@ export function diffArrivals(prev, next) {
 			p.status === n.status &&
 			p.delta === n.delta &&
 			p.stopName === n.stopName &&
-			p.departureAt === n.departureAt;
+			p.departureAt === n.departureAt &&
+			p.occupancy === n.occupancy;
 		return unchanged ? p : n;
 	});
 }

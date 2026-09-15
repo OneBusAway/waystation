@@ -304,6 +304,7 @@ describe('formatters', () => {
 				stopName: '',
 				departureAt: 1_000_000,
 				tripId: 't1',
+				occupancy: 'LIGHT',
 				...overrides
 			};
 		}
@@ -388,6 +389,14 @@ describe('formatters', () => {
 			expect(result).toBe(n);
 			expect(result).not.toBe(p);
 			expect(result.stopName).toBe('Main St & 5th Ave');
+		});
+
+		test('uses the new reference when only occupancy changes', () => {
+			const p = departure({ occupancy: 'LIGHT' });
+			const n = departure({ occupancy: 'FULL' });
+			const [result] = diffArrivals([p], [n]);
+			expect(result).toBe(n);
+			expect(result).not.toBe(p);
 		});
 	});
 });
