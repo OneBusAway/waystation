@@ -498,19 +498,19 @@ describe('alertTone', () => {
 
 describe('formatOccupancy', () => {
 	test('buckets seat-available statuses as light', () => {
-		expect(formatOccupancy('EMPTY')).toBe('light');
-		expect(formatOccupancy('MANY_SEATS_AVAILABLE')).toBe('light');
+		expect(formatOccupancy('EMPTY')).toBe('LIGHT');
+		expect(formatOccupancy('MANY_SEATS_AVAILABLE')).toBe('LIGHT');
 	});
 
 	test('buckets limited-seating statuses as medium', () => {
-		expect(formatOccupancy('FEW_SEATS_AVAILABLE')).toBe('medium');
-		expect(formatOccupancy('STANDING_ROOM_ONLY')).toBe('medium');
+		expect(formatOccupancy('FEW_SEATS_AVAILABLE')).toBe('MEDIUM');
+		expect(formatOccupancy('STANDING_ROOM_ONLY')).toBe('MEDIUM');
 	});
 
 	test('buckets statuses with no room to board comfortably as full', () => {
-		expect(formatOccupancy('CRUSHED_STANDING_ROOM_ONLY')).toBe('full');
-		expect(formatOccupancy('FULL')).toBe('full');
-		expect(formatOccupancy('NOT_ACCEPTING_PASSENGERS')).toBe('full');
+		expect(formatOccupancy('CRUSHED_STANDING_ROOM_ONLY')).toBe('FULL');
+		expect(formatOccupancy('FULL')).toBe('FULL');
+		expect(formatOccupancy('NOT_ACCEPTING_PASSENGERS')).toBe('FULL');
 	});
 
 	test('returns null for missing or unknown statuses so nothing renders', () => {
