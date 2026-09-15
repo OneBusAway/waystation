@@ -71,7 +71,7 @@
 	"board_dir_SW": "Southwest",
 	"board_stop_code": "#{stopId}",
 	"board_no_departures_inline": "No upcoming departures",
-	"board_occupancy_light": "TODO",
-	"board_occupancy_medium": "TODO",
-	"board_occupancy_full": "TODO"
+	"board_occupancy_light": "Not Crowded",
+	"board_occupancy_medium": "Crowded",
+	"board_occupancy_full": "Full"
 }
