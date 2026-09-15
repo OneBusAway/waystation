@@ -32,6 +32,13 @@ describe('DepartureRow occupancy', () => {
 		expect(container.querySelector('.occupancy-FULL')).toBeNull();
 	});
 
+	test('hides occupancy when there is no occupancy data', () => {
+		const { container } = render(DepartureRow, {
+			props: { arrival: arrival({ occupancy: null }), showOccupancyStatus: true }
+		});
+		expect(container.querySelector('[class*="occupancy-"]')).toBeNull();
+	});
+
 	test('hides occupancy for a canceled trip', () => {
 		const { container } = render(DepartureRow, {
 			props: { arrival: arrival({ status: 'CANCEL' }), showOccupancyStatus: true }
