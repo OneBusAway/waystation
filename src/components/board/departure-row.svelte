@@ -5,8 +5,9 @@
 	import ArrivalHero from '$components/board/arrival-hero.svelte';
 	import RouteBadge from '$components/board/route-badge.svelte';
 	import StatusPip from '$components/board/status-pip.svelte';
+	import OccupancyPip from '$components/board/occupancy-pip.svelte';
 
-	let { arrival, showStopName = false } = $props();
+	let { arrival, showStopName = false, showOccupancyStatus = false } = $props();
 
 	const isCancel = $derived(arrival.status === 'CANCEL');
 	const isSched = $derived(arrival.status === 'SCHED');
@@ -108,5 +109,10 @@
 				{t.board_sched()} {clock}
 			{/if}
 		</div>
+		{#if showOccupancyStatus && arrival.occupancy}
+			<div style:margin-top="6px">
+				<OccupancyPip level={arrival.occupancy} />
+			</div>
+		{/if}
 	</div>
 </div>

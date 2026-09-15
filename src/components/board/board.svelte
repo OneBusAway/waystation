@@ -26,7 +26,8 @@
 		showStopName = false,
 		rowCount = 5,
 		showFooter = true,
-		showAlerts = true
+		showAlerts = true,
+		showOccupancyStatus = false
 	} = $props();
 
 	const visible = $derived(arrivals.slice(0, rowCount));
@@ -198,7 +199,7 @@
 			style:min-height="0"
 		>
 			{#each visible as arrival (arrival.tripId ?? `${arrival.route}-${arrival.departureAt}`)}
-				<DepartureRow {arrival} {showStopName} />
+				<DepartureRow {arrival} {showStopName} {showOccupancyStatus} />
 			{/each}
 			{#each Array.from({ length: emptyCount }, (_, i) => i) as i (i)}
 				<div style:border-bottom="1px dashed var(--rule)"></div>
