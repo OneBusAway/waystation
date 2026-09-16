@@ -92,6 +92,16 @@ describe('StopRow minutes column', () => {
 		expect(glyph.style.fontSize).toBe(`${Math.round(64 * 0.32)}px`);
 	});
 
+	// CANCELED is wider than the fixed minutes track, and the group is right-aligned
+	// with overflow: hidden, so the word lost its leading letter. The track is a floor now.
+	test('lets the minutes track grow past its floor for a spelled-out status', () => {
+		const { container } = render(StopRow, { props: { arrival: arrival({ status: 'CANCEL' }) } });
+		const row = container.querySelector('.status-CANCEL');
+		expect(row.style.gridTemplateColumns).toBe(
+			`auto minmax(0, 1fr) minmax(${Math.round(48 * 2.6)}px, max-content)`
+		);
+	});
+
 	// Punch list §10: glyph and numeral share one baseline.
 	test('baseline-aligns the minutes group', () => {
 		const { container } = render(StopRow, { props: { arrival: arrival() } });

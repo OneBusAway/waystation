@@ -518,7 +518,7 @@ export function parseStopDepartures(json, id) {
 const translationCache = new Map();
 
 export function translate(text, targetLang) {
-	const key = `${targetLang} ${text}`;
+	const key = `${targetLang}\u0000${text}`;
 	let pending = translationCache.get(key);
 	if (!pending) {
 		pending = fetchTranslation(text, targetLang).catch((err) => {
@@ -569,4 +569,68 @@ export function formatOccupancy(occupancyStatus) {
 	return Object.hasOwn(OCCUPANCY_LEVELS, occupancyStatus)
 		? OCCUPANCY_LEVELS[occupancyStatus]
 		: null;
+}
+
+/**
+ * Parses and validates the `screen` / `screens` query params used to split one
+ * stop's departures across multiple physical displays.
+ *
+ * Invalid or out-of-range input never throws — it silently falls back to the
+ * single-screen default so a malformed URL degrades to normal behavior rather
+ * than breaking the board.
+ *
+ * @param {URLSearchParams} searchParams
+ * @returns {{ screen: number, screens: number }}
+ */
+export function parseScreenParams(searchParams) {
+	const rawScreens = Number(searchParams.get('screens'));
+	const screens = Number.isInteger(rawScreens) && rawScreens >= 1 ? rawScreens : 1;
+
+	const rawScreen = Number(searchParams.get('screen'));
+	const screen =
+		Number.isInteger(rawScreen) && rawScreen >= 1 && rawScreen <= screens ? rawScreen : 1;
+
+	return { screen, screens };
+}
+
+/** Max departure rows Board can render on one screen (matches its default `rowCount`). */
+export const MAX_BOARD_ROWS = 5;
+
+/**
+ * Computes the `{ start, count }` window one screen owns, dividing the total
+ * `maxDepartures` budget evenly across `screens` (remainder to the earliest
+ * screens). Depends only on config/URL params, never on live arrivals data,
+ * and clamps to `MAX_BOARD_ROWS` per screen.
+ *
+ * @param {number} maxDepartures - Total departures shown across the whole wall.
+ * @param {number} screen - 1-indexed screen number.
+ * @param {number} screens - Total number of screens sharing this stop.
+ * @returns {{ start: number, count: number }}
+ */
+export function computeScreenWindow(maxDepartures, screen, screens) {
+	const budget = Math.min(Math.max(maxDepartures, 0), Math.max(screens, 1) * MAX_BOARD_ROWS);
+
+	if (screens <= 1) return { start: 0, count: budget };
+
+	const base = Math.floor(budget / screens);
+	const remainder = budget % screens;
+	const index = screen - 1;
+
+	return {
+		start: index * base + Math.min(index, remainder),
+		count: base + (index < remainder ? 1 : 0)
+	};
+}
+
+/**
+ * Slices arrivals to a screen's window. `start`/`count` should come from
+ * `computeScreenWindow`.
+ *
+ * @param {Array} arrivals
+ * @param {number} start
+ * @param {number} count
+ * @returns {Array}
+ */
+export function paginateArrivals(arrivals, start, count) {
+	return arrivals.slice(start, start + count);
 }
