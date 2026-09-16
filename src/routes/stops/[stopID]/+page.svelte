@@ -5,8 +5,10 @@
 	import Board from '$components/board/board.svelte';
 	import MultiStopBoard from '$components/board/multi-stop-board.svelte';
 	import {
+		computeScreenWindow,
 		diffArrivals,
 		formatBoardDeparture,
+		paginateArrivals,
 		parseStopDepartures,
 		removeDuplicates,
 		sortEarliestDepartures
@@ -49,6 +51,14 @@
 	let fetchInFlight = false;
 	const refreshIntervalMs = $derived(data.config.updateInterval * 1000);
 	const maxDepartures = $derived(data.config.maxDepartures);
+
+	// Multi-screen pagination: slices this stop's departures for `data.screen`
+	// of `data.screens`. `count` also drives Board's rowCount below, so slicing
+	// and rendering never disagree.
+	const screenWindow = $derived(computeScreenWindow(maxDepartures, data.screen, data.screens));
+	const pagedArrivals = $derived(
+		paginateArrivals(primary?.arrivals ?? [], screenWindow.start, screenWindow.count)
+	);
 
 	async function fetchStop(id) {
 		const response = await fetch(`/api/oba/arrivals-and-departures-for-stop/${id}`);
@@ -191,14 +201,14 @@
 				agencyLogo={data.logoUrl}
 				stopId={primary?.code ?? ''}
 				stopName={primary?.name ?? ''}
-				arrivals={primary?.arrivals ?? []}
+				arrivals={pagedArrivals}
 				alert={activeAlert}
 				{now}
 				{lastUpdatedAt}
 				{isStale}
 				{fetchFailed}
 				{failedStopIds}
-				rowCount={Math.min(maxDepartures, 5)}
+				rowCount={screenWindow.count}
 			/>
 		{/if}
 	</div>
