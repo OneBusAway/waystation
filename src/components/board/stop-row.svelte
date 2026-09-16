@@ -45,11 +45,10 @@
 			: Math.round(badgeHeight * numericScale)
 	);
 
-	// A single fixed, right-aligned column so every card's numerals form one vertical edge.
-	// Comfortably fits a status glyph, two digits and the MIN label at the final size (125px
-	// at numeralSize: 48); a three-digit minutes value is unverified and, with the column's
-	// overflow: hidden + flex-end alignment, would be a candidate to clip. In practice OBA's
-	// arrival window keeps `min` well under 100, so this is latent.
+	// Floor for the minutes column: fits a glyph, two digits and the MIN label (125px at
+	// numeralSize: 48). Only a floor, because CANCELED is wider than it in every locale; the
+	// track grows to max-content, taking the extra from the destination, which ellipsizes.
+	// Right-aligned either way, so the numeral edge never moves.
 	const minutesColumn = $derived(Math.round(numeralSize * 2.6));
 	const glyphSize = $derived(Math.round(numeralSize * 0.32));
 	const minLabelSize = $derived(Math.round(numeralSize * 0.33));
@@ -61,7 +60,7 @@
 <div
 	class="status-{arrival.status}"
 	style:display="grid"
-	style:grid-template-columns="auto minmax(0, 1fr) {minutesColumn}px"
+	style:grid-template-columns="auto minmax(0, 1fr) minmax({minutesColumn}px, max-content)"
 	style:gap="14px"
 	style:align-items="center"
 	style:height="{rowHeight}px"
@@ -117,6 +116,7 @@
 		{/if}
 	</div>
 
+	<!-- overflow: hidden is a backstop: it keeps a string too long for the card out of the next one. -->
 	<div
 		data-testid="minutes-group"
 		dir="ltr"
