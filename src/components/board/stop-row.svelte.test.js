@@ -120,6 +120,14 @@ describe('StopRow route tile', () => {
 		expect(tile.style.padding).toBe('');
 	});
 
+	test('truncates a long route inside the tile', () => {
+		const { container } = render(StopRow, { props: { arrival: arrival({ route: 'Monorail' }) } });
+		const text = container.querySelector('.route-badge > div');
+		expect(text.style.overflow).toBe('hidden');
+		expect(text.style.textOverflow).toBe('ellipsis');
+		expect(text.style.maxWidth).not.toBe('');
+	});
+
 	test('uses the chip radius', () => {
 		const { container } = render(StopRow, { props: { arrival: arrival() } });
 		expect(container.querySelector('.route-badge').style.borderRadius).toBe('var(--radius-chip)');

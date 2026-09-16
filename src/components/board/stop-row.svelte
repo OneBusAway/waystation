@@ -86,6 +86,9 @@
 			style:letter-spacing="-0.01em"
 			style:color="var(--badge-ink)"
 			style:white-space="nowrap"
+			style:max-width="{isWordRoute ? Math.round(badgeWidth * 1.5) : badgeWidth - 16}px"
+			style:overflow="hidden"
+			style:text-overflow="ellipsis"
 		>
 			{arrival.route}
 		</div>
