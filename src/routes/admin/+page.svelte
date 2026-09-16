@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import { formatSeconds } from '$lib/formatters';
 	import { COLOR_MODES, THEMES, normalizeConfig } from '$lib/config/defaults.js';
-	import { setLocale } from '$lib/paraglide/runtime';
+	import { getLocale, setLocale } from '$lib/paraglide/runtime';
 	import {
 		SITE_TOKENS,
 		BOARD_TOKENS,
@@ -19,7 +19,8 @@
 	let localConfig = $state(normalizeConfig(data.config));
 
 	let runningTime = $state(0);
-	let selector = $state('en');
+	// Reads the locale cookie the board also reads; with no cookie it passes through to baseLocale.
+	let selector = $state(getLocale());
 	let saveErrors = $state([]);
 
 	// Live preview of the unsaved branding; `data` carries the env-var fallbacks from the layout.
@@ -33,8 +34,6 @@
 		// Same rules the server applies, so the messages match by construction.
 		saveErrors = validateBranding(localConfig.branding);
 		if (saveErrors.length) return;
-
-		setLocale(selector);
 
 		try {
 			const res = await fetch('/api/config', {
@@ -50,6 +49,8 @@
 			alert(`Failed to save configuration: ${error.message}`);
 			return;
 		}
+
+		setLocale(selector, { reload: false });
 
 		// Re-run the root layout load so the title, favicon, and branding stylesheet reflect the save,
 		// then resync the form with what the server actually persisted (e.g. trimmed names).
