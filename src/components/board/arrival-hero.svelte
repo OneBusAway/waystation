@@ -2,7 +2,7 @@
 	import * as t from '$lib/paraglide/messages.js';
 	import { getLocale } from '$lib/paraglide/runtime.js';
 
-	let { arrival } = $props();
+	let { arrival, hour12 } = $props();
 
 	const isCancel = $derived(arrival.status === 'CANCEL');
 	const isSched = $derived(arrival.status === 'SCHED');
@@ -17,7 +17,7 @@
 		const parts = new Intl.DateTimeFormat(getLocale(), {
 			hour: 'numeric',
 			minute: '2-digit',
-			hour12: true
+			hour12
 		}).formatToParts(new Date(arrival.departureAt));
 		const hm = parts
 			.filter((p) => ['hour', 'literal', 'minute'].includes(p.type))

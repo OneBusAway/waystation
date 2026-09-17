@@ -1,6 +1,6 @@
 <script>
-	import { getLocale } from '$lib/paraglide/runtime.js';
 	import * as t from '$lib/paraglide/messages.js';
+	import { formatDateTime } from '$lib/formatters.js';
 	import AlertBand from '$components/board/alert-band.svelte';
 	import ClockBlock from '$components/board/clock-block.svelte';
 	import Legend from '$components/board/legend.svelte';
@@ -33,7 +33,8 @@
 		maxDepartures = 6,
 		showFooter = true,
 		showAlerts = true,
-		showCrowding = false
+		showCrowding = false,
+		hour12
 	} = $props();
 
 	// Stops with departures come first; an empty or failed stop collapses to one line at the
@@ -66,15 +67,7 @@
 		stops.reduce((c, s) => c + s.arrivals.filter((a) => a.delta != null).length, 0)
 	);
 	const updatedDate = $derived(lastUpdatedAt ? new Date(lastUpdatedAt) : null);
-	const updatedLabel = $derived(
-		updatedDate
-			? updatedDate.toLocaleTimeString(getLocale(), {
-					hour: 'numeric',
-					minute: '2-digit',
-					second: '2-digit'
-				})
-			: ''
-	);
+	const updatedLabel = $derived(updatedDate ? formatDateTime(updatedDate, hour12) : '');
 	const ageMs = $derived(updatedDate ? now.getTime() - updatedDate.getTime() : null);
 	const stale = $derived(isStale || (ageMs != null && ageMs > STALE_THRESHOLD_MS));
 	const showLive = $derived(liveCount > 0 && !stale);
@@ -142,7 +135,7 @@
 			</div>
 		</div>
 
-		<ClockBlock {now} />
+		<ClockBlock {now} {hour12} />
 	</header>
 
 	<!-- STOP GRID -->

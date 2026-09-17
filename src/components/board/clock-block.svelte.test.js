@@ -111,6 +111,27 @@ describe('ClockBlock', () => {
 	});
 });
 
+describe('ClockBlock hour12', () => {
+	afterEach(() => {
+		mockLocale = 'en';
+		cleanup();
+	});
+
+	const clockText = (props) =>
+		render(ClockBlock, { props: { now, ...props } })
+			.container.querySelector('[data-testid="clock"]')
+			.textContent.replace(/\s+/g, '');
+
+	test('true adds a meridiem for de', () => {
+		mockLocale = 'de';
+		expect(clockText({ hour12: true })).toBe('7:52PM');
+	});
+
+	test('false drops the meridiem for en', () => {
+		expect(clockText({ hour12: false })).toBe('19:52');
+	});
+});
+
 describe('ClockBlock (Arabic/RTL)', () => {
 	beforeEach(() => {
 		mockLocale = 'ar';

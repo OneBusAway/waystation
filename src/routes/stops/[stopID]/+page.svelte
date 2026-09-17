@@ -8,6 +8,7 @@
 		computeScreenWindow,
 		diffArrivals,
 		formatBoardDeparture,
+		hour12Option,
 		paginateArrivals,
 		parseStopDepartures,
 		removeDuplicates,
@@ -24,6 +25,7 @@
 	const applyColorScheme = () => (systemTheme = colorScheme?.matches ? 'light' : 'dark');
 	const theme = $derived(data.config.theme === 'system' ? systemTheme : data.config.theme);
 	const colorMode = $derived(data.config.colorMode);
+	const hour12 = $derived(hour12Option(data.config.timeFormat));
 	const ALERT_ROTATE_MS = 8000;
 
 	const isMultiStop = $derived(data.stopIDs.length > 1);
@@ -196,6 +198,7 @@
 				{isStale}
 				{maxDepartures}
 				{showCrowding}
+				{hour12}
 			/>
 		{:else}
 			<Board
@@ -212,6 +215,7 @@
 				{failedStopIds}
 				rowCount={screenWindow.count}
 				{showCrowding}
+				{hour12}
 			/>
 		{/if}
 	</div>
