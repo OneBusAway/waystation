@@ -4,7 +4,7 @@
 	import { COLLAPSED_CARD_HEIGHT } from '$lib/board-layout.js';
 	import StopRow from '$components/board/stop-row.svelte';
 
-	let { stop, limit = 4, rowHeight = 64, numeralSize = 48 } = $props();
+	let { stop, limit = 4, rowHeight = 64, numeralSize = 48, showCrowding = false } = $props();
 
 	const rows = $derived(stop.failed ? [] : stop.arrivals.slice(0, limit));
 	// A failed stop can still hold last-good arrivals, but the card has always given the
@@ -97,7 +97,7 @@
 
 		<div style:display="grid" style:min-height="0">
 			{#each rows as arrival, i (arrival.tripId ?? `${arrival.route}-${arrival.departureAt}`)}
-				<StopRow {arrival} {rowHeight} {numeralSize} last={i === rows.length - 1} />
+				<StopRow {arrival} {rowHeight} {numeralSize} {showCrowding} last={i === rows.length - 1} />
 			{/each}
 		</div>
 	</section>

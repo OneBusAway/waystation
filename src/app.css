@@ -150,6 +150,16 @@ body::before {
 	--status-tone: var(--sched);
 }
 
+.theme-departure .occupancy-LIGHT {
+	--occupancy-tone: var(--ink-dim);
+}
+.theme-departure .occupancy-MEDIUM {
+	--occupancy-tone: var(--early);
+}
+.theme-departure .occupancy-FULL {
+	--occupancy-tone: var(--late);
+}
+
 .theme-departure .tnum {
 	font-variant-numeric: tabular-nums;
 }

@@ -169,6 +169,15 @@
 			</div>
 			{@render stepper('Departures Display Limit', 'maxDepartures')}
 			{@render stepper('Screen Update Interval (seconds)', 'updateInterval')}
+			<div class="flex w-full flex-col gap-y-3 rounded-xl border-4 border-gray-300 p-3">
+				<label for="show-crowding">Show Crowding Indicators</label>
+				<input
+					id="show-crowding"
+					type="checkbox"
+					bind:checked={localConfig.showCrowding}
+					class="size-6"
+				/>
+			</div>
 		</div>
 		{#snippet chooser(label, key, options, labels)}
 			<div class="flex w-full flex-col gap-y-3 rounded-xl border-4 border-gray-300 p-3">

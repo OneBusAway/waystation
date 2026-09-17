@@ -14,7 +14,13 @@ describe('normalizeConfig', () => {
 	});
 
 	it('keeps valid values', () => {
-		const cfg = { maxDepartures: 6, updateInterval: 15, theme: 'light', colorMode: 'mono' };
+		const cfg = {
+			maxDepartures: 6,
+			updateInterval: 15,
+			theme: 'light',
+			colorMode: 'mono',
+			showCrowding: true
+		};
 		expect(normalizeConfig(cfg)).toEqual({ ...cfg, branding: DEFAULT_CONFIG.branding });
 	});
 
@@ -24,9 +30,15 @@ describe('normalizeConfig', () => {
 		expect(out.branding.brandRed).toBe('');
 	});
 
-	it('falls back on invalid theme, colorMode, and numbers', () => {
+	it('falls back on invalid theme, colorMode, showCrowding, and numbers', () => {
 		expect(
-			normalizeConfig({ maxDepartures: 'abc', updateInterval: -2, theme: 'neon', colorMode: 'x' })
+			normalizeConfig({
+				maxDepartures: 'abc',
+				updateInterval: -2,
+				theme: 'neon',
+				colorMode: 'x',
+				showCrowding: 'yes'
+			})
 		).toEqual(DEFAULT_CONFIG);
 	});
 

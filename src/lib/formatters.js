@@ -410,7 +410,7 @@ export function removeDuplicates(departures) {
  *
  * @param {Object} dep - OBA arrivalAndDeparture record (with stopName already attached)
  * @param {Date} [now=new Date()]
- * @returns {{route: string, name: string, dest: string, min: number, delta: number|null, status: 'ONTIME'|'EARLY'|'LATE'|'SCHED'|'CANCEL', stopName: string, departureAt: number, tripId: string|undefined}}
+ * @returns {{route: string, name: string, dest: string, min: number, delta: number|null, status: 'ONTIME'|'EARLY'|'LATE'|'SCHED'|'CANCEL', stopName: string, departureAt: number, tripId: string|undefined, occupancy: 'LIGHT'|'MEDIUM'|'FULL'|null}}
  */
 export function formatBoardDeparture(dep, now = new Date()) {
 	const predicted = dep.predictedDepartureTime;
@@ -439,7 +439,8 @@ export function formatBoardDeparture(dep, now = new Date()) {
 		status,
 		stopName: dep.stopName ?? '',
 		departureAt,
-		tripId: dep.tripId
+		tripId: dep.tripId,
+		occupancy: formatOccupancy(dep.occupancyStatus)
 	};
 }
 
@@ -467,7 +468,8 @@ export function diffArrivals(prev, next) {
 			p.status === n.status &&
 			p.delta === n.delta &&
 			p.stopName === n.stopName &&
-			p.departureAt === n.departureAt;
+			p.departureAt === n.departureAt &&
+			p.occupancy === n.occupancy;
 		return unchanged ? p : n;
 	});
 }
@@ -545,6 +547,28 @@ async function fetchTranslation(text, targetLang) {
 
 	const body = await res.json();
 	return body[0].map((chunk) => chunk[0]).join('');
+}
+
+const OCCUPANCY_LEVELS = {
+	EMPTY: 'LIGHT',
+	MANY_SEATS_AVAILABLE: 'LIGHT',
+	FEW_SEATS_AVAILABLE: 'MEDIUM',
+	STANDING_ROOM_ONLY: 'MEDIUM',
+	CRUSHED_STANDING_ROOM_ONLY: 'FULL',
+	FULL: 'FULL',
+	NOT_ACCEPTING_PASSENGERS: 'FULL'
+};
+
+/**
+ * Bucket an OBA occupancy status for the departure row's crowding indicator.
+ *
+ * @param {string|null|undefined} occupancyStatus - Raw status from OBA
+ * @returns {'LIGHT'|'MEDIUM'|'FULL'|null} - null when there is no usable data, so nothing renders
+ */
+export function formatOccupancy(occupancyStatus) {
+	return Object.hasOwn(OCCUPANCY_LEVELS, occupancyStatus)
+		? OCCUPANCY_LEVELS[occupancyStatus]
+		: null;
 }
 
 /**

@@ -23,7 +23,8 @@ import {
 	paginateArrivals,
 	MAX_BOARD_ROWS,
 	formatAlertWindow,
-	splitStopName
+	splitStopName,
+	formatOccupancy
 } from '$lib/formatters';
 
 afterEach(() => {
@@ -224,6 +225,17 @@ describe('formatters', () => {
 			expect(Number.isNaN(a.min)).toBe(false);
 			expect(a.min).toBeLessThan(-2);
 		});
+
+		test('buckets occupancyStatus into occupancy', () => {
+			const dep = { ...baseDep, occupancyStatus: 'STANDING_ROOM_ONLY' };
+			const a = formatBoardDeparture(dep, NOW);
+			expect(a.occupancy).toBe('MEDIUM');
+		});
+
+		test('sets occupancy to null when occupancyStatus is missing', () => {
+			const a = formatBoardDeparture(baseDep, NOW);
+			expect(a.occupancy).toBeNull();
+		});
 	});
 
 	describe('parseStopDepartures', () => {
@@ -296,6 +308,7 @@ describe('formatters', () => {
 				stopName: '',
 				departureAt: 1_000_000,
 				tripId: 't1',
+				occupancy: 'LIGHT',
 				...overrides
 			};
 		}
@@ -380,6 +393,14 @@ describe('formatters', () => {
 			expect(result).toBe(n);
 			expect(result).not.toBe(p);
 			expect(result.stopName).toBe('Main St & 5th Ave');
+		});
+
+		test('uses the new reference when only occupancy changes', () => {
+			const p = departure({ occupancy: 'LIGHT' });
+			const n = departure({ occupancy: 'FULL' });
+			const [result] = diffArrivals([p], [n]);
+			expect(result).toBe(n);
+			expect(result).not.toBe(p);
 		});
 	});
 });
@@ -496,6 +517,32 @@ describe('alertTone', () => {
 		expect(alertTone('')).toBe('advisory');
 		expect(alertTone(undefined)).toBe('advisory');
 		expect(alertTone(null)).toBe('advisory');
+	});
+});
+
+describe('formatOccupancy', () => {
+	test('buckets seat-available statuses as light', () => {
+		expect(formatOccupancy('EMPTY')).toBe('LIGHT');
+		expect(formatOccupancy('MANY_SEATS_AVAILABLE')).toBe('LIGHT');
+	});
+
+	test('buckets limited-seating statuses as medium', () => {
+		expect(formatOccupancy('FEW_SEATS_AVAILABLE')).toBe('MEDIUM');
+		expect(formatOccupancy('STANDING_ROOM_ONLY')).toBe('MEDIUM');
+	});
+
+	test('buckets statuses with no room to board comfortably as full', () => {
+		expect(formatOccupancy('CRUSHED_STANDING_ROOM_ONLY')).toBe('FULL');
+		expect(formatOccupancy('FULL')).toBe('FULL');
+		expect(formatOccupancy('NOT_ACCEPTING_PASSENGERS')).toBe('FULL');
+	});
+
+	test('returns null for missing or unknown statuses so nothing renders', () => {
+		expect(formatOccupancy(null)).toBeNull();
+		expect(formatOccupancy(undefined)).toBeNull();
+		expect(formatOccupancy('UNKNOWN')).toBeNull();
+		expect(formatOccupancy('')).toBeNull();
+		expect(formatOccupancy('full')).toBeNull();
 	});
 });
 

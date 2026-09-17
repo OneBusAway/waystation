@@ -8,7 +8,8 @@ export const DEFAULT_CONFIG = {
 	updateInterval: 30,
 	theme: THEMES[0],
 	colorMode: COLOR_MODES[0],
-	branding: BRANDING_DEFAULTS
+	branding: BRANDING_DEFAULTS,
+	showCrowding: false
 };
 
 function positiveInt(value, fallback) {
@@ -25,6 +26,8 @@ export function normalizeConfig(raw) {
 		updateInterval: positiveInt(source.updateInterval, DEFAULT_CONFIG.updateInterval),
 		theme: THEMES.includes(source.theme) ? source.theme : DEFAULT_CONFIG.theme,
 		colorMode: COLOR_MODES.includes(source.colorMode) ? source.colorMode : DEFAULT_CONFIG.colorMode,
-		branding: normalizeBranding(source.branding)
+		branding: normalizeBranding(source.branding),
+		showCrowding:
+			typeof source.showCrowding === 'boolean' ? source.showCrowding : DEFAULT_CONFIG.showCrowding
 	};
 }

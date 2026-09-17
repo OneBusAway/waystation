@@ -51,6 +51,7 @@
 	let fetchInFlight = false;
 	const refreshIntervalMs = $derived(data.config.updateInterval * 1000);
 	const maxDepartures = $derived(data.config.maxDepartures);
+	const showCrowding = $derived(data.config.showCrowding);
 
 	// Multi-screen pagination: slices this stop's departures for `data.screen`
 	// of `data.screens`. `count` also drives Board's rowCount below, so slicing
@@ -194,6 +195,7 @@
 				{lastUpdatedAt}
 				{isStale}
 				{maxDepartures}
+				{showCrowding}
 			/>
 		{:else}
 			<Board
@@ -209,6 +211,7 @@
 				{fetchFailed}
 				{failedStopIds}
 				rowCount={screenWindow.count}
+				{showCrowding}
 			/>
 		{/if}
 	</div>
