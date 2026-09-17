@@ -2,12 +2,15 @@ import { BRANDING_DEFAULTS, asObject, normalizeBranding } from './branding.js';
 
 export const THEMES = ['system', 'light', 'dark'];
 export const COLOR_MODES = ['color', 'mono'];
+// AUTO uses the board language's own default hour cycle.
+export const TIME_FORMATS = ['AUTO', '12H', '24H'];
 
 export const DEFAULT_CONFIG = {
 	maxDepartures: 4,
 	updateInterval: 30,
 	theme: THEMES[0],
 	colorMode: COLOR_MODES[0],
+	timeFormat: TIME_FORMATS[0],
 	branding: BRANDING_DEFAULTS,
 	showCrowding: false
 };
@@ -26,6 +29,9 @@ export function normalizeConfig(raw) {
 		updateInterval: positiveInt(source.updateInterval, DEFAULT_CONFIG.updateInterval),
 		theme: THEMES.includes(source.theme) ? source.theme : DEFAULT_CONFIG.theme,
 		colorMode: COLOR_MODES.includes(source.colorMode) ? source.colorMode : DEFAULT_CONFIG.colorMode,
+		timeFormat: TIME_FORMATS.includes(source.timeFormat)
+			? source.timeFormat
+			: DEFAULT_CONFIG.timeFormat,
 		branding: normalizeBranding(source.branding),
 		showCrowding:
 			typeof source.showCrowding === 'boolean' ? source.showCrowding : DEFAULT_CONFIG.showCrowding
