@@ -85,7 +85,11 @@
 
 	onMount(() => {
 		upTime();
-		setInterval(upTime, 1000);
+		const uptimeTimer = setInterval(upTime, 1000);
+
+		return () => {
+			clearInterval(uptimeTimer);
+		};
 	});
 </script>
 
