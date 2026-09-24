@@ -25,7 +25,7 @@ import {
 	formatAlertWindow,
 	splitStopName,
 	formatOccupancy,
-	hour12Option
+	hourCycleOption
 } from '$lib/formatters';
 
 afterEach(() => {
@@ -33,24 +33,29 @@ afterEach(() => {
 });
 
 describe('formatters', () => {
-	describe('hour12Option', () => {
+	describe('hourCycleOption', () => {
 		test('AUTO leaves the hour cycle to the locale', () => {
-			expect(hour12Option()).toBeUndefined();
-			expect(hour12Option('AUTO')).toBeUndefined();
+			expect(hourCycleOption()).toBeUndefined();
+			expect(hourCycleOption('AUTO')).toBeUndefined();
 		});
 
 		test('12H and 24H force the hour cycle', () => {
-			expect(hour12Option('12H')).toBe(true);
-			expect(hour12Option('24H')).toBe(false);
+			expect(hourCycleOption('12H')).toBe('h12');
+			expect(hourCycleOption('24H')).toBe('h23');
 		});
 	});
 
-	describe('hour12', () => {
+	describe('hourCycle', () => {
 		const afternoon = new Date('2025-07-01T15:37:00');
 
-		test('false drops the meridiem', () => {
-			expect(formatTime(afternoon, false)).toBe('15:37');
-			expect(formatDateTime(afternoon, false)).toBe('15:37:00');
+		test('h23 drops the meridiem', () => {
+			expect(formatTime(afternoon, 'h23')).toBe('15:37');
+			expect(formatDateTime(afternoon, 'h23')).toBe('15:37:00');
+		});
+
+		test('h23 shows midnight as 00, not 24', () => {
+			const midnight = new Date('2025-07-01T00:05:00');
+			expect(formatTime(midnight, 'h23')).toBe('00:05');
 		});
 	});
 

@@ -34,7 +34,7 @@
 		showFooter = true,
 		showAlerts = true,
 		showCrowding = false,
-		hour12
+		hourCycle
 	} = $props();
 
 	// Stops with departures come first; an empty or failed stop collapses to one line at the
@@ -67,7 +67,7 @@
 		stops.reduce((c, s) => c + s.arrivals.filter((a) => a.delta != null).length, 0)
 	);
 	const updatedDate = $derived(lastUpdatedAt ? new Date(lastUpdatedAt) : null);
-	const updatedLabel = $derived(updatedDate ? formatDateTime(updatedDate, hour12) : '');
+	const updatedLabel = $derived(updatedDate ? formatDateTime(updatedDate, hourCycle) : '');
 	const ageMs = $derived(updatedDate ? now.getTime() - updatedDate.getTime() : null);
 	const stale = $derived(isStale || (ageMs != null && ageMs > STALE_THRESHOLD_MS));
 	const showLive = $derived(liveCount > 0 && !stale);
@@ -135,7 +135,7 @@
 			</div>
 		</div>
 
-		<ClockBlock {now} {hour12} />
+		<ClockBlock {now} {hourCycle} />
 	</header>
 
 	<!-- STOP GRID -->

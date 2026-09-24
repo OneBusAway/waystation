@@ -7,11 +7,11 @@
 	import StatusPip from '$components/board/status-pip.svelte';
 	import OccupancyPip from '$components/board/occupancy-pip.svelte';
 
-	let { arrival, showStopName = false, showCrowding = false, hour12 } = $props();
+	let { arrival, showStopName = false, showCrowding = false, hourCycle } = $props();
 
 	const isCancel = $derived(arrival.status === 'CANCEL');
 	const isSched = $derived(arrival.status === 'SCHED');
-	const clock = $derived(formatTime(arrival.departureAt, hour12));
+	const clock = $derived(formatTime(arrival.departureAt, hourCycle));
 	// Board grid renders LTR regardless of document direction.
 	// Swap TO label and destination text order for Arabic so the
 	// Arabic label appears after the destination, not before it.
@@ -90,7 +90,7 @@
 		</div>
 	</div>
 
-	<ArrivalHero {arrival} {hour12} />
+	<ArrivalHero {arrival} {hourCycle} />
 
 	<div dir="ltr" style:text-align="right">
 		<StatusPip status={arrival.status} delta={arrival.delta} large />

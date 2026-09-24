@@ -3,13 +3,13 @@ import { getLocale } from './paraglide/runtime';
 import { Duration } from 'luxon';
 
 /**
- * Intl `hour12` option for a time format; undefined for AUTO so the locale's own default applies.
+ * Intl `hourCycle` option for a time format; undefined for AUTO so the locale's own default applies.
  * @param {string} [timeFormat]
- * @returns {boolean|undefined}
+ * @returns {'h12'|'h23'|undefined}
  */
-export function hour12Option(timeFormat = 'AUTO') {
-	if (timeFormat === '12H') return true;
-	if (timeFormat === '24H') return false;
+export function hourCycleOption(timeFormat = 'AUTO') {
+	if (timeFormat === '12H') return 'h12';
+	if (timeFormat === '24H') return 'h23';
 	return undefined;
 }
 
@@ -27,14 +27,14 @@ export function formatSeconds(seconds) {
 /**
  * Format time for display
  * @param {Date} date
- * @param {boolean} [hour12] - Forces the hour cycle; undefined uses the locale default
+ * @param {'h12'|'h23'} [hourCycle] - Forces the hour cycle; undefined uses the locale default
  */
-export function formatDateTime(date, hour12) {
+export function formatDateTime(date, hourCycle) {
 	return date.toLocaleTimeString(getLocale(), {
 		hour: 'numeric',
 		minute: '2-digit',
 		second: '2-digit',
-		hour12
+		hourCycle
 	});
 }
 
@@ -241,14 +241,14 @@ export function formatTextColor(defaultStatus, routeStatus) {
 /**
  * Format time for display
  * @param {Date} time
- * @param {boolean} [hour12] - Forces the hour cycle; undefined uses the locale default
+ * @param {'h12'|'h23'} [hourCycle] - Forces the hour cycle; undefined uses the locale default
  */
-export function formatTime(time, hour12) {
+export function formatTime(time, hourCycle) {
 	const date = new Date(time);
 	return date.toLocaleTimeString(getLocale(), {
 		hour: 'numeric',
 		minute: '2-digit',
-		hour12
+		hourCycle
 	});
 }
 
@@ -267,14 +267,14 @@ export function formatDate(date) {
 /**
  * Format the current time for display
  * @param {Date} date
- * @param {boolean} [hour12] - Forces the hour cycle; undefined uses the locale default
+ * @param {'h12'|'h23'} [hourCycle] - Forces the hour cycle; undefined uses the locale default
  */
-export function formatCurrentTime(date, hour12) {
+export function formatCurrentTime(date, hourCycle) {
 	return date.toLocaleTimeString(getLocale(), {
 		hour: '2-digit',
 		minute: '2-digit',
 		second: '2-digit',
-		hour12
+		hourCycle
 	});
 }
 

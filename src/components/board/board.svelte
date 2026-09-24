@@ -28,7 +28,7 @@
 		showFooter = true,
 		showAlerts = true,
 		showCrowding = false,
-		hour12
+		hourCycle
 	} = $props();
 
 	const visible = $derived(arrivals.slice(0, rowCount));
@@ -100,7 +100,7 @@
 			</div>
 		</div>
 
-		<ClockBlock {now} {hour12} />
+		<ClockBlock {now} {hourCycle} />
 	</header>
 
 	<!-- STOP IDENTITY -->
@@ -200,7 +200,7 @@
 			style:min-height="0"
 		>
 			{#each visible as arrival (arrival.tripId ?? `${arrival.route}-${arrival.departureAt}`)}
-				<DepartureRow {arrival} {showStopName} {showCrowding} {hour12} />
+				<DepartureRow {arrival} {showStopName} {showCrowding} {hourCycle} />
 			{/each}
 			{#each Array.from({ length: emptyCount }, (_, i) => i) as i (i)}
 				<div style:border-bottom="1px dashed var(--rule)"></div>
@@ -245,10 +245,10 @@
 						{t.board_updating()}
 					{:else if stale}
 						{t.board_stale_prefix()}
-						{formatDateTime(updatedDate, hour12)}
+						{formatDateTime(updatedDate, hourCycle)}
 					{:else}
 						{t.board_updated()}
-						{formatDateTime(updatedDate, hour12)}
+						{formatDateTime(updatedDate, hourCycle)}
 					{/if}
 				</span>
 			</div>

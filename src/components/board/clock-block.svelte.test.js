@@ -111,7 +111,7 @@ describe('ClockBlock', () => {
 	});
 });
 
-describe('ClockBlock hour12', () => {
+describe('ClockBlock hourCycle', () => {
 	afterEach(() => {
 		mockLocale = 'en';
 		cleanup();
@@ -122,13 +122,13 @@ describe('ClockBlock hour12', () => {
 			.container.querySelector('[data-testid="clock"]')
 			.textContent.replace(/\s+/g, '');
 
-	test('true adds a meridiem for de', () => {
+	test('h12 adds a meridiem for de', () => {
 		mockLocale = 'de';
-		expect(clockText({ hour12: true })).toBe('7:52PM');
+		expect(clockText({ hourCycle: 'h12' })).toBe('7:52PM');
 	});
 
-	test('false drops the meridiem for en', () => {
-		expect(clockText({ hour12: false })).toBe('19:52');
+	test('h23 drops the meridiem for en', () => {
+		expect(clockText({ hourCycle: 'h23' })).toBe('19:52');
 	});
 });
 
