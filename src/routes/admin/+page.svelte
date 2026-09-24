@@ -1,7 +1,7 @@
 <script>
 	import { invalidate } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import { formatSeconds } from '$lib/formatters';
+	import { formatSeconds, hourCycleOption } from '$lib/formatters';
 	import { COLOR_MODES, THEMES, TIME_FORMATS, normalizeConfig } from '$lib/config/defaults.js';
 	import { getLocale, setLocale } from '$lib/paraglide/runtime';
 	import {
@@ -91,7 +91,11 @@
 </script>
 
 <div class="flex min-h-screen flex-col">
-	<Header title={regionName} imageUrl={logoUrl} />
+	<Header
+		title={regionName}
+		imageUrl={logoUrl}
+		hourCycle={hourCycleOption(localConfig.timeFormat)}
+	/>
 	<div class="m-5 flex flex-1 flex-col items-center justify-center space-y-4">
 		<div
 			class="flex w-full max-w-7xl flex-col justify-between gap-3 rounded-3xl bg-white p-4 text-xl md:flex-row md:items-center md:text-2xl"
