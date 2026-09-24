@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import { formatSeconds } from '$lib/formatters';
 	import { COLOR_MODES, THEMES, normalizeConfig } from '$lib/config/defaults.js';
-	import { getLocale, setLocale } from '$lib/paraglide/runtime';
+	import { getLocale, setLocale, locales } from '$lib/paraglide/runtime';
 	import {
 		SITE_TOKENS,
 		BOARD_TOKENS,
@@ -82,6 +82,11 @@
 
 	const THEME_LABELS = { system: 'Follow system', light: 'Light', dark: 'Dark' };
 	const COLOR_MODE_LABELS = { color: 'Color', mono: 'Monochromatic' };
+
+	/** @param {(typeof locales)[number]} locale */
+	const localeLabel = (locale) => {
+		return new Intl.DisplayNames(locale, { type: 'language' }).of(locale) ?? locale;
+	};
 
 	onMount(() => {
 		upTime();
@@ -164,11 +169,9 @@
 			<div class="flex w-full flex-col gap-y-3 rounded-xl border-4 border-gray-300 p-3">
 				<label for="language-select">Display Language</label>
 				<select id="language-select" bind:value={selector}>
-					<option value="en">English</option>
-					<option value="ar">Arabic</option>
-					<option value="es">Spanish</option>
-					<option value="fr">French</option>
-					<option value="de">German</option>
+					{#each locales as locale (locale)}
+						<option value={locale}>{localeLabel(locale)}</option>
+					{/each}
 				</select>
 			</div>
 			{@render stepper('Departures Display Limit', 'maxDepartures')}
