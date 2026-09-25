@@ -2,7 +2,7 @@
 	import { formatDate } from '$lib/formatters.js';
 	import { getLocale } from '$lib/paraglide/runtime.js';
 
-	let { now } = $props();
+	let { now, hourCycle } = $props();
 
 	// `now` is bumped every second by the page, but nothing this component renders changes more
 	// than once a minute. Truncating to the minute means the derivations below re-run ~1,440
@@ -23,7 +23,7 @@
 		const parts = new Intl.DateTimeFormat(latinLocale, {
 			hour: 'numeric',
 			minute: '2-digit',
-			hour12: true
+			hourCycle
 		}).formatToParts(new Date(minuteMs));
 		// The separator is the literal that sits between the hour and the minute, not simply the
 		// first literal: locales that lead with the day period (ko, zh-Hant) put a space there.
