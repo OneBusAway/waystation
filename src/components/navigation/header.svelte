@@ -7,7 +7,7 @@
 	let defaultTitle = 'Transit Board';
 	let defaultIcon = 'https://opentransitsoftwarefoundation.org/images/logos/onebusaway.svg';
 
-	let { imageUrl = defaultIcon, title = defaultTitle } = $props();
+	let { imageUrl = defaultIcon, title = defaultTitle, hourCycle } = $props();
 
 	if (typeof imageUrl !== 'string') imageUrl = defaultIcon;
 
@@ -37,6 +37,6 @@
 	</div>
 	<div class="flex flex-col gap-y-[0.416vw] text-right leading-none">
 		<div class="text-[1.25vw]">{formatDate(now)}</div>
-		<div class="text-[1.875vw] font-bold">{formatDateTime(now)}</div>
+		<div class="text-[1.875vw] font-bold">{formatDateTime(now, hourCycle)}</div>
 	</div>
 </div>

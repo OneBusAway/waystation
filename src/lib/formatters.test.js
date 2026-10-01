@@ -24,7 +24,8 @@ import {
 	MAX_BOARD_ROWS,
 	formatAlertWindow,
 	splitStopName,
-	formatOccupancy
+	formatOccupancy,
+	hourCycleOption
 } from '$lib/formatters';
 
 afterEach(() => {
@@ -32,6 +33,32 @@ afterEach(() => {
 });
 
 describe('formatters', () => {
+	describe('hourCycleOption', () => {
+		test('AUTO leaves the hour cycle to the locale', () => {
+			expect(hourCycleOption()).toBeUndefined();
+			expect(hourCycleOption('AUTO')).toBeUndefined();
+		});
+
+		test('12H and 24H force the hour cycle', () => {
+			expect(hourCycleOption('12H')).toBe('h12');
+			expect(hourCycleOption('24H')).toBe('h23');
+		});
+	});
+
+	describe('hourCycle', () => {
+		const afternoon = new Date('2025-07-01T15:37:00');
+
+		test('h23 drops the meridiem', () => {
+			expect(formatTime(afternoon, 'h23')).toBe('15:37');
+			expect(formatDateTime(afternoon, 'h23')).toBe('15:37:00');
+		});
+
+		test('h23 shows midnight as 00, not 24', () => {
+			const midnight = new Date('2025-07-01T00:05:00');
+			expect(formatTime(midnight, 'h23')).toBe('00:05');
+		});
+	});
+
 	describe('Time & Date Formatting', () => {
 		test('formatDateTime includes seconds and meridiem', () => {
 			const date = new Date('2025-07-01T12:34:56');

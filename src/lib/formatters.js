@@ -3,6 +3,17 @@ import { getLocale } from './paraglide/runtime';
 import { Duration } from 'luxon';
 
 /**
+ * Intl `hourCycle` option for a time format; undefined for AUTO so the locale's own default applies.
+ * @param {string} [timeFormat]
+ * @returns {'h12'|'h23'|undefined}
+ */
+export function hourCycleOption(timeFormat = 'AUTO') {
+	if (timeFormat === '12H') return 'h12';
+	if (timeFormat === '24H') return 'h23';
+	return undefined;
+}
+
+/**
  * Format seconds into a human-readable time
  * @param {number} seconds
  * @returns {string}
@@ -16,13 +27,14 @@ export function formatSeconds(seconds) {
 /**
  * Format time for display
  * @param {Date} date
+ * @param {'h12'|'h23'} [hourCycle] - Forces the hour cycle; undefined uses the locale default
  */
-export function formatDateTime(date) {
+export function formatDateTime(date, hourCycle) {
 	return date.toLocaleTimeString(getLocale(), {
 		hour: 'numeric',
 		minute: '2-digit',
 		second: '2-digit',
-		hour12: true
+		hourCycle
 	});
 }
 
@@ -229,13 +241,14 @@ export function formatTextColor(defaultStatus, routeStatus) {
 /**
  * Format time for display
  * @param {Date} time
+ * @param {'h12'|'h23'} [hourCycle] - Forces the hour cycle; undefined uses the locale default
  */
-export function formatTime(time) {
+export function formatTime(time, hourCycle) {
 	const date = new Date(time);
 	return date.toLocaleTimeString(getLocale(), {
 		hour: 'numeric',
 		minute: '2-digit',
-		hour12: true
+		hourCycle
 	});
 }
 
@@ -254,13 +267,14 @@ export function formatDate(date) {
 /**
  * Format the current time for display
  * @param {Date} date
+ * @param {'h12'|'h23'} [hourCycle] - Forces the hour cycle; undefined uses the locale default
  */
-export function formatCurrentTime(date) {
+export function formatCurrentTime(date, hourCycle) {
 	return date.toLocaleTimeString(getLocale(), {
 		hour: '2-digit',
 		minute: '2-digit',
 		second: '2-digit',
-		hour12: true
+		hourCycle
 	});
 }
 
