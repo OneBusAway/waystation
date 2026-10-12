@@ -275,6 +275,24 @@ body::before {
 	animation: board-live-pulse 2s ease-in-out infinite;
 }
 
+.departure-rows-container {
+	scrollbar-width: thin;
+	scrollbar-color: var(--rule-strong) transparent;
+}
+
+.departure-rows-container::-webkit-scrollbar {
+	width: 6px;
+}
+
+.departure-rows-container::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.departure-rows-container::-webkit-scrollbar-thumb {
+	background: var(--rule-strong);
+	border-radius: 3px;
+}
+
 @media (prefers-reduced-motion: reduce) {
 	.board-empty-sweep,
 	.board-empty-rise,

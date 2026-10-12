@@ -53,7 +53,7 @@
 	style:color="var(--ink)"
 	style:padding="28px 32px 24px"
 	style:display="grid"
-	style:grid-template-rows="118px auto 56px 1fr auto"
+	style:grid-template-rows="118px auto 56px minmax(0, 1fr) auto"
 	style:gap="16px"
 	style:z-index="1"
 >
@@ -194,10 +194,13 @@
 		<EmptyBoard mode={emptyMode} {rowCount} />
 	{:else}
 		<div
+			class="departure-rows-container"
 			style:display="grid"
 			style:grid-template-rows="repeat({rowCount}, 1fr)"
 			style:gap="6px"
 			style:min-height="0"
+			style:overflow-y="auto"
+			style:overflow-x="hidden"
 		>
 			{#each visible as arrival (arrival.tripId ?? `${arrival.route}-${arrival.departureAt}`)}
 				<DepartureRow {arrival} {showStopName} {showCrowding} {hourCycle} />

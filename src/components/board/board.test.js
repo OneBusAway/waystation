@@ -72,3 +72,193 @@ describe('Board empty state', () => {
 		expect(container.innerHTML).toContain('#200');
 	});
 });
+
+describe('Board departure rows layout and footer containment (Issue #99)', () => {
+	afterEach(() => {
+		cleanup();
+	});
+
+	const now = new Date('2026-06-11T15:55:00Z');
+
+	function makeArrival(index, overrides = {}) {
+		return {
+			route: `${index + 1}`,
+			name: `Route ${index + 1}`,
+			dest: `Destination ${index + 1}`,
+			departureAt: now.getTime() + (index + 1) * 60_000,
+			min: index + 1,
+			status: 'ONTIME',
+			delta: 0,
+			tripId: `trip-${index}`,
+			...overrides
+		};
+	}
+
+	function renderBoard(arrivalsList, props = {}) {
+		return render(Board, {
+			props: {
+				arrivals: arrivalsList,
+				now,
+				lastUpdatedAt: now.getTime(),
+				rowCount: props.rowCount ?? arrivalsList.length,
+				showFooter: true,
+				...props
+			}
+		});
+	}
+
+	test('A: four or fewer departures continue to fit and render without overflow', () => {
+		const fourArrivals = Array.from({ length: 4 }, (_, i) => makeArrival(i));
+		const { container } = renderBoard(fourArrivals, { rowCount: 4 });
+
+		const outerGrid = container.firstElementChild;
+		expect(outerGrid.style.gridTemplateRows).toContain('minmax(0, 1fr)');
+
+		const rowsContainer = container.querySelector('.departure-rows-container');
+		expect(rowsContainer).not.toBeNull();
+		expect(rowsContainer.style.overflowY).toBe('auto');
+		expect(rowsContainer.style.overflowX).toBe('hidden');
+
+		const rows = rowsContainer.querySelectorAll('.row');
+		expect(rows.length).toBe(4);
+
+		const footer = container.querySelector('footer');
+		expect(footer).not.toBeNull();
+		// Rows container and footer must be separate grid siblings
+		expect(footer.parentElement).toBe(outerGrid);
+		expect(rowsContainer.nextElementSibling).toBe(footer);
+	});
+
+	test('A: renders empty dashed slots when departures are fewer than rowCount <= 4', () => {
+		const twoArrivals = Array.from({ length: 2 }, (_, i) => makeArrival(i));
+		const { container } = renderBoard(twoArrivals, { rowCount: 4 });
+
+		const rowsContainer = container.querySelector('.departure-rows-container');
+		const rows = rowsContainer.querySelectorAll('.row');
+		expect(rows.length).toBe(2);
+
+		// Remaining 2 slots are empty dashed borders
+		const emptySlots = rowsContainer.querySelectorAll('div[style*="border-bottom: 1px dashed"]');
+		expect(emptySlots.length).toBe(2);
+	});
+
+	test('B: five departures stay contained within the rows track and do not overlap the footer', () => {
+		const fiveArrivals = Array.from({ length: 5 }, (_, i) => makeArrival(i));
+		const { container } = renderBoard(fiveArrivals, { rowCount: 5 });
+
+		const outerGrid = container.firstElementChild;
+		// Outer grid track 4 must be constrained with minmax(0, 1fr) so it never expands past available space
+		expect(outerGrid.style.gridTemplateRows).toContain('minmax(0, 1fr)');
+
+		const rowsContainer = container.querySelector('.departure-rows-container');
+		expect(rowsContainer).not.toBeNull();
+		expect(rowsContainer.style.overflowY).toBe('auto');
+		expect(rowsContainer.style.overflowX).toBe('hidden');
+		expect(['0', '0px']).toContain(rowsContainer.style.minHeight);
+
+		const rows = rowsContainer.querySelectorAll('.row');
+		expect(rows.length).toBe(5);
+
+		// All 5 rows must be inside the scrolling rowsContainer, NOT outside it
+		for (const row of rows) {
+			expect(rowsContainer.contains(row)).toBe(true);
+		}
+
+		// The footer must exist, be positioned as a separate grid item, and not contain any departure rows
+		const footer = container.querySelector('footer');
+		expect(footer).not.toBeNull();
+		expect(footer.querySelector('.row')).toBeNull();
+		expect(footer.parentElement).toBe(outerGrid);
+		expect(rowsContainer.nextElementSibling).toBe(footer);
+	});
+
+	test('C: a substantially larger number of departures (8 rows) remain accessible and the footer remains visible', () => {
+		const eightArrivals = Array.from({ length: 8 }, (_, i) => makeArrival(i));
+		const { container } = renderBoard(eightArrivals, { rowCount: 8 });
+
+		const rowsContainer = container.querySelector('.departure-rows-container');
+		expect(rowsContainer).not.toBeNull();
+		expect(rowsContainer.style.overflowY).toBe('auto');
+
+		const rows = rowsContainer.querySelectorAll('.row');
+		expect(rows.length).toBe(8);
+
+		// Each row must be present and display its route and destination
+		eightArrivals.forEach((arr, i) => {
+			expect(rows[i].textContent).toContain(arr.name);
+			expect(rows[i].textContent).toContain(arr.dest);
+		});
+
+		// Footer remains visible at the bottom of the outer grid
+		const footer = container.querySelector('footer');
+		expect(footer).not.toBeNull();
+		expect(footer.innerHTML).toContain('WAYSTATION');
+	});
+
+	test('D: responsive layout maintains grid constraints and stage containment', () => {
+		const fiveArrivals = Array.from({ length: 5 }, (_, i) => makeArrival(i));
+		const { container } = renderBoard(fiveArrivals, { rowCount: 5 });
+
+		const outerGrid = container.firstElementChild;
+		// Position absolute with inset 0 fills the stage container regardless of viewport scaling
+		expect(outerGrid.style.position).toBe('absolute');
+		expect(['0', '0px']).toContain(outerGrid.style.inset);
+
+		const rowsContainer = container.querySelector('.departure-rows-container');
+		expect(rowsContainer.style.overflowY).toBe('auto');
+		expect(['0', '0px']).toContain(rowsContainer.style.minHeight);
+	});
+
+	test('E: variable content such as long destination and route names remain contained', () => {
+		const longArrivals = [
+			makeArrival(0, {
+				name: 'Very Long Route Name That Could Exceed Normal Width 550 Express',
+				dest: 'Downtown Seattle via Bellevue Transit Center and Mercer Island Park & Ride',
+				route: '550EXP'
+			}),
+			makeArrival(1, {
+				name: 'Edmonds - Kingston Ferry Terminal Shuttle Route',
+				dest: 'Edmonds Kingston Terminal Southbound Connection Point',
+				route: 'FERRY'
+			}),
+			makeArrival(2),
+			makeArrival(3),
+			makeArrival(4)
+		];
+		const { container } = renderBoard(longArrivals, {
+			rowCount: 5,
+			stopSubtitle: 'Platform 3 · Southbound Bay A / Bay B Long Subtitle'
+		});
+
+		const rowsContainer = container.querySelector('.departure-rows-container');
+		const rows = rowsContainer.querySelectorAll('.row');
+		expect(rows.length).toBe(5);
+
+		// Elements with long text must have ellipsis and hidden overflow in their inline styles
+		const longNameEl = rows[0].querySelector('.display');
+		expect(longNameEl.style.textOverflow).toBe('ellipsis');
+		expect(longNameEl.style.overflow).toBe('hidden');
+
+		// Footer is still present and unaffected
+		const footer = container.querySelector('footer');
+		expect(footer).not.toBeNull();
+	});
+
+	test('F: configuration with varying rowCount maintains bounded board area', () => {
+		const tenArrivals = Array.from({ length: 10 }, (_, i) => makeArrival(i));
+
+		// Increasing rowCount to 10
+		const { container } = renderBoard(tenArrivals, { rowCount: 10 });
+		const rowsContainer = container.querySelector('.departure-rows-container');
+		expect(rowsContainer.style.gridTemplateRows).toBe('repeat(10, 1fr)');
+		expect(rowsContainer.style.overflowY).toBe('auto');
+
+		const rows = rowsContainer.querySelectorAll('.row');
+		expect(rows.length).toBe(10);
+
+		// Footer remains strictly in place
+		const footer = container.querySelector('footer');
+		expect(footer).not.toBeNull();
+		expect(footer.innerHTML).toContain('WAYSTATION');
+	});
+});
