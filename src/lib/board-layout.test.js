@@ -12,7 +12,9 @@ import {
 	MIN_ROW_HEIGHT,
 	MAX_ROW_HEIGHT,
 	MIN_NUMERAL,
-	MAX_NUMERAL
+	MAX_NUMERAL,
+	singleBoardRowsAreaHeight,
+	singleBoardUsedHeight
 } from './board-layout.js';
 
 // Mirrors the stacking in multi-stop-board.svelte so the assertions below stay
@@ -156,5 +158,31 @@ describe('computeGridLayout', () => {
 	test('respects the admin departure limit as an upper bound', () => {
 		const layout = computeGridLayout({ rowCounts: [8, 8], maxDepartures: 3, hasAlert: false });
 		expect(layout.perCard).toBe(3);
+	});
+});
+
+describe('single-stop board layout (board.svelte)', () => {
+	test('computes available rows area height without and with failed badge', () => {
+		const normalHeight = singleBoardRowsAreaHeight({ showFailedBadge: false });
+		const failedHeight = singleBoardRowsAreaHeight({ showFailedBadge: true });
+		expect(normalHeight).toBeGreaterThan(650);
+		expect(failedHeight).toBeGreaterThan(600);
+		expect(normalHeight - failedHeight).toBe(48);
+	});
+
+	test('four rows fit completely within available height even with failed badge', () => {
+		const used = singleBoardUsedHeight(4);
+		const availableWithFailed = singleBoardRowsAreaHeight({ showFailedBadge: true });
+		const availableNormal = singleBoardRowsAreaHeight({ showFailedBadge: false });
+		expect(used).toBeLessThanOrEqual(availableWithFailed);
+		expect(used).toBeLessThanOrEqual(availableNormal);
+	});
+
+	test('five rows in compact mode fit completely within available height even with failed badge', () => {
+		const used = singleBoardUsedHeight(5);
+		const availableWithFailed = singleBoardRowsAreaHeight({ showFailedBadge: true });
+		const availableNormal = singleBoardRowsAreaHeight({ showFailedBadge: false });
+		expect(used).toBeLessThanOrEqual(availableWithFailed);
+		expect(used).toBeLessThanOrEqual(availableNormal);
 	});
 });

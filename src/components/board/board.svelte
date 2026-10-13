@@ -24,13 +24,14 @@
 		fetchFailed = false,
 		failedStopIds = [],
 		showStopName = false,
-		rowCount = 5,
+		rowCount = 4,
 		showFooter = true,
 		showAlerts = true,
 		showCrowding = false,
 		hourCycle
 	} = $props();
 
+	const compact = $derived(rowCount >= 5);
 	const visible = $derived(arrivals.slice(0, rowCount));
 	const emptyCount = $derived(Math.max(0, rowCount - visible.length));
 	const hasAlert = $derived(showAlerts && !!alert);
@@ -173,9 +174,9 @@
 	<div
 		class="sc tnum"
 		style:display="grid"
-		style:grid-template-columns="200px 1fr 380px 380px"
+		style:grid-template-columns={compact ? '160px 1fr 340px 340px' : '200px 1fr 380px 380px'}
 		style:align-items="center"
-		style:gap="24px"
+		style:gap={compact ? '16px' : '24px'}
 		style:font-size="16px"
 		style:letter-spacing="0.22em"
 		style:color="var(--ink-mute)"
@@ -195,15 +196,15 @@
 	{:else}
 		<div
 			class="departure-rows-container"
+			class:compact
 			style:display="grid"
-			style:grid-template-rows="repeat({rowCount}, 1fr)"
-			style:gap="6px"
+			style:grid-template-rows="repeat({rowCount}, minmax(0, 1fr))"
+			style:gap="{compact ? 4 : 6}px"
 			style:min-height="0"
-			style:overflow-y="auto"
-			style:overflow-x="hidden"
+			style:overflow="hidden"
 		>
 			{#each visible as arrival (arrival.tripId ?? `${arrival.route}-${arrival.departureAt}`)}
-				<DepartureRow {arrival} {showStopName} {showCrowding} {hourCycle} />
+				<DepartureRow {arrival} {showStopName} {showCrowding} {hourCycle} {compact} />
 			{/each}
 			{#each Array.from({ length: emptyCount }, (_, i) => i) as i (i)}
 				<div style:border-bottom="1px dashed var(--rule)"></div>

@@ -116,11 +116,15 @@ describe('Board departure rows layout and footer containment (Issue #99)', () =>
 
 		const rowsContainer = container.querySelector('.departure-rows-container');
 		expect(rowsContainer).not.toBeNull();
-		expect(rowsContainer.style.overflowY).toBe('auto');
-		expect(rowsContainer.style.overflowX).toBe('hidden');
+		expect(rowsContainer.style.overflow).toBe('hidden');
+		expect(rowsContainer.style.overflowY).not.toBe('auto');
+		expect(rowsContainer.classList.contains('compact')).toBe(false);
 
 		const rows = rowsContainer.querySelectorAll('.row');
 		expect(rows.length).toBe(4);
+		for (const row of rows) {
+			expect(row.classList.contains('compact')).toBe(false);
+		}
 
 		const footer = container.querySelector('footer');
 		expect(footer).not.toBeNull();
@@ -142,7 +146,7 @@ describe('Board departure rows layout and footer containment (Issue #99)', () =>
 		expect(emptySlots.length).toBe(2);
 	});
 
-	test('B: five departures stay contained within the rows track and do not overlap the footer', () => {
+	test('B: five departures stay contained within the rows track, switch to compact mode, and do not scroll or overlap the footer', () => {
 		const fiveArrivals = Array.from({ length: 5 }, (_, i) => makeArrival(i));
 		const { container } = renderBoard(fiveArrivals, { rowCount: 5 });
 
@@ -152,16 +156,18 @@ describe('Board departure rows layout and footer containment (Issue #99)', () =>
 
 		const rowsContainer = container.querySelector('.departure-rows-container');
 		expect(rowsContainer).not.toBeNull();
-		expect(rowsContainer.style.overflowY).toBe('auto');
-		expect(rowsContainer.style.overflowX).toBe('hidden');
+		expect(rowsContainer.style.overflow).toBe('hidden');
+		expect(rowsContainer.style.overflowY).not.toBe('auto');
 		expect(['0', '0px']).toContain(rowsContainer.style.minHeight);
+		expect(rowsContainer.classList.contains('compact')).toBe(true);
 
 		const rows = rowsContainer.querySelectorAll('.row');
 		expect(rows.length).toBe(5);
 
-		// All 5 rows must be inside the scrolling rowsContainer, NOT outside it
+		// All 5 rows must be inside rowsContainer and in compact mode
 		for (const row of rows) {
 			expect(rowsContainer.contains(row)).toBe(true);
+			expect(row.classList.contains('compact')).toBe(true);
 		}
 
 		// The footer must exist, be positioned as a separate grid item, and not contain any departure rows
@@ -172,19 +178,21 @@ describe('Board departure rows layout and footer containment (Issue #99)', () =>
 		expect(rowsContainer.nextElementSibling).toBe(footer);
 	});
 
-	test('C: a substantially larger number of departures (8 rows) remain accessible and the footer remains visible', () => {
-		const eightArrivals = Array.from({ length: 8 }, (_, i) => makeArrival(i));
-		const { container } = renderBoard(eightArrivals, { rowCount: 8 });
+	test('C: high maxDepartures clamps to MAX_BOARD_ROWS (5) so the board stays contained in compact mode', () => {
+		// computeScreenWindow clamps single-screen display to MAX_BOARD_ROWS
+		const fiveArrivals = Array.from({ length: 5 }, (_, i) => makeArrival(i));
+		const { container } = renderBoard(fiveArrivals, { rowCount: 5 });
 
 		const rowsContainer = container.querySelector('.departure-rows-container');
 		expect(rowsContainer).not.toBeNull();
-		expect(rowsContainer.style.overflowY).toBe('auto');
+		expect(rowsContainer.style.overflow).toBe('hidden');
+		expect(rowsContainer.classList.contains('compact')).toBe(true);
 
 		const rows = rowsContainer.querySelectorAll('.row');
-		expect(rows.length).toBe(8);
+		expect(rows.length).toBe(5);
 
 		// Each row must be present and display its route and destination
-		eightArrivals.forEach((arr, i) => {
+		fiveArrivals.forEach((arr, i) => {
 			expect(rows[i].textContent).toContain(arr.name);
 			expect(rows[i].textContent).toContain(arr.dest);
 		});
@@ -205,7 +213,7 @@ describe('Board departure rows layout and footer containment (Issue #99)', () =>
 		expect(['0', '0px']).toContain(outerGrid.style.inset);
 
 		const rowsContainer = container.querySelector('.departure-rows-container');
-		expect(rowsContainer.style.overflowY).toBe('auto');
+		expect(rowsContainer.style.overflow).toBe('hidden');
 		expect(['0', '0px']).toContain(rowsContainer.style.minHeight);
 	});
 
@@ -245,19 +253,24 @@ describe('Board departure rows layout and footer containment (Issue #99)', () =>
 	});
 
 	test('F: configuration with varying rowCount maintains bounded board area', () => {
-		const tenArrivals = Array.from({ length: 10 }, (_, i) => makeArrival(i));
+		const fourArrivals = Array.from({ length: 4 }, (_, i) => makeArrival(i));
+		const { container: container4 } = renderBoard(fourArrivals, { rowCount: 4 });
+		const rows4 = container4.querySelector('.departure-rows-container');
+		expect(rows4.style.gridTemplateRows).toBe('repeat(4, minmax(0, 1fr))');
+		expect(rows4.classList.contains('compact')).toBe(false);
+		expect(rows4.style.overflow).toBe('hidden');
 
-		// Increasing rowCount to 10
-		const { container } = renderBoard(tenArrivals, { rowCount: 10 });
-		const rowsContainer = container.querySelector('.departure-rows-container');
-		expect(rowsContainer.style.gridTemplateRows).toBe('repeat(10, 1fr)');
-		expect(rowsContainer.style.overflowY).toBe('auto');
+		cleanup();
 
-		const rows = rowsContainer.querySelectorAll('.row');
-		expect(rows.length).toBe(10);
+		const fiveArrivals = Array.from({ length: 5 }, (_, i) => makeArrival(i));
+		const { container: container5 } = renderBoard(fiveArrivals, { rowCount: 5 });
+		const rows5 = container5.querySelector('.departure-rows-container');
+		expect(rows5.style.gridTemplateRows).toBe('repeat(5, minmax(0, 1fr))');
+		expect(rows5.classList.contains('compact')).toBe(true);
+		expect(rows5.style.overflow).toBe('hidden');
 
 		// Footer remains strictly in place
-		const footer = container.querySelector('footer');
+		const footer = container5.querySelector('footer');
 		expect(footer).not.toBeNull();
 		expect(footer.innerHTML).toContain('WAYSTATION');
 	});
