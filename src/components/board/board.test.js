@@ -178,8 +178,8 @@ describe('Board departure rows layout and footer containment (Issue #99)', () =>
 		expect(rowsContainer.nextElementSibling).toBe(footer);
 	});
 
-	test('C: high maxDepartures clamps to MAX_BOARD_ROWS (5) so the board stays contained in compact mode', () => {
-		// computeScreenWindow clamps single-screen display to MAX_BOARD_ROWS
+	test('C: all five departure rows remain accessible and the footer remains visible in compact mode', () => {
+		// Verifies that when 5 departures are rendered with rowCount: 5, all rows display their details
 		const fiveArrivals = Array.from({ length: 5 }, (_, i) => makeArrival(i));
 		const { container } = renderBoard(fiveArrivals, { rowCount: 5 });
 
