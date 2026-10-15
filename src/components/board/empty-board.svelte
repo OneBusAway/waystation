@@ -1,7 +1,7 @@
 <script>
 	import * as t from '$lib/paraglide/messages.js';
 
-	let { mode = 'connecting', rowCount = 5 } = $props();
+	let { mode = 'connecting', rowCount = 4 } = $props();
 
 	const ACCENTS = {
 		connecting: 'var(--sched)',
@@ -22,7 +22,7 @@
 	});
 
 	const ticks = Array.from({ length: 60 }, (_, i) => i);
-	const ghosts = Array.from({ length: rowCount }, (_, i) => i);
+	const ghosts = $derived(Array.from({ length: rowCount }, (_, i) => i));
 </script>
 
 <div style:position="relative" style:min-height="0" style:height="100%">
@@ -30,7 +30,7 @@
 		style:position="absolute"
 		style:inset="0"
 		style:display="grid"
-		style:grid-template-rows="repeat({rowCount}, 1fr)"
+		style:grid-template-rows="repeat({rowCount}, minmax(0, 1fr))"
 		style:gap="6px"
 		aria-hidden="true"
 	>

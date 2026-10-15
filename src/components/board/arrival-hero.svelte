@@ -2,7 +2,7 @@
 	import * as t from '$lib/paraglide/messages.js';
 	import { getLocale } from '$lib/paraglide/runtime.js';
 
-	let { arrival, hourCycle } = $props();
+	let { arrival, hourCycle, compact = false } = $props();
 
 	const isCancel = $derived(arrival.status === 'CANCEL');
 	const isSched = $derived(arrival.status === 'SCHED');
@@ -32,7 +32,7 @@
 	<div style:text-align="right">
 		<div
 			class="display sc"
-			style:font-size="80px"
+			style:font-size={compact ? '52px' : '68px'}
 			style:font-weight="800"
 			style:line-height="0.9"
 			style:letter-spacing="0.04em"
@@ -42,10 +42,10 @@
 		</div>
 		<div
 			class="sc"
-			style:font-size="18px"
+			style:font-size={compact ? '14px' : '16px'}
 			style:letter-spacing="0.22em"
 			style:color="var(--ink-mute)"
-			style:margin-top="6px"
+			style:margin-top={compact ? '3px' : '6px'}
 		>
 			{t.board_do_not_board()}
 		</div>
@@ -54,7 +54,7 @@
 	<div style:text-align="right">
 		<div
 			class="display sc"
-			style:font-size="130px"
+			style:font-size={compact ? '82px' : '108px'}
 			style:font-weight="800"
 			style:line-height="0.9"
 			style:letter-spacing="0.04em"
@@ -67,7 +67,7 @@
 	<div style:text-align="right">
 		<div
 			class="display mono"
-			style:font-size="110px"
+			style:font-size={compact ? '72px' : '92px'}
 			style:font-weight="600"
 			style:line-height="0.9"
 			style:letter-spacing="-0.02em"
@@ -76,14 +76,18 @@
 			style:display="flex"
 			style:align-items="baseline"
 			style:justify-content="flex-end"
-			style:gap="8px"
+			style:gap={compact ? '6px' : '8px'}
 		>
 			{#if isRTL && clockParts.ap}
-				<span style:font-size="38px" style:color="var(--ink-dim)">{clockParts.ap}</span>
+				<span style:font-size={compact ? '24px' : '32px'} style:color="var(--ink-dim)"
+					>{clockParts.ap}</span
+				>
 			{/if}
 			<span dir="ltr">{clockParts.hm}</span>
 			{#if !isRTL && clockParts.ap}
-				<span style:font-size="38px" style:color="var(--ink-dim)">{clockParts.ap}</span>
+				<span style:font-size={compact ? '24px' : '32px'} style:color="var(--ink-dim)"
+					>{clockParts.ap}</span
+				>
 			{/if}
 		</div>
 	</div>
@@ -93,12 +97,12 @@
 		style:display="flex"
 		style:align-items="baseline"
 		style:justify-content="flex-end"
-		style:gap="14px"
+		style:gap={compact ? '10px' : '12px'}
 	>
 		{#if isRTL}
 			<div
 				class="sc display"
-				style:font-size="36px"
+				style:font-size={compact ? '24px' : '30px'}
 				style:font-weight="700"
 				style:letter-spacing="0.06em"
 				style:color="var(--ink-dim)"
@@ -107,7 +111,7 @@
 			</div>
 			<div
 				class="display mono"
-				style:font-size="156px"
+				style:font-size={compact ? '96px' : '130px'}
 				style:font-weight="700"
 				style:line-height="0.9"
 				style:letter-spacing="-0.04em"
@@ -119,7 +123,7 @@
 		{:else}
 			<div
 				class="display mono"
-				style:font-size="156px"
+				style:font-size={compact ? '96px' : '130px'}
 				style:font-weight="700"
 				style:line-height="0.9"
 				style:letter-spacing="-0.04em"
@@ -130,7 +134,7 @@
 			</div>
 			<div
 				class="sc display"
-				style:font-size="36px"
+				style:font-size={compact ? '24px' : '30px'}
 				style:font-weight="700"
 				style:letter-spacing="0.06em"
 				style:color="var(--ink-dim)"

@@ -25,4 +25,12 @@ describe('RouteBadge', () => {
 		expect(el.style.textOverflow).toBe('ellipsis');
 		expect(el.style.maxWidth).toBe('132px');
 	});
+
+	test('applies compact dimensions and smaller font size when compact is true', () => {
+		const { container } = render(RouteBadge, { props: { route: '49', compact: true } });
+		const badge = container.querySelector('.route-badge');
+		expect(badge.style.width).toBe('128px');
+		expect(badge.style.height).toBe('84px');
+		expect(text(container).style.fontSize).toBe('60px');
+	});
 });
