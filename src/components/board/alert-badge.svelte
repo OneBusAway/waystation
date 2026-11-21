@@ -28,6 +28,9 @@
 			return;
 		}
 
+		// Do not keep the previous alert's translation visible while this one is pending.
+		translatedHeadline = '';
+
 		translate(raw, locale)
 			.then((text) => {
 				if (!cancelled) {
@@ -80,6 +83,7 @@
 					{getLocale() === 'ar' ? '←' : '→'} {windowEnd}{/if}{/if}
 		</div>
 		<div
+			data-testid="alert-headline"
 			style:font-size="22px"
 			style:font-weight="600"
 			style:line-height="1.25"
