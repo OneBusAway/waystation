@@ -1,7 +1,7 @@
 <script>
 	import * as t from '$lib/paraglide/messages.js';
 	import { getLocale } from '$lib/paraglide/runtime.js';
-	import { formatTimestamp, translate } from '$lib/formatters.js';
+	import { alertTone, formatTimestamp, translate } from '$lib/formatters.js';
 
 	let { situation } = $props();
 
@@ -9,7 +9,7 @@
 	const activeWindow = $derived(situation?.activeWindows?.[0]);
 	const windowStart = $derived(activeWindow?.from ? formatTimestamp(activeWindow.from) : '');
 	const windowEnd = $derived(activeWindow?.to ? formatTimestamp(activeWindow.to) : '');
-	const severity = $derived(situation?.severity?.toLowerCase?.() ?? 'alert');
+	const tone = $derived(alertTone(situation?.severity));
 
 	let translatedHeadline = $state('');
 
@@ -49,7 +49,7 @@
 </script>
 
 <div
-	class="alert-badge alert-{severity}"
+	class="alert-badge alert-{tone}"
 	style:width="760px"
 	style:padding="16px 24px"
 	style:border-radius="4px"
