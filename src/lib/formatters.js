@@ -607,7 +607,7 @@ export function parseScreenParams(searchParams) {
 	return { screen, screens };
 }
 
-/** Max departure rows Board can render on one screen (matches its default `rowCount`). */
+/** Max departure rows Board can render on one screen (Board defaults to 4 and switches to compact mode at 5). */
 export const MAX_BOARD_ROWS = 5;
 
 /**
