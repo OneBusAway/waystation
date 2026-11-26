@@ -193,10 +193,23 @@ export const SINGLE_BOARD_COL_HEADER_HEIGHT = 56;
 export const SINGLE_BOARD_FOOTER_HEIGHT = 39;
 export const SINGLE_BOARD_SECTION_GAP = 16;
 
+export const SINGLE_BOARD_COMPACT_THRESHOLD = 5;
 export const SINGLE_BOARD_ROW_GAP_NORMAL = 6;
 export const SINGLE_BOARD_ROW_GAP_COMPACT = 4;
 export const SINGLE_BOARD_ROW_HEIGHT_NORMAL = 129;
 export const SINGLE_BOARD_ROW_HEIGHT_COMPACT = 97;
+
+/**
+ * Whether the single-stop board switches to compact row sizing for `rowCount`.
+ * Shared between board.svelte and singleBoardUsedHeight so layout math and
+ * rendered styles use the same threshold.
+ *
+ * @param {number} rowCount
+ * @returns {boolean}
+ */
+export function isSingleBoardCompact(rowCount) {
+	return rowCount >= SINGLE_BOARD_COMPACT_THRESHOLD;
+}
 
 /**
  * Height available for departure rows on the single-stop board.
@@ -226,7 +239,7 @@ export function singleBoardRowsAreaHeight({ showFailedBadge = false } = {}) {
  */
 export function singleBoardUsedHeight(rowCount) {
 	if (rowCount <= 0) return 0;
-	const isCompact = rowCount >= 5;
+	const isCompact = isSingleBoardCompact(rowCount);
 	const rowHeight = isCompact ? SINGLE_BOARD_ROW_HEIGHT_COMPACT : SINGLE_BOARD_ROW_HEIGHT_NORMAL;
 	const gap = isCompact ? SINGLE_BOARD_ROW_GAP_COMPACT : SINGLE_BOARD_ROW_GAP_NORMAL;
 	return rowCount * rowHeight + (rowCount - 1) * gap;

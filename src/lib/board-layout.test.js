@@ -6,6 +6,7 @@ import {
 	columnsFor,
 	gridAreaHeight,
 	gridAreaWidth,
+	isSingleBoardCompact,
 	CARD_GAP,
 	CARD_CHROME_HEIGHT,
 	COLLAPSED_CARD_HEIGHT,
@@ -13,6 +14,7 @@ import {
 	MAX_ROW_HEIGHT,
 	MIN_NUMERAL,
 	MAX_NUMERAL,
+	SINGLE_BOARD_COMPACT_THRESHOLD,
 	singleBoardRowsAreaHeight,
 	singleBoardUsedHeight
 } from './board-layout.js';
@@ -184,5 +186,12 @@ describe('single-stop board layout (board.svelte)', () => {
 		const availableNormal = singleBoardRowsAreaHeight({ showFailedBadge: false });
 		expect(used).toBeLessThanOrEqual(availableWithFailed);
 		expect(used).toBeLessThanOrEqual(availableNormal);
+	});
+
+	test('switches to compact mode at SINGLE_BOARD_COMPACT_THRESHOLD (5 rows)', () => {
+		expect(SINGLE_BOARD_COMPACT_THRESHOLD).toBe(5);
+		expect(isSingleBoardCompact(4)).toBe(false);
+		expect(isSingleBoardCompact(5)).toBe(true);
+		expect(singleBoardUsedHeight(5)).toBeLessThan(singleBoardUsedHeight(4));
 	});
 });

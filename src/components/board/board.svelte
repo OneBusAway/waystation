@@ -1,5 +1,6 @@
 <script>
 	import * as t from '$lib/paraglide/messages.js';
+	import { isSingleBoardCompact } from '$lib/board-layout.js';
 	import { formatDateTime } from '$lib/formatters.js';
 	import AlertBadge from '$components/board/alert-badge.svelte';
 	import ClockBlock from '$components/board/clock-block.svelte';
@@ -31,7 +32,7 @@
 		hourCycle
 	} = $props();
 
-	const compact = $derived(rowCount >= 5);
+	const compact = $derived(isSingleBoardCompact(rowCount));
 	const visible = $derived(arrivals.slice(0, rowCount));
 	const emptyCount = $derived(Math.max(0, rowCount - visible.length));
 	const hasAlert = $derived(showAlerts && !!alert);
