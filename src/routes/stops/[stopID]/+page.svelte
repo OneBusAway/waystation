@@ -4,11 +4,13 @@
 
 	import Board from '$components/board/board.svelte';
 	import MultiStopBoard from '$components/board/multi-stop-board.svelte';
+	import NightView from '$components/board/night-view.svelte';
 	import {
 		computeScreenWindow,
 		diffArrivals,
 		formatBoardDeparture,
 		hourCycleOption,
+		isNightMode,
 		paginateArrivals,
 		parseStopDepartures,
 		removeDuplicates,
@@ -54,6 +56,14 @@
 	const refreshIntervalMs = $derived(data.config.updateInterval * 1000);
 	const maxDepartures = $derived(data.config.maxDepartures);
 	const showCrowding = $derived(data.config.showCrowding);
+
+	// Recomputed from the existing 1s clock tick (`now`), so no extra timer. A $derived boolean
+	// only notifies dependents when it flips, so this doesn't re-render the board every second.
+	// Fetching continues normally during night mode; only the rendering changes.
+	const nightMode = $derived(
+		isNightMode(now, data.config.nightModeStart, data.config.nightModeEnd)
+	);
+	const nightStyle = $derived(data.config.nightModeStyle);
 
 	// Multi-screen pagination: slices this stop's departures for `data.screen`
 	// of `data.screens`. `count` also drives Board's rowCount below, so slicing
@@ -186,8 +196,19 @@
 </script>
 
 <div class="board-stage-wrap">
-	<div id="board-stage" class="board-stage theme-departure theme-{theme} theme-{colorMode}">
-		{#if isMultiStop}
+	<div
+		id="board-stage"
+		class="board-stage theme-departure theme-{theme} theme-{colorMode}"
+		class:night-dim={nightMode && nightStyle === 'dim'}
+	>
+		{#if nightMode && nightStyle === 'minimal'}
+			<NightView
+				stopName={primary?.name ?? ''}
+				arrivals={primary?.arrivals ?? []}
+				{now}
+				{hourCycle}
+			/>
+		{:else if isMultiStop}
 			<MultiStopBoard
 				agencyName={data.regionName}
 				agencyLogo={data.logoUrl}

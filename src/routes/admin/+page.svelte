@@ -2,7 +2,14 @@
 	import { invalidate } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { formatSeconds, hourCycleOption } from '$lib/formatters';
-	import { COLOR_MODES, THEMES, TIME_FORMATS, normalizeConfig } from '$lib/config/defaults.js';
+	import {
+		COLOR_MODES,
+		NIGHT_MODE_STYLES,
+		THEMES,
+		TIME_FORMATS,
+		normalizeConfig,
+		parseHHMM
+	} from '$lib/config/defaults.js';
 	import { getLocale, setLocale, locales } from '$lib/paraglide/runtime';
 	import {
 		SITE_TOKENS,
@@ -30,9 +37,19 @@
 	);
 	const regionName = $derived(localConfig.branding.regionName || data.regionName);
 
+	function validateNightMode({ nightModeStart: s, nightModeEnd: e }) {
+		const errors = [];
+		if (!s && !e) return errors; // feature off
+		if (!s || !e) errors.push('Night mode needs both a start and an end time.');
+		else if (parseHHMM(s) === null || parseHHMM(e) === null)
+			errors.push('Night mode times must be in HH:mm format.');
+		else if (s === e) errors.push('Night mode start and end must differ.');
+		return errors;
+	}
+
 	async function saveChanges() {
 		// Same rules the server applies, so the messages match by construction.
-		saveErrors = validateBranding(localConfig.branding);
+		saveErrors = [...validateBranding(localConfig.branding), ...validateNightMode(localConfig)];
 		if (saveErrors.length) return;
 
 		try {
@@ -83,6 +100,7 @@
 	const THEME_LABELS = { system: 'Follow system', light: 'Light', dark: 'Dark' };
 	const COLOR_MODE_LABELS = { color: 'Color', mono: 'Monochromatic' };
 	const TIME_FORMAT_LABELS = { AUTO: 'Language default', '12H': '12-hour', '24H': '24-hour' };
+	const NIGHT_MODE_STYLE_LABELS = { dim: 'Dim', minimal: 'Minimal' };
 
 	/** @param {(typeof locales)[number]} locale */
 	const localeLabel = (locale) => {
@@ -206,6 +224,44 @@
 			{@render chooser('Board Theme', 'theme', THEMES, THEME_LABELS)}
 			{@render chooser('Board Colors', 'colorMode', COLOR_MODES, COLOR_MODE_LABELS)}
 			{@render chooser('Time Format', 'timeFormat', TIME_FORMATS, TIME_FORMAT_LABELS)}
+		</div>
+
+		<!-- Night Mode -->
+		<div class="flex w-full max-w-7xl flex-col gap-3 rounded-3xl bg-white p-5 text-xl">
+			<h2 class="text-lg font-bold text-gray-700">Night Mode</h2>
+			<p class="text-sm text-gray-500">
+				Dims the board or shows a minimal view during this nightly window to reduce screen burn-in.
+				Leave both times empty to disable. Windows may cross midnight (e.g. 22:00–06:00).
+			</p>
+			<div class="flex flex-col gap-3 md:flex-row">
+				<div class="flex w-full flex-col gap-y-2 rounded-xl border-4 border-gray-300 p-3">
+					<label for="night-start" class="text-sm font-medium">Start</label>
+					<input
+						id="night-start"
+						type="time"
+						bind:value={localConfig.nightModeStart}
+						class="rounded border border-gray-300 px-3 py-2 text-base"
+					/>
+				</div>
+				<div class="flex w-full flex-col gap-y-2 rounded-xl border-4 border-gray-300 p-3">
+					<label for="night-end" class="text-sm font-medium">End</label>
+					<input
+						id="night-end"
+						type="time"
+						bind:value={localConfig.nightModeEnd}
+						class="rounded border border-gray-300 px-3 py-2 text-base"
+					/>
+				</div>
+				{@render chooser('Style', 'nightModeStyle', NIGHT_MODE_STYLES, NIGHT_MODE_STYLE_LABELS)}
+			</div>
+			<button
+				type="button"
+				class="self-start text-sm text-gray-400 hover:text-red-500"
+				onclick={() => {
+					localConfig.nightModeStart = '';
+					localConfig.nightModeEnd = '';
+				}}>Disable night mode</button
+			>
 		</div>
 
 		<!-- Board Branding -->

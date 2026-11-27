@@ -49,6 +49,16 @@ body::before {
 	overflow: hidden;
 }
 
+/* Night mode (dim): darken the whole stage without changing layout. */
+.board-stage.night-dim::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: rgb(0 0 0 / 0.7);
+	pointer-events: none;
+	z-index: 100;
+}
+
 .theme-departure {
 	font-family: 'IBM Plex Sans', system-ui, sans-serif;
 	background: var(--bg);

@@ -1,6 +1,7 @@
 import * as t from '$lib/paraglide/messages.js';
 import { getLocale } from './paraglide/runtime';
 import { Duration } from 'luxon';
+import { parseHHMM } from './config/defaults.js';
 
 /**
  * Intl `hourCycle` option for a time format; undefined for AUTO so the locale's own default applies.
@@ -647,4 +648,22 @@ export function computeScreenWindow(maxDepartures, screen, screens) {
  */
 export function paginateArrivals(arrivals, start, count) {
 	return arrivals.slice(start, start + count);
+}
+
+/**
+ * Whether `now` (kiosk local time) falls inside the nightly window [start, end).
+ * Handles windows that wrap past midnight, e.g. 22:00–06:00.
+ * Returns false when either bound is missing/invalid or both are equal (feature off).
+ *
+ * @param {Date} now
+ * @param {string} start - "HH:mm"
+ * @param {string} end - "HH:mm"
+ * @returns {boolean}
+ */
+export function isNightMode(now, start, end) {
+	const s = parseHHMM(start);
+	const e = parseHHMM(end);
+	if (s === null || e === null || s === e || !(now instanceof Date)) return false;
+	const cur = now.getHours() * 60 + now.getMinutes();
+	return s < e ? cur >= s && cur < e : cur >= s || cur < e;
 }
