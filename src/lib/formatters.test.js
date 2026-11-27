@@ -21,6 +21,7 @@ import {
 	parseScreenParams,
 	computeScreenWindow,
 	paginateArrivals,
+	isNightMode,
 	MAX_BOARD_ROWS,
 	formatAlertWindow,
 	splitStopName,
@@ -669,5 +670,39 @@ describe('paginateArrivals', () => {
 		// Window says this screen owns 4 rows, but only 3 are currently live -
 		// e.g. a bus just crossed the departed cutoff. No error, no fabricated rows.
 		expect(paginateArrivals(three, 0, 4)).toEqual(three);
+	});
+});
+
+describe('isNightMode', () => {
+	const at = (h, m = 0) => new Date(2026, 0, 1, h, m);
+
+	test('inside a same-day window', () => {
+		expect(isNightMode(at(1, 30), '01:00', '05:00')).toBe(true);
+	});
+
+	test('outside a same-day window', () => {
+		expect(isNightMode(at(12), '01:00', '05:00')).toBe(false);
+	});
+
+	test('wrap-around window (22:00–06:00)', () => {
+		expect(isNightMode(at(2), '22:00', '06:00')).toBe(true);
+		expect(isNightMode(at(23), '22:00', '06:00')).toBe(true);
+		expect(isNightMode(at(12), '22:00', '06:00')).toBe(false);
+	});
+
+	test('start is inclusive, end is exclusive', () => {
+		expect(isNightMode(at(22), '22:00', '06:00')).toBe(true);
+		expect(isNightMode(at(6), '22:00', '06:00')).toBe(false);
+	});
+
+	test('false when start equals end', () => {
+		expect(isNightMode(at(22), '22:00', '22:00')).toBe(false);
+	});
+
+	test('false when either bound is missing or malformed', () => {
+		expect(isNightMode(at(2), '', '06:00')).toBe(false);
+		expect(isNightMode(at(2), '22:00', undefined)).toBe(false);
+		expect(isNightMode(at(2), '25:00', '06:00')).toBe(false);
+		expect(isNightMode(at(2), '10pm', '06:00')).toBe(false);
 	});
 });

@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { COLOR_MODES, DEFAULT_CONFIG, THEMES, TIME_FORMATS, normalizeConfig } from './defaults.js';
+import {
+	COLOR_MODES,
+	DEFAULT_CONFIG,
+	NIGHT_MODE_STYLES,
+	THEMES,
+	TIME_FORMATS,
+	normalizeConfig
+} from './defaults.js';
 
 describe('normalizeConfig', () => {
 	it('returns defaults for an empty or missing config', () => {
@@ -20,7 +27,10 @@ describe('normalizeConfig', () => {
 			theme: 'light',
 			colorMode: 'mono',
 			timeFormat: '24H',
-			showCrowding: true
+			showCrowding: true,
+			nightModeStart: '22:00',
+			nightModeEnd: '06:00',
+			nightModeStyle: 'minimal'
 		};
 		expect(normalizeConfig(cfg)).toEqual({ ...cfg, branding: DEFAULT_CONFIG.branding });
 	});
@@ -49,5 +59,17 @@ describe('normalizeConfig', () => {
 		expect(COLOR_MODES).toContain(DEFAULT_CONFIG.colorMode);
 		expect(TIME_FORMATS).toContain(DEFAULT_CONFIG.timeFormat);
 		expect(DEFAULT_CONFIG.timeFormat).toBe('AUTO');
+	});
+
+	it('disables night mode on invalid times and falls back on invalid style', () => {
+		const out = normalizeConfig({
+			nightModeStart: '25:00',
+			nightModeEnd: 'abc',
+			nightModeStyle: 'sparkly'
+		});
+		expect(out.nightModeStart).toBe('');
+		expect(out.nightModeEnd).toBe('');
+		expect(out.nightModeStyle).toBe('dim');
+		expect(NIGHT_MODE_STYLES).toContain(DEFAULT_CONFIG.nightModeStyle);
 	});
 });
